@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   
     <title>linfeng</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="xuelinf">
     
@@ -14,12 +14,14 @@
     
     
     
+    <link rel="alternative" href="/atom.xml" title="linfeng" type="application/atom+xml">
+    
     
     <link rel="icon" href="/img/favicon.ico">
     
     
-    <link rel="apple-touch-icon" href="/img/pacman.jpg">
-    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
     
     <link rel="stylesheet" href="/css/style.css" type="text/css">
 
@@ -30,7 +32,7 @@
       <div>
 		
 			<div id="imglogo">
-				<a href="/"><img src="/img/logo.svg" alt="linfeng" title="linfeng"/></a>
+				<a href="/"><img src="/img/logo.png" alt="linfeng" title="linfeng"/></a>
 			</div>
 			
 			<div id="textlogo">
@@ -41,16 +43,19 @@
 			</a></div>
 			<nav class="animated">
 				<ul>
-					
+					<ul>
+					 
 						<li><a href="/">Home</a></li>
 					
 						<li><a href="/archives">Archives</a></li>
 					
-					<li>
+						<li><a href="/about">About</a></li>
 					
+					<li>
+ 					
 					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
 						<input type="hidden" name="q" value="site:yoursite.com">
 					</form>
 					
@@ -58,12 +63,12 @@
 				</ul>
 			</nav>			
 </div>
-
     </header>
     <div id="container">
       <div id="main">
 
-  <section class="post" itemscope itemprop="blogPost">
+  
+<section class="post" itemscope itemprop="blogitem">
   
     <a href="/2014/11/26/new-day/" title="new day" itemprop="url">
   
@@ -77,7 +82,13 @@
   </a>
 </section>
 
-  <section class="post" itemscope itemprop="blogPost">
+
+
+
+
+
+  
+<section class="post" itemscope itemprop="blogitem">
   
     <a href="/2014/11/25/Hello-world-again/" title="Hello world again" itemprop="url">
   
@@ -91,7 +102,13 @@
   </a>
 </section>
 
-  <section class="post" itemscope itemprop="blogPost">
+
+
+
+
+
+  
+<section class="post" itemscope itemprop="blogitem">
   
     <a href="/2014/11/25/hello-world/" title="Hello World" itemprop="url">
   
@@ -106,6 +123,11 @@
 </section>
 
 
+
+
+
+
+
 </div>
       <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 
@@ -117,20 +139,24 @@
 
   
 
-  <div class="rsspart">
-	<a href="null" target="_blank" title="rss">RSS 订阅</a>
-</div>
-
-  
-
   <div class="linkslist">
   <p class="asidetitle">友情链接</p>
     <ul>
-      <li><a href="http://yangjian.me" target="_blank" title="YangJian">Alimon's Blog</a></li>
-      <li><a href="http://hexo.io" target="_blank" title="Hexo">Hexo</a></li>
+        
+          <li>
+            <a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+          </li>
+        
+          <li>
+            <a href="http://hexo.io" target="_blank" title="Hexo">Hexo</a>
+          </li>
+        
     </ul>
 </div>
 
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
 
 </aside>
 </div>
@@ -143,21 +169,34 @@
 	</div>
 	
 	
-	<div class="social-font clearfix">
+	<section class="info">
+		<p> Hello ,I&#39;m Larry Page in Google. <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
 		
 		
 		
 		
 		
 	</div>
-		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2014 
+		<p class="copyright">Powered by <a href="http://zespia.tw/hexo/" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Pacman">Jacman</a> © 2014 
 		
-		<a href="http://yoursite.com" target="_blank" title="xuelinf">xuelinf</a>
+		<a href="http://yoursite.com/about" target="_blank" title="xuelinf">xuelinf</a>
 		
 		</p>
 </div>
 </footer>
-    <script src="/js/jquery-2.1.0.min.js"></script>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
 <script type="text/javascript">
 $(document).ready(function(){ 
   $('.navbar').click(function(){
@@ -208,6 +247,31 @@ $(document).ready(function(){
 
 
 
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
 
   </body>
  </html>
