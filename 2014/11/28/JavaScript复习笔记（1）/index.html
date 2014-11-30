@@ -139,6 +139,32 @@ async 下载后，顺序可能改变。使用">
 </ul>
 </blockquote>
 </li>
+<li><p><code>NaN</code>表示非数值，与任何的值不同，<code>NaN</code>与自己也不相同，0除以0时候是NaN</p>
+</li>
+<li><p>一元加操作，其实是一个转换工具，有一套自己的转换规则，减操作则是在这个转换之后变负数。例：</p>
+</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> S1 = <span class="string">"01"</span>    <span class="comment">//+S1 = 1    -S1 = -1</span></div><div class="line"><span class="keyword">var</span> S2 = <span class="string">"1.1"</span>      <span class="comment">//+S2 = 1.1     -S2 = -1.1</span></div><div class="line"><span class="keyword">var</span> S3 = <span class="string">"z"</span>        <span class="comment">//+S3 = NaN     -S3 = NaN</span></div><div class="line"><span class="keyword">var</span> S4 = <span class="string">"false"</span>    <span class="comment">//+s4 = 0       -S4 = 0</span></div><div class="line"><span class="keyword">var</span> S5 = {</div><div class="line">    <span class="keyword">return</span> valueof:</div><div class="line">           <span class="function"><span class="keyword">function</span><span class="params">()</span></span>{</div><div class="line">               <span class="keyword">return</span> -<span class="number">1</span></div><div class="line">           }}       <span class="comment">//+S5 = -1      -S5 = 1</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li><p>位移操作 &gt;&gt; 和 &gt;&gt;&gt;<br>前者是有符号的移动，后者是无符号的移动</p>
+</li>
+<li><p>全等和不全等</p>
+</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="string">"55"</span> == <span class="number">55</span>; <span class="comment">//true</span></div><div class="line"><span class="string">"55"</span> == <span class="number">55</span>; <span class="comment">//false   因为是不同类型的</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li>‘label’标签功能<br>‘with’语句</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">with</span>(location){</div><div class="line">    <span class="keyword">var</span> qs = search.substring(<span class="number">1</span>);       <span class="comment">//location.search.substring(1)</span></div><div class="line">    <span class="keyword">var</span> hostName = hostname;</div><div class="line">    <span class="keyword">var</span> url = href:</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<ul>
+<li><p>‘没有重载，不存在签名特性’</p>
+</li>
+<li><p>可向函数传递任意数量的参数，然后可通过’arguments’访问</p>
+<p>‘arguments[1] arguments[2]’</p>
+</li>
 </ul>
   
 	</div>
