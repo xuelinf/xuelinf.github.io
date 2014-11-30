@@ -69,6 +69,63 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2014/11/30/JavaScript复习笔记（2）/" title="JavaScript复习笔记（2）" itemprop="url">JavaScript复习笔记（2）</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://yoursite.com/about" title="xuelinf" target="_blank" itemprop="author">xuelinf</a>
+		
+  <p class="article-time">
+    <time datetime="2014-11-30T13:49:27.000Z" itemprop="datePublished"> 发表于 11月 30 2014</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="变量、作用域及内存问题">变量、作用域及内存问题</h2>
+<ul>
+<li>只能给引用对象定义对象，基本类型不行：</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> person = <span class="keyword">new</span> object();</div><div class="line">person.name = <span class="string">"hello"</span>;    <span class="comment">//OK</span></div><div class="line"><span class="keyword">var</span> person;</div><div class="line">person.name = <span class="string">"hello"</span>;    <span class="comment">//False</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li>复制变量：基本类型的复制，数据间相互独立；引用类型之间，副本是一个指针，所以两个变量引用的是同一个对象，所以数据是相同的。</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> obj1 = <span class="keyword">new</span> object();</div><div class="line"><span class="keyword">var</span> obj2 = obj1;</div><div class="line">obj1.name = <span class="string">"lucy"</span>;     <span class="comment">//obj2.name = lucy</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li>参数传递问题：直接看实例：</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">addTen</span><span class="params">(num)</span></span>{</div><div class="line">    num += <span class="number">10</span>;</div><div class="line">    <span class="keyword">return</span> num;</div><div class="line">}</div><div class="line"><span class="keyword">var</span> count = <span class="number">20</span>;</div><div class="line"><span class="keyword">var</span> result = addTen(count);</div><div class="line">alert (count);       <span class="comment">//20</span></div><div class="line">alert (result);      <span class="comment">//30</span></div></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">setName</span><span class="params">(obj)</span></span>{</div><div class="line">    obj.name = <span class="string">"lucy"</span>;</div><div class="line">    obj = <span class="keyword">new</span> object();</div><div class="line">    obj.name = <span class="string">"lily"</span>;</div><div class="line">}</div><div class="line"><span class="keyword">var</span> person = <span class="keyword">new</span> object();</div><div class="line">setName(person);</div><div class="line">alert (person.name);        <span class="comment">//lucy</span></div></pre></td></tr></table></figure>
+
+<p>第一个基本类型的实例中，<code>num</code>是一个局部变量，所以在函数中，<code>count</code>值传给<code>num</code>，所以count本身的值不会改变，函数结束后<code>num</code>立即销毁。<br>第二个引用类型的实例则需要理解一下，引用类型在复制和传递过程中，副本是一个指针，所以说<code>person.name</code>指向<code>obj.name</code>，但是函数内部在重写<code>obj</code>时，变量的引用是局部对象，到函数外的时候，就会立即销毁，所以函数内部重写<code>obj</code>，修改<code>obj.name</code>就不会传递给<code>person.name</code>了。</p>
+<ul>
+<li>作用域（scope)</li>
+</ul>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2014/11/30/神奇工具黑帽子-Alfred2/" title="神奇工具黑帽子-Alfred2" itemprop="url">神奇工具黑帽子-Alfred2</a>
   </h1>
   <p class="article-author">By
@@ -416,7 +473,7 @@
 	<p class="asidetitle">分类</p>
 		<ul>
 		
-			<li><a href="/categories/JavaScript复习笔记/" title="JavaScript复习笔记">JavaScript复习笔记<sup>1</sup></a></li>
+			<li><a href="/categories/JavaScript复习笔记/" title="JavaScript复习笔记">JavaScript复习笔记<sup>2</sup></a></li>
 		
 			<li><a href="/categories/Mac-Study/" title="Mac Study">Mac Study<sup>1</sup></a></li>
 		
@@ -433,9 +490,9 @@
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
 		
-			<li><a href="/tags/efficiency/" title="efficiency">efficiency<sup>1</sup></a></li>
+			<li><a href="/tags/JavaScript/" title="JavaScript">JavaScript<sup>2</sup></a></li>
 		
-			<li><a href="/tags/JavaScript/" title="JavaScript">JavaScript<sup>1</sup></a></li>
+			<li><a href="/tags/efficiency/" title="efficiency">efficiency<sup>1</sup></a></li>
 		
 			<li><a href="/tags/学习计划-Mac软件/" title="学习计划 Mac软件">学习计划 Mac软件<sup>1</sup></a></li>
 		
@@ -468,7 +525,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/JavaScript/" style="font-size: 20.00px;">JavaScript</a><a href="/tags/efficiency/" style="font-size: 20.00px;">efficiency</a><a href="/tags/study/" style="font-size: 10.00px;">study</a><a href="/tags/学习计划-Mac软件/" style="font-size: 20.00px;">学习计划 Mac软件</a>
+       <a href="/tags/JavaScript/" style="font-size: 20.00px;">JavaScript</a><a href="/tags/efficiency/" style="font-size: 15.00px;">efficiency</a><a href="/tags/study/" style="font-size: 10.00px;">study</a><a href="/tags/学习计划-Mac软件/" style="font-size: 15.00px;">学习计划 Mac软件</a>
     </div>
   </div>
 
