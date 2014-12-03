@@ -4,19 +4,20 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>JavaScript复习笔记（2） | 临风</title>
+    <title>JavaScript复习笔记(3） | 临风</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="xuelinf">
     
-    <meta name="description" content="变量、作用域及内存问题
+    <meta name="description" content="ps.笔记2已更新
+引用类型
 
-只能给引用对象定义对象，基本类型不行：
+Object类方括号的使用，优点是可以通过变量来访问属性。
 
-1234var person = new object();person.name = &quot;hello&quot;;    //OKvar person;person.name = &quot;hello&quot;;    //False
+12var propertyName = &quot;name&quot;;aler (person[propertyName]);
 
 
-复制变量：基本类型">
+Array类Array是javascript用的非常广泛的一个类。JS中数组的每一项，可">
     
     
     
@@ -74,14 +75,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/11/30/JavaScript复习笔记（2）/" title="JavaScript复习笔记（2）" itemprop="url">JavaScript复习笔记（2）</a>
+      <a href="/2014/12/03/JavaScript复习笔记-3）/" title="JavaScript复习笔记(3）" itemprop="url">JavaScript复习笔记(3）</a>
   </h1>
   <p class="article-author">By
        
 		<a href="http://yoursite.com/about" title="xuelinf" target="_blank" itemprop="author">xuelinf</a>
 		
   <p class="article-time">
-    <time datetime="2014-11-30T13:49:27.000Z" itemprop="datePublished"> 发表于 11月 30 2014</time>
+    <time datetime="2014-12-03T14:18:20.000Z" itemprop="datePublished"> 发表于 12月 3 2014</time>
     
   </p>
 </header>
@@ -90,52 +91,27 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#变量、作用域及内存问题"><span class="toc-number">1.</span> <span class="toc-text">变量、作用域及内存问题</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#引用类型"><span class="toc-number">1.</span> <span class="toc-text">引用类型</span></a></li></ol>
 		
 		</div>
 		
-		<h2 id="变量、作用域及内存问题">变量、作用域及内存问题</h2>
+		<p>ps.笔记2已更新</p>
+<h4 id="引用类型">引用类型</h4>
 <ul>
-<li>只能给引用对象定义对象，基本类型不行：</li>
+<li>Object类<br>方括号的使用，优点是可以通过变量来访问属性。</li>
 </ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> person = <span class="keyword">new</span> object();</div><div class="line">person.name = <span class="string">"hello"</span>;    <span class="comment">//OK</span></div><div class="line"><span class="keyword">var</span> person;</div><div class="line">person.name = <span class="string">"hello"</span>;    <span class="comment">//False</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> propertyName = <span class="string">"name"</span>;</div><div class="line">aler (person[propertyName]);</div></pre></td></tr></table></figure>
 
 <ul>
-<li>复制变量：基本类型的复制，数据间相互独立；引用类型之间，副本是一个指针，所以两个变量引用的是同一个对象，所以数据是相同的。</li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> obj1 = <span class="keyword">new</span> object();</div><div class="line"><span class="keyword">var</span> obj2 = obj1;</div><div class="line">obj1.name = <span class="string">"lucy"</span>;     <span class="comment">//obj2.name = lucy</span></div></pre></td></tr></table></figure>
-
-<ul>
-<li>参数传递问题：直接看实例：</li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">addTen</span><span class="params">(num)</span></span>{</div><div class="line">    num += <span class="number">10</span>;</div><div class="line">    <span class="keyword">return</span> num;</div><div class="line">}</div><div class="line"><span class="keyword">var</span> count = <span class="number">20</span>;</div><div class="line"><span class="keyword">var</span> result = addTen(count);</div><div class="line">alert (count);       <span class="comment">//20</span></div><div class="line">alert (result);      <span class="comment">//30</span></div></pre></td></tr></table></figure>
-
-
-
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">setName</span><span class="params">(obj)</span></span>{</div><div class="line">    obj.name = <span class="string">"lucy"</span>;</div><div class="line">    obj = <span class="keyword">new</span> object();</div><div class="line">    obj.name = <span class="string">"lily"</span>;</div><div class="line">}</div><div class="line"><span class="keyword">var</span> person = <span class="keyword">new</span> object();</div><div class="line">setName(person);</div><div class="line">alert (person.name);        <span class="comment">//lucy</span></div></pre></td></tr></table></figure>
-
-<p>第一个基本类型的实例中，<code>num</code>是一个局部变量，所以在函数中，<code>count</code>值传给<code>num</code>，所以count本身的值不会改变，函数结束后<code>num</code>立即销毁。<br>第二个引用类型的实例则需要理解一下，引用类型在复制和传递过程中，副本是一个指针，所以说<code>person.name</code>指向<code>obj.name</code>，但是函数内部在重写<code>obj</code>时，变量的引用是局部对象，到函数外的时候，就会立即销毁，所以函数内部重写<code>obj</code>，修改<code>obj.name</code>就不会传递给<code>person.name</code>了。</p>
-<ul>
-<li>作用域（scope)<br>延长作用域链，两种。<code>try-catch</code>和<code>with</code>语句。例子：</li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">buildUrl</span><span class="params">()</span></span>{</div><div class="line">    <span class="keyword">var</span> qs = <span class="string">"?debug = true"</span>;</div><div class="line">    <span class="keyword">with</span>(location){</div><div class="line">        <span class="keyword">var</span> url = href + qs;</div><div class="line">    }</div><div class="line">    <span class="keyword">return</span> url;</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<p>定义了一个url变量，url就成了函数执行环境一部分，可以作为函数值被返回。</p>
-<ul>
-<li>没有块级作用域，这一块最容易让人理解上出现混淆，JS语言中没有块级作用域，于是在if语句，for语句中的变量声明将添加到当前执行环境中（全局环境）。例子：</li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>(<span class="literal">true</span>){</div><div class="line">    <span class="keyword">var</span> color = <span class="string">"blue"</span>;</div><div class="line">}</div><div class="line">alert(color);       <span class="comment">//blue</span></div><div class="line"></div><div class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++){</div><div class="line">    doSomething(i);</div><div class="line">}</div><div class="line">alert(i);       <span class="comment">//10</span></div></pre></td></tr></table></figure>
-
-<ul>
-<li><p>接上一条，<code>var</code>生命的变量会被添加大最接近的环境中去，对于函数内部来说，也就是局部变量，而对于<code>for</code>,<code>with</code>,<code>if</code>来说，就是执行环境，也就是全局环境，于是也就成为了全局变量。</p>
+<li><p>Array类<br>Array是javascript用的非常广泛的一个类。JS中数组的每一项，可以保存任何数据类型。而且可以各不相同。</p>
 </li>
-<li><p>标示符的查询，沿作用域链向上搜索，找到立即停止。</p>
+<li><p>数组的length不是只读的，它可以被设置改变</p>
 </li>
 </ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> color = <span class="string">'blue'</span>;</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">getColor</span><span class="params">()</span></span>{</div><div class="line">    <span class="keyword">var</span> color = <span class="string">"red"</span>;</div><div class="line">    <span class="keyword">return</span> color;</div><div class="line">}</div><div class="line">alert (getColor());         <span class="comment">//red,删掉第三行，则为blue</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> color = [<span class="string">"red"</span>,<span class="string">"blue"</span>,<span class="string">"green"</span>];</div><div class="line">color.length = <span class="number">2</span>;</div><div class="line">alert(color[<span class="number">2</span>]);        <span class="comment">//undefined 第三项被删掉</span></div><div class="line">color.length = <span class="number">4</span>;</div><div class="line">alert(color[<span class="number">3</span>]);        <span class="comment">//undefined 第四项还没有制定数据</span></div><div class="line">color[color.length] = <span class="string">"black"</span>;      <span class="comment">//此方法可以在末尾方便的添加数据</span></div></pre></td></tr></table></figure>
 
 <ul>
-<li><code>typeof</code>和 <code>instanceof</code>的使用。</li>
+<li>Array各种可调用的函数： </li>
 </ul>
   
 	</div>
@@ -158,7 +134,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://yoursite.com/2014/11/30/JavaScript复习笔记（2）/" data-title="JavaScript复习笔记（2） | 临风" data-tsina="null" class="share clearfix">
+  <div data-url="http://yoursite.com/2014/12/03/JavaScript复习笔记-3）/" data-title="JavaScript复习笔记(3） | 临风" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -167,19 +143,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2014/12/01/杂读乱记（2014第一周）/" title="杂读乱记（2014第一周）">
-  <strong>上一篇：</strong><br/>
-  <span>
-  杂读乱记（2014第一周）</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2014/11/30/神奇工具黑帽子-Alfred2/"  title="神奇工具黑帽子-Alfred2">
+<a href="/2014/12/02/杂读乱记（2014第一周2）/"  title="杂读乱记（2014第一周2）">
  <strong>下一篇：</strong><br/> 
- <span>神奇工具黑帽子-Alfred2
+ <span>杂读乱记（2014第一周2）
 </span>
 </a>
 </div>
@@ -214,7 +182,7 @@ var duoshuoQuery = {short_name:"xuelinf"};
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#变量、作用域及内存问题"><span class="toc-number">1.</span> <span class="toc-text">变量、作用域及内存问题</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#引用类型"><span class="toc-number">1.</span> <span class="toc-text">引用类型</span></a></li></ol>
  
   </div>
 
