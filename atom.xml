@@ -4,7 +4,7 @@
   <subtitle><![CDATA[见自己  见天地  见众生]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2014-12-03T15:42:30.189Z</updated>
+  <updated>2014-12-06T08:33:19.814Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://yoursite.com/2014/12/03/JavaScript%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%883%EF%BC%89/"/>
     <id>http://yoursite.com/2014/12/03/JavaScript复习笔记（3）/</id>
     <published>2014-12-03T14:18:20.000Z</published>
-    <updated>2014-12-03T14:20:53.000Z</updated>
+    <updated>2014-12-06T08:33:07.000Z</updated>
     <content type="html"><![CDATA[<p>ps.笔记2已更新</p>
 <h4 id="引用类型">引用类型</h4>
 <ul>
@@ -36,7 +36,50 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> color = [<span class="string">"red"</span>,<span class="string">"blue"</span>,<span class="string">"green"</span>];</div><div class="line">color.length = <span class="number">2</span>;</div><div class="line">alert(color[<span class="number">2</span>]);        <span class="comment">//undefined 第三项被删掉</span></div><div class="line">color.length = <span class="number">4</span>;</div><div class="line">alert(color[<span class="number">3</span>]);        <span class="comment">//undefined 第四项还没有制定数据</span></div><div class="line">color[color.length] = <span class="string">"black"</span>;      <span class="comment">//此方法可以在末尾方便的添加数据</span></div></pre></td></tr></table></figure>
 
 <ul>
-<li>Array各种可调用的函数： </li>
+<li>Array各种可调用的函数： <blockquote>
+<ul>
+<li>由于多框架可能会干扰到<code>instanceof</code>,所以改用<code>.isArray(value)</code></li>
+<li>栈方法： <code>pop</code>,<code>push</code></li>
+<li>队列方法：<code>push</code>,<code>shift</code></li>
+<li>排序：<code>sort</code>,<code>reverse</code></li>
+<li><code>concat</code>：基于当前数组新建数组；<code>slice</code>，创建一个基于当前数组去掉某项；<code>splice</code>：可以有多应用。<code>splice(第一项，项数，替换值)</code>因此可实现删除，插入，替换的功能</li>
+<li>位置方法：<code>indexOf()</code>,<code>lastIndexOf()</code></li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<p>但是值得注意的事<code>sort()</code>方法调用了<code>toString()</code>，所以在比较的时候，会出现<code>10</code>在<code>5</code>前边，所以解决方法是自己编写<code>compare</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> values = {<span class="number">0</span>,<span class="number">1</span>,<span class="number">5</span>,<span class="number">10</span>,<span class="number">15</span>};</div><div class="line"><span class="comment">//values.sort();</span></div><div class="line"><span class="comment">//alert(values):      结果：0,1,10,15,5</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">compare</span><span class="params">(value1,value2)</span></span>{</div><div class="line">    <span class="keyword">if</span>(value1 &lt; value2){</div><div class="line">        <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">    }<span class="keyword">else</span> <span class="keyword">if</span> (value1&gt;value2){</div><div class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">    }<span class="keyword">else</span>{</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    }</div><div class="line">}</div><div class="line">values.sort(compare);</div><div class="line">alert(values);      <span class="comment">//15,10,5,1,0</span></div><div class="line">&lt;!--同时其实可以简化方法--&gt;</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">compare</span><span class="params">(value1,value2)</span></span>{</div><div class="line">    <span class="keyword">return</span> value2 - value1;</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<ul>
+<li><p>五个迭代方法:</p>
+<blockquote>
+<ul>
+<li><code>every</code>:对每一项迭代，全部为true,才返回true</li>
+<li><code>filter</code>：过滤，返回那些true的</li>
+<li><code>forEach</code>:对每一项给定函数，没有返回值</li>
+<li><code>map</code>：对每一项给定函数，全部返回值</li>
+<li><code>some</code>:每一项给定参数，只要有一个true，则返回true</li>
+</ul>
+</blockquote>
+</li>
+<li><p>归并方法<code>reduce</code>，四个参数，前一个值，当前值，项的索引，数组对象</p>
+</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> values = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>];</div><div class="line"><span class="keyword">var</span> sum = values.reduce(<span class="function"><span class="keyword">function</span><span class="params">(prev, cur, index, array)</span></span>{</div><div class="line">    <span class="keyword">return</span> prev + cur;</div><div class="line">});</div><div class="line">alert(sum);     <span class="comment">//15</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Date类型</strong></li>
+<li><p><code>Date.now()</code>取得当前时间，用于简化代码工作，也可以使用一元加操作，<code>+new Date()</code></p>
+</li>
+<li><p><strong>RegExp类型</strong></p>
+</li>
+<li><p>结合正则表达式学习理解这部分<br>pattern:<code>g</code>,全局；<code>i</code>：不区分大小写；<code>m</code>：多行模式；</p>
+</li>
+<li><p><strong>Function类型</strong></p>
+</li>
+<li><p>没有重载，后边的函数覆盖前边的函数</p>
+</li>
 </ul>
 ]]></content>
     <summary type="html">
