@@ -4,19 +4,15 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>JavaScript复习笔记（2） | 临风</title>
+    <title>Django学习笔记（一） | 临风</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="xuelinf">
     
-    <meta name="description" content="变量、作用域及内存问题
+    <meta name="description" content="Django笔记（1）
+Django是一个可以让WEB开发愉悦并且高效的Web开发框架。可以以较小的代价构建和维护高质量的Web应用。如我正在看的一本书里讲的：
 
-只能给引用对象定义对象，基本类型不行：
-
-1234var person = new object();person.name = &quot;hello&quot;;    //OKvar person;person.name = &quot;hello&quot;;    //False
-
-
-复制变量：基本类型">
+At its best, Web development is an exciting, creative act; at its wo">
     
     
     
@@ -74,14 +70,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/11/30/JavaScript复习笔记（2）/" title="JavaScript复习笔记（2）" itemprop="url">JavaScript复习笔记（2）</a>
+      <a href="/2014/12/18/Django学习笔记（一）/" title="Django学习笔记（一）" itemprop="url">Django学习笔记（一）</a>
   </h1>
   <p class="article-author">By
        
 		<a href="http://yoursite.com/about" title="xuelinf" target="_blank" itemprop="author">xuelinf</a>
 		
   <p class="article-time">
-    <time datetime="2014-11-30T13:49:27.000Z" itemprop="datePublished"> 发表于 11月 30 2014</time>
+    <time datetime="2014-12-18T15:34:08.000Z" itemprop="datePublished"> 发表于 12月 18 2014</time>
     
   </p>
 </header>
@@ -90,53 +86,62 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#变量、作用域及内存问题"><span class="toc-number">1.</span> <span class="toc-text">变量、作用域及内存问题</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Django笔记（1）"><span class="toc-number">1.</span> <span class="toc-text">Django笔记（1）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC模型"><span class="toc-number">1.1.</span> <span class="toc-text">MVC模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Django的安装"><span class="toc-number">1.2.</span> <span class="toc-text">Django的安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Start"><span class="toc-number">1.3.</span> <span class="toc-text">Start</span></a></li></ol></li></ol>
 		
 		</div>
 		
-		<h2 id="变量、作用域及内存问题">变量、作用域及内存问题</h2>
+		<h1 id="Django笔记（1）">Django笔记（1）</h1>
+<p>Django是一个可以让WEB开发愉悦并且高效的Web开发框架。可以以较小的代价构建和维护高质量的Web应用。<br>如我正在看的一本书里讲的：</p>
+<blockquote>
+<p>At its best, Web development is an exciting, creative act; at its worst, it can be a repetitive, frustrating nuisance. Django lets you focus on the fun stuff – the crux of your Web application – while easing the pain of the repetitive bits. In doing so, it provides high-level abstractions of common Web development patterns, shortcuts for frequent programming tasks, and clear conventions for how to solve problems. At the same time, Django tries to stay out of your way, letting you work outside the scope of the framework as needed.</p>
+</blockquote>
+<p>正如书中所说的，Django高度抽象了Web开发模式，可以避免频繁的编程工作，同时也提供了许多可行的方法给用户开发。</p>
+<h2 id="MVC模型">MVC模型</h2>
+<p>Django采用的是比较流行的MVC开发模型，虽然是菜鸟，也不需要再重复解释了。其优势<strong>松耦合</strong>，各个开发部分可以独立更改，而不影响到其他的部分，比如我去做HTML页面，只要一心关注HTML页面即可，做数据库就专心数据库，这也就是时下流行的MVC模型。</p>
+<h2 id="Django的安装">Django的安装</h2>
+<p>这里也不再赘述，可看官方文档，去django的<a href="http://www.djangoproject.org" target="_blank" rel="external">网站</a>去看他的文档引导安装。在这里推荐<code>virtualenv</code> 和 <code>virtualenvwrapper</code>构造独立的开发环境，这样不会让自己的电脑里边因为搞开发环境乱的一锅粥。</p>
 <ul>
-<li>只能给引用对象定义对象，基本类型不行：</li>
+<li>隔离项目之间的第三方包依赖</li>
+<li>为部署应用提供方便，把开发环境的虚拟环境打包到生产环境即可</li>
 </ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> person = <span class="keyword">new</span> object();</div><div class="line">person.name = <span class="string">"hello"</span>;    <span class="comment">//OK</span></div><div class="line"><span class="keyword">var</span> person;</div><div class="line">person.name = <span class="string">"hello"</span>;    <span class="comment">//False</span></div></pre></td></tr></table></figure>
+<p>安装方式不难，这里只以Mac为例，安装了pip就行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ pip install virtualenv</div><div class="line">$ pip install  virtualenvwrapper</div></pre></td></tr></table></figure>
 
+<p>之后在shell的配置文件中加入配置，比如用的是bash的话（这个是Mac的默认shell，有很多推荐zsh），在bash里配置如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">export</span> WORKON_HOME=<span class="variable">$HOME</span>/.virtualenvs</div><div class="line"><span class="built_in">source</span> /usr/local/bin/virtualenvwrapper.sh</div></pre></td></tr></table></figure>
+
+<p>然后这个玩意就算是安装完成了，使用方式如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">mkvirtualenv venv        <span class="comment"># 创建虚拟环境</span></div><div class="line">workon venv              <span class="comment"># 激活虚拟环境</span></div><div class="line">deactivate               <span class="comment"># 关闭虚拟环境</span></div><div class="line">rmvirtualenv venv        <span class="comment"># 删除虚拟环境</span></div><div class="line">lsvirtualenv             <span class="comment"># 列出所有虚拟环境</span></div></pre></td></tr></table></figure>
+
+<p>建立完虚拟环境之后，就可以在虚拟环境中安装django等等一些东西，随后不再使用的时候，可以删除这个虚拟环境。</p>
+<h2 id="Start">Start</h2>
+<p>一切就绪之后，就可以使用短短的一句，开始你的项目：</p>
+<figure class="highlight pyhton"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">django-<span class="literal">admin</span>.py startproject mysite</div></pre></td></tr></table></figure>
+
+<p>忘记从django哪一个版本开始，默认的项目中的文件有了改变，在django book里还是1.4时代的django，构建起得项目文件夹默认是这样的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">mysite/</div><div class="line">    __init__.py</div><div class="line">    manage.py</div><div class="line">    settings.py</div><div class="line">    urls.py</div></pre></td></tr></table></figure>
+
+<p>而最新的1.7，默认是这样的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysite/</div><div class="line">    manage.py</div><div class="line">    mysite/</div><div class="line">        __init__.py</div><div class="line">        settings.py</div><div class="line">        urls.py</div><div class="line">        wsgi.py</div></pre></td></tr></table></figure>
+
+<p>既然是新开发，那么就尽量按照新的django开始开发，那么就看看这些都是什么。之前也都说了，MVC模式就是将项目的各个部分分开了，独立更改。<br>这里直接引用原文：</p>
+<blockquote>
 <ul>
-<li>复制变量：基本类型的复制，数据间相互独立；引用类型之间，副本是一个指针，所以两个变量引用的是同一个对象，所以数据是相同的。</li>
+<li>The outer mysite/ root directory is just a container for your project. Its name doesn’t matter to Django; you can rename it to anything you like.</li>
+<li>manage.py: A command-line utility that lets you interact with this Django project in various ways. You can read all the details about manage.py in django-admin.py and manage.py.</li>
+<li>The inner mysite/ directory is the actual Python package for your project. Its name is the Python package name you’ll need to use to import anything inside it (e.g. mysite.urls).</li>
+<li>mysite/<strong>init</strong>.py: An empty file that tells Python that this directory should be considered a Python package. (Read more about packages in the official Python docs if you’re a Python beginner.)</li>
+<li>mysite/settings.py: Settings/configuration for this Django project. Django settings will tell you all about how settings work.</li>
+<li>mysite/urls.py: The URL declarations for this Django project; a “table of contents” of your Django-powered site. You can read more about URLs in URL dispatcher.</li>
+<li>mysite/wsgi.py: An entry-point for WSGI-compatible web servers to serve your project. See How to deploy with WSGI for more details.</li>
 </ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> obj1 = <span class="keyword">new</span> object();</div><div class="line"><span class="keyword">var</span> obj2 = obj1;</div><div class="line">obj1.name = <span class="string">"lucy"</span>;     <span class="comment">//obj2.name = lucy</span></div></pre></td></tr></table></figure>
-
+</blockquote>
+<p>其中有几个解释一下</p>
 <ul>
-<li>参数传递问题：直接看实例：</li>
+<li>最后一个，WSGI，意思是Web服务器网关接口（Python Web Server Gateway Interface，缩写为WSGI）是为Python语言定义的Web服务器和Web应用程序或框架之间的一种简单而通用的接口。自从WSGI被开发出来以后，许多其它语言中也出现了类似接口。知晓了这个意思也就是明白了他的作用，以及为什么新的django为什么要加入它了。</li>
+<li>为什么在mysite的主文件夹下改成了新增一个文件夹了呢？因为django一个大项目可以包含多个django app呀，以前那样的视图显然会显得混乱啊，这样之后显然更清晰了~（我是这么认为的,不知道还有没有别的原因）。</li>
 </ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">addTen</span><span class="params">(num)</span></span>{</div><div class="line">    num += <span class="number">10</span>;</div><div class="line">    <span class="keyword">return</span> num;</div><div class="line">}</div><div class="line"><span class="keyword">var</span> count = <span class="number">20</span>;</div><div class="line"><span class="keyword">var</span> result = addTen(count);</div><div class="line">alert (count);       <span class="comment">//20</span></div><div class="line">alert (result);      <span class="comment">//30</span></div></pre></td></tr></table></figure>
-
-
-
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">setName</span><span class="params">(obj)</span></span>{</div><div class="line">    obj.name = <span class="string">"lucy"</span>;</div><div class="line">    obj = <span class="keyword">new</span> object();</div><div class="line">    obj.name = <span class="string">"lily"</span>;</div><div class="line">}</div><div class="line"><span class="keyword">var</span> person = <span class="keyword">new</span> object();</div><div class="line">setName(person);</div><div class="line">alert (person.name);        <span class="comment">//lucy</span></div></pre></td></tr></table></figure>
-
-<p>第一个基本类型的实例中，<code>num</code>是一个局部变量，所以在函数中，<code>count</code>值传给<code>num</code>，所以count本身的值不会改变，函数结束后<code>num</code>立即销毁。<br>第二个引用类型的实例则需要理解一下，引用类型在复制和传递过程中，副本是一个指针，所以说<code>person.name</code>指向<code>obj.name</code>，但是函数内部在重写<code>obj</code>时，变量的引用是局部对象，到函数外的时候，就会立即销毁，所以函数内部重写<code>obj</code>，修改<code>obj.name</code>就不会传递给<code>person.name</code>了。</p>
-<ul>
-<li>作用域（scope)<br>延长作用域链，两种。<code>try-catch</code>和<code>with</code>语句。例子：</li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">buildUrl</span><span class="params">()</span></span>{</div><div class="line">    <span class="keyword">var</span> qs = <span class="string">"?debug = true"</span>;</div><div class="line">    <span class="keyword">with</span>(location){</div><div class="line">        <span class="keyword">var</span> url = href + qs;</div><div class="line">    }</div><div class="line">    <span class="keyword">return</span> url;</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<p>定义了一个url变量，url就成了函数执行环境一部分，可以作为函数值被返回。</p>
-<ul>
-<li>没有块级作用域，这一块最容易让人理解上出现混淆，JS语言中没有块级作用域，于是在if语句，for语句中的变量声明将添加到当前执行环境中（全局环境）。例子：</li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>(<span class="literal">true</span>){</div><div class="line">    <span class="keyword">var</span> color = <span class="string">"blue"</span>;</div><div class="line">}</div><div class="line">alert(color);       <span class="comment">//blue</span></div><div class="line"></div><div class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++){</div><div class="line">    doSomething(i);</div><div class="line">}</div><div class="line">alert(i);       <span class="comment">//10</span></div></pre></td></tr></table></figure>
-
-<ul>
-<li><p>接上一条，<code>var</code>生命的变量会被添加大最接近的环境中去，对于函数内部来说，也就是局部变量，而对于<code>for</code>,<code>with</code>,<code>if</code>来说，就是执行环境，也就是全局环境，于是也就成为了全局变量。</p>
-</li>
-<li><p>标示符的查询，沿作用域链向上搜索，找到立即停止。</p>
-</li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> color = <span class="string">'blue'</span>;</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">getColor</span><span class="params">()</span></span>{</div><div class="line">    <span class="keyword">var</span> color = <span class="string">"red"</span>;</div><div class="line">    <span class="keyword">return</span> color;</div><div class="line">}</div><div class="line">alert (getColor());         <span class="comment">//red,删掉第三行，则为blue</span></div></pre></td></tr></table></figure>
-
-<ul>
-<li><code>typeof</code>和 <code>instanceof</code>的使用。</li>
-</ul>
+<p>其他的都一样了，下一次，我将会将一些主要的一些东西和心得记录下来，而且尽量不去按照自己做django的步骤去记录笔记，因为简单的项目只会让我了解很小的地方。我会选择一些常用的，或者是有意义的部分做以研究，希望自己在学习过程中有所收获。<br>作为一只典型菜鸟，我希望，自己在这样不断的记录和学习中，让自己迅速茁壮的成长起来~~加油！</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -144,13 +149,13 @@
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/JavaScript复习笔记/">JavaScript复习笔记</a>
+  <a class="article-category-link" href="/categories/Django笔记/">Django笔记</a>
 </div>
 
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/JavaScript/">JavaScript</a>
+  <span></span> <a href="/tags/django/">django</a>
   </div>
 
 </div>
@@ -158,7 +163,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://yoursite.com/2014/11/30/JavaScript复习笔记（2）/" data-title="JavaScript复习笔记（2） | 临风" data-tsina="null" class="share clearfix">
+  <div data-url="http://yoursite.com/2014/12/18/Django学习笔记（一）/" data-title="Django学习笔记（一） | 临风" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -167,19 +172,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2014/12/01/杂读乱记（2014第一周）/" title="杂读乱记（2014第一周）">
-  <strong>上一篇：</strong><br/>
-  <span>
-  杂读乱记（2014第一周）</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2014/11/30/神奇工具黑帽子-Alfred2/"  title="神奇工具黑帽子-Alfred2">
+<a href="/2014/12/15/你所经历的都是人生/"  title="你所经历的都是人生">
  <strong>下一篇：</strong><br/> 
- <span>神奇工具黑帽子-Alfred2
+ <span>你所经历的都是人生
 </span>
 </a>
 </div>
@@ -214,7 +211,7 @@ var duoshuoQuery = {short_name:"xuelinf"};
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#变量、作用域及内存问题"><span class="toc-number">1.</span> <span class="toc-text">变量、作用域及内存问题</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Django笔记（1）"><span class="toc-number">1.</span> <span class="toc-text">Django笔记（1）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC模型"><span class="toc-number">1.1.</span> <span class="toc-text">MVC模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Django的安装"><span class="toc-number">1.2.</span> <span class="toc-text">Django的安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Start"><span class="toc-number">1.3.</span> <span class="toc-text">Start</span></a></li></ol></li></ol>
  
   </div>
 
