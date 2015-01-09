@@ -4,15 +4,14 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Django学习笔记（一） | 临风</title>
+    <title>读书是追赶时间的方式 | 临风</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="xuelinf">
     
-    <meta name="description" content="Django笔记（1）
-Django是一个可以让WEB开发愉悦并且高效的Web开发框架。可以以较小的代价构建和维护高质量的Web应用。如我正在看的一本书里讲的：
+    <meta name="description" content="写在前边的闲话：
 
-At its best, Web development is an exciting, creative act; at its wo">
+本文纯粹是一篇闲来的随笔，又好像恢复了以前晦涩的感觉，偏意识流一些了。其实大多数时间自己在这种时候，思考的方式更纯粹一些。本周终于看完了《失控》，后小部分理解起来越来越费劲，所以常常读完一大块会停下来思考一下，KK在资料的丰富度上是此类书籍里比较少见的，见解也有很多独到或者是在今">
     
     
     
@@ -74,14 +73,14 @@ At its best, Web development is an exciting, creative act; at its wo">
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/12/18/Django学习笔记（一）/" title="Django学习笔记（一）" itemprop="url">Django学习笔记（一）</a>
+      <a href="/2015/01/09/读书是追赶时间的方式/" title="读书是追赶时间的方式" itemprop="url">读书是追赶时间的方式</a>
   </h1>
   <p class="article-author">By
        
 		<a href="http://yoursite.com/about" title="xuelinf" target="_blank" itemprop="author">xuelinf</a>
 		
   <p class="article-time">
-    <time datetime="2014-12-18T15:34:08.000Z" itemprop="datePublished"> 发表于 12月 18 2014</time>
+    <time datetime="2015-01-09T15:56:37.000Z" itemprop="datePublished"> 发表于 1月 9 2015</time>
     
   </p>
 </header>
@@ -90,62 +89,29 @@ At its best, Web development is an exciting, creative act; at its wo">
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Django笔记（1）"><span class="toc-number">1.</span> <span class="toc-text">Django笔记（1）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC模型"><span class="toc-number">1.1.</span> <span class="toc-text">MVC模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Django的安装"><span class="toc-number">1.2.</span> <span class="toc-text">Django的安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Start"><span class="toc-number">1.3.</span> <span class="toc-text">Start</span></a></li></ol></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#写在前边的闲话："><span class="toc-number">1.</span> <span class="toc-text">写在前边的闲话：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#正文"><span class="toc-number"></span> <span class="toc-text">正文</span></a>
 		
 		</div>
 		
-		<h1 id="Django笔记（1）">Django笔记（1）</h1>
-<p>Django是一个可以让WEB开发愉悦并且高效的Web开发框架。可以以较小的代价构建和维护高质量的Web应用。<br>如我正在看的一本书里讲的：</p>
+		<h4 id="写在前边的闲话：">写在前边的闲话：</h4>
 <blockquote>
-<p>At its best, Web development is an exciting, creative act; at its worst, it can be a repetitive, frustrating nuisance. Django lets you focus on the fun stuff – the crux of your Web application – while easing the pain of the repetitive bits. In doing so, it provides high-level abstractions of common Web development patterns, shortcuts for frequent programming tasks, and clear conventions for how to solve problems. At the same time, Django tries to stay out of your way, letting you work outside the scope of the framework as needed.</p>
+<p>本文纯粹是一篇闲来的随笔，又好像恢复了以前晦涩的感觉，偏意识流一些了。其实大多数时间自己在这种时候，思考的方式更纯粹一些。本周终于看完了《失控》，后小部分理解起来越来越费劲，所以常常读完一大块会停下来思考一下，KK在资料的丰富度上是此类书籍里比较少见的，见解也有很多独到或者是在今天社会有些离经叛道的。</p>
+<p>本周看完的另外几本书是《易中天中华史》中国根系列的的后两本，越来越口水，不过有那么几个观点还挺有趣。把node.js的一本开发入门又看了一遍，发现比django更轻量一些，或者说是我了解的还不够？</p>
 </blockquote>
-<p>正如书中所说的，Django高度抽象了Web开发模式，可以避免频繁的编程工作，同时也提供了许多可行的方法给用户开发。</p>
-<h2 id="MVC模型">MVC模型</h2>
-<p>Django采用的是比较流行的MVC开发模型，虽然是菜鸟，也不需要再重复解释了。其优势<strong>松耦合</strong>，各个开发部分可以独立更改，而不影响到其他的部分，比如我去做HTML页面，只要一心关注HTML页面即可，做数据库就专心数据库，这也就是时下流行的MVC模型。</p>
-<h2 id="Django的安装">Django的安装</h2>
-<p>这里也不再赘述，可看官方文档，去django的<a href="http://www.djangoproject.org" target="_blank" rel="external">网站</a>去看他的文档引导安装。在这里推荐<code>virtualenv</code> 和 <code>virtualenvwrapper</code>构造独立的开发环境，这样不会让自己的电脑里边因为搞开发环境乱的一锅粥。</p>
-<ul>
-<li>隔离项目之间的第三方包依赖</li>
-<li>为部署应用提供方便，把开发环境的虚拟环境打包到生产环境即可</li>
-</ul>
-<p>安装方式不难，这里只以Mac为例，安装了pip就行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ pip install virtualenv</div><div class="line">$ pip install  virtualenvwrapper</div></pre></td></tr></table></figure>
-
-<p>之后在shell的配置文件中加入配置，比如用的是bash的话（这个是Mac的默认shell，有很多推荐zsh），在bash里配置如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">export</span> WORKON_HOME=<span class="variable">$HOME</span>/.virtualenvs</div><div class="line"><span class="built_in">source</span> /usr/local/bin/virtualenvwrapper.sh</div></pre></td></tr></table></figure>
-
-<p>然后这个玩意就算是安装完成了，使用方式如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">mkvirtualenv venv        <span class="comment"># 创建虚拟环境</span></div><div class="line">workon venv              <span class="comment"># 激活虚拟环境</span></div><div class="line">deactivate               <span class="comment"># 关闭虚拟环境</span></div><div class="line">rmvirtualenv venv        <span class="comment"># 删除虚拟环境</span></div><div class="line">lsvirtualenv             <span class="comment"># 列出所有虚拟环境</span></div></pre></td></tr></table></figure>
-
-<p>建立完虚拟环境之后，就可以在虚拟环境中安装django等等一些东西，随后不再使用的时候，可以删除这个虚拟环境。</p>
-<h2 id="Start">Start</h2>
-<p>一切就绪之后，就可以使用短短的一句，开始你的项目：</p>
-<figure class="highlight pyhton"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">django-<span class="literal">admin</span>.py startproject mysite</div></pre></td></tr></table></figure>
-
-<p>忘记从django哪一个版本开始，默认的项目中的文件有了改变，在django book里还是1.4时代的django，构建起得项目文件夹默认是这样的：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">mysite/</div><div class="line">    __init__.py</div><div class="line">    manage.py</div><div class="line">    settings.py</div><div class="line">    urls.py</div></pre></td></tr></table></figure>
-
-<p>而最新的1.7，默认是这样的：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysite/</div><div class="line">    manage.py</div><div class="line">    mysite/</div><div class="line">        __init__.py</div><div class="line">        settings.py</div><div class="line">        urls.py</div><div class="line">        wsgi.py</div></pre></td></tr></table></figure>
-
-<p>既然是新开发，那么就尽量按照新的django开始开发，那么就看看这些都是什么。之前也都说了，MVC模式就是将项目的各个部分分开了，独立更改。<br>这里直接引用原文：</p>
-<blockquote>
-<ul>
-<li>The outer mysite/ root directory is just a container for your project. Its name doesn’t matter to Django; you can rename it to anything you like.</li>
-<li>manage.py: A command-line utility that lets you interact with this Django project in various ways. You can read all the details about manage.py in django-admin.py and manage.py.</li>
-<li>The inner mysite/ directory is the actual Python package for your project. Its name is the Python package name you’ll need to use to import anything inside it (e.g. mysite.urls).</li>
-<li>mysite/<strong>init</strong>.py: An empty file that tells Python that this directory should be considered a Python package. (Read more about packages in the official Python docs if you’re a Python beginner.)</li>
-<li>mysite/settings.py: Settings/configuration for this Django project. Django settings will tell you all about how settings work.</li>
-<li>mysite/urls.py: The URL declarations for this Django project; a “table of contents” of your Django-powered site. You can read more about URLs in URL dispatcher.</li>
-<li>mysite/wsgi.py: An entry-point for WSGI-compatible web servers to serve your project. See How to deploy with WSGI for more details.</li>
-</ul>
-</blockquote>
-<p>其中有几个解释一下</p>
-<ul>
-<li>最后一个，WSGI，意思是Web服务器网关接口（Python Web Server Gateway Interface，缩写为WSGI）是为Python语言定义的Web服务器和Web应用程序或框架之间的一种简单而通用的接口。自从WSGI被开发出来以后，许多其它语言中也出现了类似接口。知晓了这个意思也就是明白了他的作用，以及为什么新的django为什么要加入它了。</li>
-<li>为什么在mysite的主文件夹下改成了新增一个文件夹了呢？因为django一个大项目可以包含多个django app呀，以前那样的视图显然会显得混乱啊，这样之后显然更清晰了~（我是这么认为的,不知道还有没有别的原因）。</li>
-</ul>
-<p>其他的都一样了，下一次，我将会将一些主要的一些东西和心得记录下来，而且尽量不去按照自己做django的步骤去记录笔记，因为简单的项目只会让我了解很小的地方。我会选择一些常用的，或者是有意义的部分做以研究，希望自己在学习过程中有所收获。<br>作为一只典型菜鸟，我希望，自己在这样不断的记录和学习中，让自己迅速茁壮的成长起来~~加油！</p>
+<h2 id="正文">正文</h2>
+<p>这世界上，有无数东西是不可逆的（或者严谨一些说，目前看来是不可逆的），比如熵，比如时间，比如容颜和青春。</p>
+<p>作为三维动物，我们永远只能在时间线的上匀速前进，无论你是感慨万千伤春悲秋，还是唐突岁月碌碌一生，时间总是不疾不徐的流逝，无法放大，无法缩小。几乎所有的人，都曾后悔过浪费了时间，后悔没有珍惜某段时光，更会因为时间马不停蹄的流逝而彷徨失措。</p>
+<p>而阅读大概是我能想到的唯一追赶时间的方式，因为在阅读的时候，文字所承载的时间的重量传递到了读者的时间里，个体在短暂的时间里变得强大，变得丰富。所以每次感觉自己在浪费时间的时候，我就会迅速拿起一本书去读，一本好书，能让我在时间上穿越千万年，空间上直抵亿万光年，于是，自己就好像在这段时间里，获得了足够强大的力量，可以扯住时间的步伐。</p>
+<p>当然，在过去的1.0生活里，自己常常热爱虚耗时间，热衷于平静的生命体验，崇尚所谓无用的灵魂，惧怕自己分秒必争，惧怕劳累。那时候，读书对我来说，更像是一种陶冶情操，洞见灵魂的方式，喜欢就看下去，不喜欢就放下，作者和读者，像在围炉夜话，促膝长谈，有趣的可以剪烛畅谈，无趣的可以一拍两散，读书不过是给生命另一种体验的方式而已。</p>
+<p>然而现在，我却认为读书，是追赶时间的唯一方式，因为你可以用一天时间，收获作者辛勤耕耘数月的收获，可以用一周的时间，收获作者许多年，甚至毕生的时间精华，在和作者交流的过程，时间的有效收益被成倍的放大。这也是为什么，人在读一本书的时候，会有一种奇特的充实感。</p>
+<p>本来玩游戏，看电视，和读书，都是个体对外界的信息获取，然而为什么玩完一天游戏和看完一天电视后，人会有一种特别空虚的感觉，而读书却感觉特别的充实呢。</p>
+<p>知乎上有相关问题的讨论，我闲时也去看过，回答的比较丰富，且用的是心理学上的分析方法。就我自己觉得，大部分游戏和大部分电视节目都不过是生活里的噪声，是有趣的噪声，大多数人会被这种喧哗的噪声吸引，于是认真倾听，并渴望从这些噪声中听出些什么，然后事实却是最终发现一无所获，这也是空虚感的来源，因为他们对于你的人生，起不到一点点的正相关作用，甚至于负相关作用都起不到，你接下来的生活，不会因为他们而兴起一丝丝波澜。</p>
+<p>诚然，游戏已经被称为了第九艺术，一个好的游戏设计和制作，更趋近于一种令人享受的艺术，比如文明系列，比如全面战争系列，其中包含的控制论，人工智能，分布式等等理论也都创造了令人着迷的未来景观。然而，游戏却无法摆脱它固有的噪声本质，它的创造总是遵循着较为固定的套路，所以你所玩过的千千万万款游戏，其实都是同一款游戏，他们的终极设计原理相同，目的也相同。从生物学上讲，游戏的感官体验刺激了多巴胺、肾上腺素和后叶加压素的分泌，而在游戏结束后，这些因素的消退造成了巨大的空虚感。</p>
+<p>然而读书却不一样，这里，首先排除掉网络上流行的小白文读物，因为这些读物的设计原理，其实和游戏的设计原理非常相近，也同样不过是一堆噪声而已。一本好书，其中汇聚着的是真正的信号，是真正有意义的信息，他们承载了作者人生体验中提炼出的思想之花，无论读者同意与否，都可以让读者收获有意义的信息量。</p>
+<p>推荐《信号与噪声》这本书，可以花一天的时间，速读一番，更高效的提炼出作者思考所得，也对生活中无处不在的信号与噪声有一些自己的想法。</p>
+<p>在抱着这种对读书新的理解下，我加快了自己的阅读速度，因为我变得异常渴望留住时间，大约半年的时间，阅读了大约五十多本书，绝大多数的书保证了80%以上的完成度。而这半年时间里，自己也获得了非同一般的体验，这是以前的阅读中没有感受到的，我感觉时间被放大，视野在不同的类型书的跳跃间变得更大，虽然生活没有那么自由，思想却挣脱牢笼飞的更远。</p>
+<p>所以二零一五年开始以后，我希望自己能看更多的书，能体会更宽广的世界，也会记录下自己所看过的书，目标定在截至十二月31日，阅读完120本书，再多的书，我怕会让自己的阅读变得囫囵吞枣。</p>
+<p>以上。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -153,13 +119,13 @@ At its best, Web development is an exciting, creative act; at its wo">
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/Django笔记/">Django笔记</a>
+  <a class="article-category-link" href="/categories/随笔/">随笔</a>
 </div>
 
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/django/">django</a>
+  <span></span> <a href="/tags/life/">life</a>
   </div>
 
 </div>
@@ -167,7 +133,7 @@ At its best, Web development is an exciting, creative act; at its wo">
 
 <div class="article-share" id="share">
 
-  <div data-url="http://yoursite.com/2014/12/18/Django学习笔记（一）/" data-title="Django学习笔记（一） | 临风" data-tsina="null" class="share clearfix">
+  <div data-url="http://yoursite.com/2015/01/09/读书是追赶时间的方式/" data-title="读书是追赶时间的方式 | 临风" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -176,19 +142,11 @@ At its best, Web development is an exciting, creative act; at its wo">
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2014/12/20/杂读乱记（2014年第三周）/" title="杂读乱记（2014年第三周）">
-  <strong>上一篇：</strong><br/>
-  <span>
-  杂读乱记（2014年第三周）</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2014/12/15/你所经历的都是人生/"  title="你所经历的都是人生">
+<a href="/2015/01/04/如何科学午睡/"  title="如何科学午睡">
  <strong>下一篇：</strong><br/> 
- <span>你所经历的都是人生
+ <span>如何科学午睡
 </span>
 </a>
 </div>
@@ -223,7 +181,7 @@ var duoshuoQuery = {short_name:"xuelinf"};
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Django笔记（1）"><span class="toc-number">1.</span> <span class="toc-text">Django笔记（1）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC模型"><span class="toc-number">1.1.</span> <span class="toc-text">MVC模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Django的安装"><span class="toc-number">1.2.</span> <span class="toc-text">Django的安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Start"><span class="toc-number">1.3.</span> <span class="toc-text">Start</span></a></li></ol></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#写在前边的闲话："><span class="toc-number">1.</span> <span class="toc-text">写在前边的闲话：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#正文"><span class="toc-number"></span> <span class="toc-text">正文</span></a>
  
   </div>
 
