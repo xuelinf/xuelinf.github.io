@@ -188,6 +188,80 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-Docker学习笔记-一" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/09/25/Docker学习笔记-一/" class="article-date">
+  	<time datetime="2015-09-25T07:31:58.000Z" itemprop="datePublished">9月 25 2015</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>title: Docker学习笔记(一)<br>date: 2015-09-25 15:27:44</p>
+<h2 id="tags:Docker">tags:Docker</h2>
+<p>来自：<a href="https://www.gitbook.com/book/yeasy/docker_practice/details" target="_blank" rel="external">Docker 从入门到实战 Gitbook</a></p>
+<h2 id="什么是Docker">什么是Docker</h2>
+<hr>
+<p>Docker 是一个开源的项目，于2013年诞生，基于Go语言实现，代码在<a href="https://github.com/docker/docker" target="_blank" rel="external">Github</a>上维护。</p>
+<p><strong>Docker 项目的目标是实现轻量级的操作系统虚拟化解决方案</strong>，Docker 的基础是Linux 容器等技术。</p>
+<p>在 LXC 的基础上 Docker 进行了进一步的封装，让用户不需要去关心容器的管理，使得操作更为简便。用户操作 Docker 的容器就像操作一个快速轻量级的虚拟机一样简单。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/30117-b2fb8aee9f40c436.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Alt text"></p>
+<p>与传统虚拟机相比，Docker 容器是在操作系统层面实现了虚拟化，直接复用本地主机的操作系统，传统的方式仅在硬件层面上实现。</p>
+<h2 id="Docker优点">Docker优点</h2>
+<hr>
+<p>秒级实现，资源利用率高，除运行应用外，基本不消耗额外系统资源，使应用性能很高，开销更小。</p>
+<h3 id="更快的交付和部署">更快的交付和部署</h3>
+<p>开发者使用标准镜像构建一套开发容器，完成后，运维可以直接使用容器来部署代码。Docker可以快速创建，快速迭代，全程可见。</p>
+<h3 id="更高效的虚拟化">更高效的虚拟化</h3>
+<p>内核级的虚拟化，不需要额外的hypervisor支持。</p>
+<h3 id="更轻松的迁移和扩展">更轻松的迁移和扩展</h3>
+<p>可在任意平台运行，更好的实现迁移。</p>
+<h3 id="更简单的管理">更简单的管理</h3>
+<p>简单修改，以增量的方式分发和更新，实现自动化和高效管理。</p>
+<h2 id="基本概念">基本概念</h2>
+<hr>
+<h3 id="镜像（Image）">镜像（Image）</h3>
+<p>Docker镜像就是一个只读模板。<strong>例如：一个镜像可以包含一个完整的 ubuntu 操作系统环境，里面仅安装了 Apache 或用户需要的其它应用程序。</strong></p>
+<p>用户通过简单的机制创建或者更新现有的镜像。</p>
+<h3 id="容器（Container）">容器（Container）</h3>
+<p>Docker利用容器运行应用。容器是从镜像创建的运行实例。它可以被启动、开始、停止、删除。<strong>每个容器都是相互隔离的、保证安全的平台</strong>。</p>
+<h3 id="仓库（Repository）">仓库（Repository）</h3>
+<p>仓库是集中存放镜像文件的场所。概念与Git相似，注册服务器可以理解为Github这样的托管服务。所以Docker也有仓库和仓库注册服务器的概念。</p>
+<p>仓库分为公开仓库（Public）和私有仓库（Private）两种形式。最大的公开仓库是 <a href="https://hub.docker.com/" target="_blank" rel="external">Docker Hub</a>，存放了数量庞大的镜像供用户下载。 国内的公开仓库包括 <a href="http://dockerpool.com/" target="_blank" rel="external">Docker Pool</a> 等，可以提供大陆用户更稳定快速的访问。</p>
+<p>用户也可以自己创建一个私有仓库，通过<code>push</code>命令上传，通过<code>pull</code>命令下载。</p>
+<h2 id="安装">安装</h2>
+<hr>
+<p>官方网站上有各种环境下的 <a href="https://docs.docker.com/installation/#installation" target="_blank" rel="external">安装指南</a> ， 不再赘述。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
     <article id="post-阶段读书总结" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
