@@ -4,7 +4,7 @@
   <subtitle><![CDATA[见自己 见天地 见众生]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-09-25T07:32:05.553Z</updated>
+  <updated>2015-09-25T07:40:49.751Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,20 +15,18 @@
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
   
   <entry>
-    <title><![CDATA[]]></title>
+    <title><![CDATA[Docker学习笔记(一)]]></title>
     <link href="http://yoursite.com/2015/09/25/Docker%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E4%B8%80/"/>
     <id>http://yoursite.com/2015/09/25/Docker学习笔记-一/</id>
-    <published>2015-09-25T07:31:58.000Z</published>
-    <updated>2015-09-25T07:31:58.000Z</updated>
-    <content type="html"><![CDATA[<p>title: Docker学习笔记(一)<br>date: 2015-09-25 15:27:44</p>
-<h2 id="tags:Docker">tags:Docker</h2>
-<p>来自：<a href="https://www.gitbook.com/book/yeasy/docker_practice/details" target="_blank" rel="external">Docker 从入门到实战 Gitbook</a></p>
+    <published>2015-09-25T07:27:44.000Z</published>
+    <updated>2015-09-25T07:37:20.000Z</updated>
+    <content type="html"><![CDATA[<p>来自：<a href="https://www.gitbook.com/book/yeasy/docker_practice/details" target="_blank" rel="external">Docker 从入门到实战 Gitbook</a></p>
 <h2 id="什么是Docker">什么是Docker</h2>
 <hr>
 <p>Docker 是一个开源的项目，于2013年诞生，基于Go语言实现，代码在<a href="https://github.com/docker/docker" target="_blank" rel="external">Github</a>上维护。</p>
 <p><strong>Docker 项目的目标是实现轻量级的操作系统虚拟化解决方案</strong>，Docker 的基础是Linux 容器等技术。</p>
 <p>在 LXC 的基础上 Docker 进行了进一步的封装，让用户不需要去关心容器的管理，使得操作更为简便。用户操作 Docker 的容器就像操作一个快速轻量级的虚拟机一样简单。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/30117-b2fb8aee9f40c436.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Alt text"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/30117-b2fb8aee9f40c436.png?imageMogr2/auto-orient/strip%7CimageView2/2" alt="Alt text"></p>
 <p>与传统虚拟机相比，Docker 容器是在操作系统层面实现了虚拟化，直接复用本地主机的操作系统，传统的方式仅在硬件层面上实现。</p>
 <h2 id="Docker优点">Docker优点</h2>
 <hr>
@@ -57,10 +55,13 @@
 <p>官方网站上有各种环境下的 <a href="https://docs.docker.com/installation/#installation" target="_blank" rel="external">安装指南</a> ， 不再赘述。</p>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>title: Docker学习笔记(一)<br>date: 2015-09-25 15:27:44</p>
-<h2 id="tags:Docker">tags:Docker</h2>
-<p>来自：<a href="https://www.gitbook.com/book/y]]>
+    <![CDATA[<p>来自：<a href="https://www.gitbook.com/book/yeasy/docker_practice/details" target="_blank" rel="external">Docker 从入门到实战 Gitbook</a></p>
+<h2 ]]>
     </summary>
+    
+      <category term="Docker" scheme="http://yoursite.com/tags/Docker/"/>
+    
+      <category term="Docker" scheme="http://yoursite.com/categories/Docker/"/>
     
   </entry>
   
@@ -69,7 +70,7 @@
     <link href="http://yoursite.com/2015/03/15/%E9%98%B6%E6%AE%B5%E8%AF%BB%E4%B9%A6%E6%80%BB%E7%BB%93/"/>
     <id>http://yoursite.com/2015/03/15/阶段读书总结/</id>
     <published>2015-03-15T15:19:30.000Z</published>
-    <updated>2015-03-15T15:28:08.000Z</updated>
+    <updated>2015-09-25T07:37:21.000Z</updated>
     <content type="html"><![CDATA[<p>很长时间没有更新这个博客了，其实常常责备自己难道又要三分钟热度的放弃了这个博客了么。</p>
 <p>不过虽然博客没有更新文章，但是文章一直在写，每天千字，如今已经积累了一百多篇，不过一直觉得自己思考的东西，没必要总是更新在博客里。博客里更新的应该是比较成熟的而且更加思想密集的文章，所以就一直搁置下来，包括阅读笔记也没有更新。</p>
 <p>大概在今年年中的时候，环境发生变化后，我可能会改变很多学习方式，这个博客就会继续更新，并且确保自己处在高效思考的状态。</p>
