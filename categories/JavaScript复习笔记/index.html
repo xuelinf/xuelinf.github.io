@@ -1,245 +1,616 @@
-
-  <!DOCTYPE HTML>
-<html lang="zh-CN">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   
-    <title>Category: JavaScript复习笔记 | 临风</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
-    
-    <meta name="author" content="xuelinf">
-    
-    <meta name="description" content="临风的博客">
-    
-    
-    
-    
+  <title>Category: JavaScript复习笔记 | 临风</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="临风的博客">
+<meta property="og:type" content="website">
+<meta property="og:title" content="临风">
+<meta property="og:url" content="http://yoursite.com/categories/JavaScript复习笔记/">
+<meta property="og:site_name" content="临风">
+<meta property="og:description" content="临风的博客">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="临风">
+<meta name="twitter:description" content="临风的博客">
+
+  
     <link rel="alternative" href="/atom.xml" title="临风" type="application/atom+xml">
-    
-    
-    <link rel="icon" href="/img/favicon.ico">
-    
-    
-    <link rel="apple-touch-icon" href="/img/space.jpg">
-    <link rel="apple-touch-icon-precomposed" href="/img/space.jpg">
-    
-    <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
 
 </head>
-
-    <body>
-      <header>
-        <div>
-		
-			<div id="imglogo">
-				<a href="/"><img src="/img/love.png" alt="临风" title="临风"/></a>
-			</div>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
 			
-			<div id="textlogo">
-				<h1 class="site-name"><a href="/" title="临风">临风</a></h1>
-				<h2 class="blog-motto">见自己 见天地 见众生</h2>
+			<img lazy-src="null" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">xuelinf</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">见自己 见天地 见众生</p>
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						<li>友情链接</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
 			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
-			</a></div>
-			<nav class="animated">
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="/#" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="/#" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="/#" title="rss">rss</a>
+					        
+								<a class="zhihu" target="_blank" href="/#" title="zhihu">zhihu</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 13.33px;">life</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 10.00px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">奥巴马的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">卡卡的美丽传说</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">本泽马的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">吉格斯的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">习大大大不同</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">托蒂的博客</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">我是谁，我从哪里来，我到哪里去？</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">xuelinf</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img lazy-src="null" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author">xuelinf</h1>
+			</hgroup>
+			
+			<p class="header-subtitle">见自己 见天地 见众生</p>
+			
+			<nav class="header-menu">
 				<ul>
-					<ul>
-					 
-						<li><a href="/">Home</a></li>
-					
-						<li><a href="/archives">Archives</a></li>
-					
-						<li><a href="/about">About</a></li>
-					
-					<li>
- 					
-					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
-						<label>Search</label>
-						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
-						<input type="hidden" name="q" value="site:yoursite.com">
-					</form>
-					
-					</li>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
 				</ul>
-			</nav>			
-</div>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="/#" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="/#" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="/#" title="rss">rss</a>
+			        
+						<a class="zhihu" target="_blank" href="/#" title="zhihu">zhihu</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <div class="body-wrap">
+  
+    <article id="post-JavaScript复习笔记（3）" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2014/12/03/JavaScript复习笔记（3）/" class="article-date">
+  	<time datetime="2014-12-03T14:18:20.000Z" itemprop="datePublished">12月 3 2014</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/12/03/JavaScript复习笔记（3）/">JavaScript复习笔记(3）</a>
+    </h1>
+  
+
       </header>
-      <div id="container">
-        
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>ps.笔记2已更新</p>
+<h4 id="引用类型">引用类型</h4>
+<ul>
+<li>Object类<br>方括号的使用，优点是可以通过变量来访问属性。</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> propertyName = <span class="string">"name"</span>;</div><div class="line">aler (person[propertyName]);</div></pre></td></tr></table></figure>
 
-<div class="archive-title" >
-  <h2 class="category-icon">JavaScript复习笔记</h2>
-  
-</div>
-<div id="main" class="archive-part clearfix">
-  <div id="archive-page">
+<ul>
+<li><p>Array类<br>Array是javascript用的非常广泛的一个类。JS中数组的每一项，可以保存任何数据类型。而且可以各不相同。</p>
+</li>
+<li><p>数组的length不是只读的，它可以被设置改变</p>
+</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> color = [<span class="string">"red"</span>,<span class="string">"blue"</span>,<span class="string">"green"</span>];</div><div class="line">color.length = <span class="number">2</span>;</div><div class="line">alert(color[<span class="number">2</span>]);        <span class="comment">//undefined 第三项被删掉</span></div><div class="line">color.length = <span class="number">4</span>;</div><div class="line">alert(color[<span class="number">3</span>]);        <span class="comment">//undefined 第四项还没有制定数据</span></div><div class="line">color[color.length] = <span class="string">"black"</span>;      <span class="comment">//此方法可以在末尾方便的添加数据</span></div></pre></td></tr></table></figure>
 
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a href="/2014/12/03/JavaScript复习笔记（3）/" title="JavaScript复习笔记(3）" itemprop="url">
-  
+<ul>
+<li>Array各种可调用的函数： <blockquote>
+<ul>
+<li>由于多框架可能会干扰到<code>instanceof</code>,所以改用<code>.isArray(value)</code></li>
+<li>栈方法： <code>pop</code>,<code>push</code></li>
+<li>队列方法：<code>push</code>,<code>shift</code></li>
+<li>排序：<code>sort</code>,<code>reverse</code></li>
+<li><code>concat</code>：基于当前数组新建数组；<code>slice</code>，创建一个基于当前数组去掉某项；<code>splice</code>：可以有多应用。<code>splice(第一项，项数，替换值)</code>因此可实现删除，插入，替换的功能</li>
+<li>位置方法：<code>indexOf()</code>,<code>lastIndexOf()</code></li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<p>但是值得注意的事<code>sort()</code>方法调用了<code>toString()</code>，所以在比较的时候，会出现<code>10</code>在<code>5</code>前边，所以解决方法是自己编写<code>compare</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> values = {<span class="number">0</span>,<span class="number">1</span>,<span class="number">5</span>,<span class="number">10</span>,<span class="number">15</span>};</div><div class="line"><span class="comment">//values.sort();</span></div><div class="line"><span class="comment">//alert(values):      结果：0,1,10,15,5</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">compare</span><span class="params">(value1,value2)</span></span>{</div><div class="line">    <span class="keyword">if</span>(value1 &lt; value2){</div><div class="line">        <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">    }<span class="keyword">else</span> <span class="keyword">if</span> (value1&gt;value2){</div><div class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">    }<span class="keyword">else</span>{</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    }</div><div class="line">}</div><div class="line">values.sort(compare);</div><div class="line">alert(values);      <span class="comment">//15,10,5,1,0</span></div><div class="line">&lt;!--同时其实可以简化方法--&gt;</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">compare</span><span class="params">(value1,value2)</span></span>{</div><div class="line">    <span class="keyword">return</span> value2 - value1;</div><div class="line">}</div></pre></td></tr></table></figure>
 
-    <time datetime="2014-12-03T14:18:20.000Z" itemprop="datePublished">12月 3 2014</time>
+<ul>
+<li><p>五个迭代方法:</p>
+<blockquote>
+<ul>
+<li><code>every</code>:对每一项迭代，全部为true,才返回true</li>
+<li><code>filter</code>：过滤，返回那些true的</li>
+<li><code>forEach</code>:对每一项给定函数，没有返回值</li>
+<li><code>map</code>：对每一项给定函数，全部返回值</li>
+<li><code>some</code>:每一项给定参数，只要有一个true，则返回true</li>
+</ul>
+</blockquote>
+</li>
+<li><p>归并方法<code>reduce</code>，四个参数，前一个值，当前值，项的索引，数组对象</p>
+</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> values = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>];</div><div class="line"><span class="keyword">var</span> sum = values.reduce(<span class="function"><span class="keyword">function</span><span class="params">(prev, cur, index, array)</span></span>{</div><div class="line">    <span class="keyword">return</span> prev + cur;</div><div class="line">});</div><div class="line">alert(sum);     <span class="comment">//15</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Date类型</strong></li>
+<li><p><code>Date.now()</code>取得当前时间，用于简化代码工作，也可以使用一元加操作，<code>+new Date()</code></p>
+</li>
+<li><p><strong>RegExp类型</strong></p>
+</li>
+<li><p>结合正则表达式学习理解这部分<br>pattern:<code>g</code>,全局；<code>i</code>：不区分大小写；<code>m</code>：多行模式；</p>
+</li>
+<li><p><strong>Function类型</strong></p>
+</li>
+<li><p>没有重载，后边的函数覆盖前边的函数</p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/JavaScript复习笔记/">JavaScript复习笔记</a>
+	</div>
 
 
-    <h1 itemprop="name">JavaScript复习笔记(3）</h1>
-
-  </a>
-</section>
-
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a href="/2014/11/30/JavaScript复习笔记（2）/" title="JavaScript复习笔记（2）" itemprop="url">
-  
-
-    <time datetime="2014-11-30T13:49:27.000Z" itemprop="datePublished">11月 30 2014</time>
-
-
-    <h1 itemprop="name">JavaScript复习笔记（2）</h1>
-
-  </a>
-</section>
-
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a href="/2014/11/28/JavaScript复习笔记（1）/" title="JavaScript复习笔记（1）" itemprop="url">
-  
-
-    <time datetime="2014-11-28T11:59:43.000Z" itemprop="datePublished">11月 28 2014</time>
-
-
-    <h1 itemprop="name">JavaScript复习笔记（1）</h1>
-
-  </a>
-</section>
-
-
+      
+      <div class="clearfix"></div>
+    </div>
+    
   </div>
-</div>
+  
+</article>
 
-      </div>
-      <footer><div id="footer" >
-	
-	<div class="line">
-		<span></span>
-		<div class="author"></div>
-	</div>
-	
-	
-	<section class="info">
-		<p> Hello ,I&#39;m linfeng <br/>
-			Welcome to my Blog ,hope you have a good time.</p>
-	</section>
-	 
-	<div class="social-font" class="clearfix">
-		
-		<a href="http://weibo.com/http://www.weibo.com/1221903300" target="_blank" class="icon-weibo" title="微博"></a>
-		
-		
-		<a href="https://github.com/https://github.com/xuelinf" target="_blank" class="icon-github" title="github"></a>
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		<a href="mailto:xuelinf@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
-		
-	</div>
-		<p class="copyright">Powered by <a href="http://zespia.tw/hexo/" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Pacman">Jacman</a> © 2015 
-		
-		<a href="http://yoursite.com/about" target="_blank" title="xuelinf">xuelinf</a>
-		
-		</p>
-</div>
-</footer>
-      <script src="/js/jquery-2.0.3.min.js"></script>
-<script src="/js/jquery.imagesloaded.min.js"></script>
-<script src="/js/gallery.js"></script>
 
-<script type="text/javascript">
-$(document).ready(function(){ 
-  $('.navbar').click(function(){
-    $('header nav').toggleClass('shownav');
-  });
-  var myWidth = 0;
-  function getSize(){
-    if( typeof( window.innerWidth ) == 'number' ) {
-      myWidth = window.innerWidth;
-    } else if( document.documentElement && document.documentElement.clientWidth) {
-      myWidth = document.documentElement.clientWidth;
-    };
-  };
-  var m = $('#main'),
-      a = $('#asidepart'),
-      c = $('.closeaside'),
-      o = $('.openaside');
-  $(window).resize(function(){
-    getSize(); 
-    if (myWidth >= 1024) {
-      $('header nav').removeClass('shownav');
-    }else
-    {
-      m.removeClass('moveMain');
-      a.css('display', 'block').removeClass('fadeOut');
-      o.css('display', 'none');
+
+
+
+
+
+  
+    <article id="post-JavaScript复习笔记（2）" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2014/11/30/JavaScript复习笔记（2）/" class="article-date">
+  	<time datetime="2014-11-30T13:49:27.000Z" itemprop="datePublished">11月 30 2014</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
         
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/11/30/JavaScript复习笔记（2）/">JavaScript复习笔记（2）</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="变量、作用域及内存问题">变量、作用域及内存问题</h2>
+<ul>
+<li>只能给引用对象定义对象，基本类型不行：</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> person = <span class="keyword">new</span> object();</div><div class="line">person.name = <span class="string">"hello"</span>;    <span class="comment">//OK</span></div><div class="line"><span class="keyword">var</span> person;</div><div class="line">person.name = <span class="string">"hello"</span>;    <span class="comment">//False</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li>复制变量：基本类型的复制，数据间相互独立；引用类型之间，副本是一个指针，所以两个变量引用的是同一个对象，所以数据是相同的。</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> obj1 = <span class="keyword">new</span> object();</div><div class="line"><span class="keyword">var</span> obj2 = obj1;</div><div class="line">obj1.name = <span class="string">"lucy"</span>;     <span class="comment">//obj2.name = lucy</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li>参数传递问题：直接看实例：</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">addTen</span><span class="params">(num)</span></span>{</div><div class="line">    num += <span class="number">10</span>;</div><div class="line">    <span class="keyword">return</span> num;</div><div class="line">}</div><div class="line"><span class="keyword">var</span> count = <span class="number">20</span>;</div><div class="line"><span class="keyword">var</span> result = addTen(count);</div><div class="line">alert (count);       <span class="comment">//20</span></div><div class="line">alert (result);      <span class="comment">//30</span></div></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">setName</span><span class="params">(obj)</span></span>{</div><div class="line">    obj.name = <span class="string">"lucy"</span>;</div><div class="line">    obj = <span class="keyword">new</span> object();</div><div class="line">    obj.name = <span class="string">"lily"</span>;</div><div class="line">}</div><div class="line"><span class="keyword">var</span> person = <span class="keyword">new</span> object();</div><div class="line">setName(person);</div><div class="line">alert (person.name);        <span class="comment">//lucy</span></div></pre></td></tr></table></figure>
+
+<p>第一个基本类型的实例中，<code>num</code>是一个局部变量，所以在函数中，<code>count</code>值传给<code>num</code>，所以count本身的值不会改变，函数结束后<code>num</code>立即销毁。<br>第二个引用类型的实例则需要理解一下，引用类型在复制和传递过程中，副本是一个指针，所以说<code>person.name</code>指向<code>obj.name</code>，但是函数内部在重写<code>obj</code>时，变量的引用是局部对象，到函数外的时候，就会立即销毁，所以函数内部重写<code>obj</code>，修改<code>obj.name</code>就不会传递给<code>person.name</code>了。</p>
+<ul>
+<li>作用域（scope)<br>延长作用域链，两种。<code>try-catch</code>和<code>with</code>语句。例子：</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">buildUrl</span><span class="params">()</span></span>{</div><div class="line">    <span class="keyword">var</span> qs = <span class="string">"?debug = true"</span>;</div><div class="line">    <span class="keyword">with</span>(location){</div><div class="line">        <span class="keyword">var</span> url = href + qs;</div><div class="line">    }</div><div class="line">    <span class="keyword">return</span> url;</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>定义了一个url变量，url就成了函数执行环境一部分，可以作为函数值被返回。</p>
+<ul>
+<li>没有块级作用域，这一块最容易让人理解上出现混淆，JS语言中没有块级作用域，于是在if语句，for语句中的变量声明将添加到当前执行环境中（全局环境）。例子：</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>(<span class="literal">true</span>){</div><div class="line">    <span class="keyword">var</span> color = <span class="string">"blue"</span>;</div><div class="line">}</div><div class="line">alert(color);       <span class="comment">//blue</span></div><div class="line"></div><div class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++){</div><div class="line">    doSomething(i);</div><div class="line">}</div><div class="line">alert(i);       <span class="comment">//10</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li><p>接上一条，<code>var</code>生命的变量会被添加大最接近的环境中去，对于函数内部来说，也就是局部变量，而对于<code>for</code>,<code>with</code>,<code>if</code>来说，就是执行环境，也就是全局环境，于是也就成为了全局变量。</p>
+</li>
+<li><p>标示符的查询，沿作用域链向上搜索，找到立即停止。</p>
+</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> color = <span class="string">'blue'</span>;</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">getColor</span><span class="params">()</span></span>{</div><div class="line">    <span class="keyword">var</span> color = <span class="string">"red"</span>;</div><div class="line">    <span class="keyword">return</span> color;</div><div class="line">}</div><div class="line">alert (getColor());         <span class="comment">//red,删掉第三行，则为blue</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li><code>typeof</code>和 <code>instanceof</code>的使用。</li>
+</ul>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/JavaScript复习笔记/">JavaScript复习笔记</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+    <article id="post-JavaScript复习笔记（1）" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2014/11/28/JavaScript复习笔记（1）/" class="article-date">
+  	<time datetime="2014-11-28T11:59:43.000Z" itemprop="datePublished">11月 28 2014</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/11/28/JavaScript复习笔记（1）/">JavaScript复习笔记（1）</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="JavaScript_复习笔记">JavaScript 复习笔记</h2>
+<p>今天又从头开始看JavaScript红宝书，这一次本着更加细致的原则，从头去再刷一遍，另外犀牛书也可以开始看了。</p>
+<h2 id="HTML中的JS元素">HTML中的JS元素</h2>
+<ul>
+<li><p>注意两个属性：</p>
+<blockquote>
+<ul>
+<li>defer 立即下载，延迟执行。使用方式<strong>defer = ‘defer’</strong></li>
+<li>async 下载后，顺序可能改变。使用方式 <strong>‘async’</strong></li>
+</ul>
+</blockquote>
+</li>
+<li><p>HTML中尽量不要使用</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;script src = “test.js” /&gt;</div></pre></td></tr></table></figure>
+
+<p>不符合规范，所以在平时写作时候，尽量保持良好的书写规范。</p>
+<ul>
+<li><strong>平稳退化</strong>，当不支持脚本或禁用脚本时候调用。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;noscript&gt;</div></pre></td></tr></table></figure>
+
+<ul>
+<li><p>Javascript中区分<strong>大小写</strong>，标识符书写规范采用<strong>驼峰型</strong>，第一个字母用小写后边的每个单词首字母大写。例：<em>firstChild</em> <em>myBlog</em></p>
+</li>
+<li><p>; 不是必须的，但是鉴于书写规范，推荐保持使用的习惯。</p>
+</li>
+<li><p><strong>关键字</strong>，<strong>保留字</strong>，不可以作为标识符，具体谷歌。</p>
+</li>
+<li><p>var操作符定义的变量为局部变量，函数退出后即销毁，直接创建，则为全局变量，但可能导致不必要的麻烦。</p>
+</li>
+<li><p><strong>null == undefined</strong>返回的是true。</p>
+</li>
+<li><p>数据类型转换成Boolean时，TRUE or False</p>
+<blockquote>
+<ul>
+<li>string 非空  “”</li>
+<li>Number 非零  0或者NaN</li>
+<li>object 任何对象  null</li>
+<li>undefined N/A  undefined</li>
+</ul>
+</blockquote>
+</li>
+<li><p><code>NaN</code>表示非数值，与任何的值不同，<code>NaN</code>与自己也不相同，0除以0时候是NaN</p>
+</li>
+<li><p>一元加操作，其实是一个转换工具，有一套自己的转换规则，减操作则是在这个转换之后变负数。例：</p>
+</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> S1 = <span class="string">"01"</span>    <span class="comment">//+S1 = 1    -S1 = -1</span></div><div class="line"><span class="keyword">var</span> S2 = <span class="string">"1.1"</span>      <span class="comment">//+S2 = 1.1     -S2 = -1.1</span></div><div class="line"><span class="keyword">var</span> S3 = <span class="string">"z"</span>        <span class="comment">//+S3 = NaN     -S3 = NaN</span></div><div class="line"><span class="keyword">var</span> S4 = <span class="string">"false"</span>    <span class="comment">//+s4 = 0       -S4 = 0</span></div><div class="line"><span class="keyword">var</span> S5 = {</div><div class="line">    valueOf:<span class="function"><span class="keyword">function</span><span class="params">()</span></span>{</div><div class="line">               <span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">           }};       <span class="comment">//+S5 = -1      -S5 = 1</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li><p>位移操作 &gt;&gt; 和 &gt;&gt;&gt;<br>前者是有符号的移动，后者是无符号的移动</p>
+</li>
+<li><p>全等和不全等</p>
+</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="string">"55"</span> == <span class="number">55</span>; <span class="comment">//true</span></div><div class="line"><span class="string">"55"</span> === <span class="number">55</span>; <span class="comment">//false   因为是不同类型的</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li>‘label’标签功能<br>‘with’语句</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">with</span>(location){</div><div class="line">    <span class="keyword">var</span> qs = search.substring(<span class="number">1</span>);       <span class="comment">//location.search.substring(1)</span></div><div class="line">    <span class="keyword">var</span> hostName = hostname;</div><div class="line">    <span class="keyword">var</span> url = href:</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<ul>
+<li><p>没有重载，不存在签名特性</p>
+</li>
+<li><p>可向函数传递任意数量的参数，然后可通过’arguments’访问</p>
+<p>‘arguments[1] arguments[2]’</p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/JavaScript复习笔记/">JavaScript复习笔记</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+  
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2015 xuelinf
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: false,
+		isArchive: false,
+		isTag: false,
+		isCategory: true,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js" type="text/javascript"></script>
+
+<script src="/js/main.js" type="text/javascript"></script>
+
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
     }
-  });
-  c.click(function(){
-    a.addClass('fadeOut').css('display', 'none');
-    o.css('display', 'block').addClass('fadeIn');
-    m.addClass('moveMain');
-  });
-  o.click(function(){
-    o.css('display', 'none').removeClass('beforeFadeIn');
-    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
-    m.removeClass('moveMain');
-  });
-  $(window).scroll(function(){
-    o.css("top",Math.max(80,260-$(this).scrollTop()));
-  });
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
 });
 </script>
 
-
-
-
-
-
-
-
-
-<!-- Analytics Begin -->
-
-
-
-
-
-<!-- Analytics End -->
-
-<!-- Totop Begin -->
-
-	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
-	</div>
-	<script src="/js/totop.js"></script>
-
-<!-- Totop End -->
-
-<!-- MathJax Begin -->
-<!-- mathjax config similar to math.stackexchange -->
-
-
-<!-- MathJax End -->
-<script type="text/javascript">
-var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
-document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F423b48635ed8c96d699780dda2b1b642' type='text/javascript'%3E%3C/script%3E"));
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
-    </body>
-   </html>
+  </div>
+</body>
+</html>
