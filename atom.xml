@@ -4,7 +4,7 @@
   <subtitle><![CDATA[把日子过成一个一个的明天]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-10-05T12:39:39.386Z</updated>
+  <updated>2015-10-06T12:18:03.502Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,277 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Web开发规范]]></title>
+    <link href="http://yoursite.com/2015/10/06/Web%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/"/>
+    <id>http://yoursite.com/2015/10/06/Web开发规范/</id>
+    <published>2015-10-06T12:12:43.000Z</published>
+    <updated>2015-10-06T12:17:30.000Z</updated>
+    <content type="html"><![CDATA[<p>from: <a href="">Github</a></p>
+<h2 id="通用规范">通用规范</h2>
+<ul>
+<li>使用空格代替TAB，windows和Linux的Tab占位不同。</li>
+<li>CSS样式属性和 JavaScript代码后边添加分号<code>;</code> ，方便断句，利于压缩。</li>
+<li>文件内容编码均统一为UTF-8。</li>
+<li>CSS、JAVASCRIPT中的非注释类中文字符须转换成unicode编码使用，以避免编码错误时乱码显示。</li>
+</ul>
+<h2 id="文件规范">文件规范</h2>
+<ul>
+<li>文件名用英文单词，多个单词用驼峰命名法。</li>
+<li>一些浏览器会将含有这些词的作为广告拦截，文件命名、ID、CLASS等所有命名避免以上词汇。<code>ad`、`ads`、`adv`、`banner`、`sponsor`、`gg`、`guangg`、`guanggao</code><br><a id="more"></a><h2 id="HTML书写规范">HTML书写规范</h2>
+</li>
+<li>为每个HTML页面的第一行添加标准模式（standard mode）的声明，确保在每个浏览器中拥有一致的展现。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="doctype">&lt;!DOCTYPE html&gt;</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li>文档类型声明统一为HTML5声明类型，编码统一为UTF-8。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">meta</span> <span class="attribute">charset</span>=<span class="value">"UTF-8"</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li><code>&lt;HEAD&gt;</code>中添加信息。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&lt;meta <span class="variable">name=</span><span class="string">"author"</span> <span class="variable">content=</span><span class="string">"smile@kang.cool"</span>&gt;//作者</div><div class="line">&lt;meta <span class="variable">name=</span><span class="string">"description"</span> <span class="variable">content=</span><span class="string">"hello"</span>&gt;//网页描述</div><div class="line">&lt;meta <span class="variable">name=</span><span class="string">"keywords"</span> <span class="variable">content=</span><span class="string">"a,b,c"</span>&gt;//关键字,“，”分隔</div><div class="line">&lt;meta <span class="variable">http-equiv=</span><span class="string">"expires"</span> <span class="variable">content=</span><span class="string">"Wed, 26 Feb 1997 08：21：57 GMT"</span>&gt;//设定网页的到期时间。一旦网页过期，必须到服务器上重新调阅</div><div class="line">&lt;meta <span class="variable">http-equiv=</span><span class="string">"Pragma"</span> <span class="variable">content=</span><span class="string">"no-cache"</span>&gt;//禁止浏览器从本地机的缓存中调阅页面内容</div><div class="line">&lt;meta <span class="variable">http-equiv=</span><span class="string">"Window-target"</span> <span class="variable">content=</span><span class="string">"_top"</span>&gt;//用来防止别人在框架里调用你的页面</div><div class="line">&lt;meta <span class="variable">http-equiv=</span><span class="string">"Refresh"</span> <span class="variable">content=</span><span class="string">"5;URL=http://kahn1990.com/"</span>&gt;//跳转页面，<span class="number">5</span>指时间停留<span class="number">5</span>秒 网页搜索机器人向导。用来告诉搜索机器人哪些页面需要索引，哪些页面不需要索引</div><div class="line">&lt;meta <span class="variable">name=</span><span class="string">"robots"</span> <span class="variable">content=</span><span class="string">"none"</span>&gt;//content的参数有all,none,index,noindex,follow,nofollow，默认是all</div><div class="line">&lt;link <span class="variable">rel=</span><span class="string">"Shortcut Icon"</span> <span class="variable">href=</span><span class="string">"favicon.ico"</span>&gt;//收藏图标</div><div class="line">&lt;meta <span class="variable">http-equiv=</span><span class="string">"Cache-Control"</span> <span class="variable">content=</span><span class="string">"no-cache, must-revalidate"</span>&gt;//网页不会被缓存</div></pre></td></tr></table></figure>
+
+<ul>
+<li>IE支持通过特定<meta>标签来确定绘制当前页面所应该采用的IE版本。除非有强烈的特殊需求，否则最好是设置为edge mode ，从而通知IE采用其所支持的最新的模式。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">meta <span class="variable">http-equiv=</span><span class="string">"X-UA-Compatible"</span> <span class="variable">content=</span><span class="string">"IE=Edge"</span>&gt;</div></pre></td></tr></table></figure>
+
+<ul>
+<li><p>非特殊情况下CSS样式文件外链至HEAD之间，JAVASCRIPT文件外链至页面底部。引入JAVASCRIPT库文件，文件名须包含库名称及版本号及是否为压缩版。引入JAVASCRIPT插件, 文件名格式为库名称+.+插件名称。<code>jQuery.cookie.js</code></p>
+</li>
+<li><p>HTML属性应当按照以下给出的顺序依次排列，来确保代码的易读性。</p>
+</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">class</span></div><div class="line">id 、 name</div><div class="line">data-*</div><div class="line">src、<span class="keyword">for</span>、 <span class="class"><span class="keyword">type</span>、 <span class="title">href</span></span></div><div class="line">title、alt</div><div class="line">aria-*、 role</div></pre></td></tr></table></figure>
+
+<ul>
+<li>编码均遵循XHTML标准，标签、属性、属性命名由小写英文、数字和_组成，且所有标签必须闭合，属性值必须用双引号””，避免使用中文拼音尽量简易并要求语义化。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">CLASS <span class="comment">--&gt; nHeadTitle --&gt; CLASS遵循小驼峰命名法（little camel-case）</span></div><div class="line">ID <span class="comment">--&gt; n_head_title --&gt; ID遵循名称+_</span></div><div class="line">NAME <span class="comment">--&gt; N_Head_Title --&gt; NAME属性命名遵循首个字母大写+_</span></div><div class="line">&lt;<span class="keyword">div</span> <span class="type">class</span>=<span class="string">"nHeadTitle"</span> <span class="property">id</span>=<span class="string">"n_head_title"</span> <span class="property">name</span>=<span class="string">"N_Head_Title"</span>&gt;&lt;/<span class="keyword">div</span>&gt;</div></pre></td></tr></table></figure>
+
+<ul>
+<li>当JAVASCRIPT获取单个元素时，通常使用<code>document.getElementById</code>来获取dom元素，<code>document.getElementById</code>兼容所有浏览器，<strong>但IE浏览器会混淆元素的ID和NAME属性，所以要区分ID和NAME命名。</strong></li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">input</span> <span class="attribute">type</span>=<span class="value">"text"</span> <span class="attribute">name</span>=<span class="value">"test"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">id</span>=<span class="value">"test"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">button</span> <span class="attribute">onclick</span>=<span class="value">"alert(document.getElementById('test').tagName)"</span>&gt;</span><span class="tag">&lt;/<span class="title">button</span>&gt;</span></div><div class="line"><span class="comment">&lt;!-- ie6下为INPUT --&gt;</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li>特殊符号应使用转意符。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;    <span class="literal">-</span><span class="literal">-</span>&gt;    <span class="comment">&lt;</span></div><div class="line">&gt;    <span class="literal">-</span><span class="literal">-</span>&gt;    <span class="comment">&gt;</span></div><div class="line"><span class="comment">空格</span>  <span class="literal">-</span><span class="literal">-</span>&gt;</div></pre></td></tr></table></figure>
+
+<ul>
+<li>含有描述性表单元素（INPUT，TEXTAREA）添加LABEL。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">p</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">label</span> <span class="attribute">for</span>=<span class="value">"test"</span>&gt;</span>测试<span class="tag">&lt;/<span class="title">label</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">input</span> <span class="attribute">type</span>=<span class="value">"text"</span> <span class="attribute">id</span>=<span class="value">"test"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">p</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li>多用无兼容性问题的HTML内置标签，比如SPAN、EM、STRONG、OPTGROUP、LABEL等,需要自定义HTML标签属性时，首先考虑是否存在已有的合适标签可替换，如果没有，可使用须以“data-”为前缀来添加自定义属性，避免使用其他命名方式。</li>
+<li>语义化HTML。</li>
+<li>尽可能减少<code>&lt;DIV&gt;</code>嵌套。</li>
+<li>书写链接地址时避免重定向。<br><code>href=&quot;http://www.kahn1990.com/&quot; //即在URL地址后面加“/”</code></li>
+</ul>
+<h1 id="Web开发规范（二）">Web开发规范（二）</h1>
+<p>@(总结)</p>
+<h2 id="CSS书写规范">CSS书写规范</h2>
+<p>-为了欺骗W3C的验证工具,可将代码分为两个文件，一个是针对所有浏览器,一个只针对IE。即将所有符合<code>W3C</code>的代码写到一个文件中,而一些IE中必须而又不能通过<code>W3C</code>验证的代码（如:cursor:hand;）放到另一个文件中，再用下面的方法导入。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 放置所有浏览器样式--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">link</span> <span class="attribute">rel</span>=<span class="value">"stylesheet"</span> <span class="attribute">type</span>=<span class="value">"text/css"</span> <span class="attribute">href</span>=<span class="value">""</span>&gt;</span></div><div class="line"><span class="comment">&lt;!-- 只放置IE必须，而不能通过w3c的--&gt;</span></div><div class="line"><span class="comment">&lt;!--[if IE]</span></div><div class="line">    &lt;link rel="stylesheet" href=""&gt;</div><div class="line">&lt;![endif]--&gt;</div></pre></td></tr></table></figure>
+
+<ul>
+<li><p>CSS样式新建或修改尽量遵循以下原则。</p>
+<ul>
+<li>根据新建样式的适用范围分为三级：全站级、产品级、页面级。</li>
+<li>尽量通过继承和层叠重用已有样式。</li>
+<li>不要轻易改动全站级CSS。改动后，要经过全面测试。</li>
+</ul>
+</li>
+<li><p>CSS属性显示顺序。</p>
+<ul>
+<li>显示属性</li>
+<li>元素位置</li>
+<li>元素属性</li>
+<li><p>元素内容属性</p>
+</li>
+<li><p>CSS书写顺序。</p>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"> .header {</div><div class="line"><span class="comment">/* 显示属性 */</span></div><div class="line">    display || visibility</div><div class="line">    list-style</div><div class="line">    position top || right || bottom || left</div><div class="line">    z-index</div><div class="line">    <span class="keyword">clear</span></div><div class="line">    <span class="keyword">float</span></div><div class="line"><span class="comment">/* 自身属性 */</span></div><div class="line">    width <span class="keyword">max</span>-width || <span class="keyword">min</span>-width</div><div class="line">    height <span class="keyword">max</span>-height || <span class="keyword">min</span>-height</div><div class="line">    overflow || <span class="keyword">clip</span></div><div class="line">    margin</div><div class="line">    padding</div><div class="line">    outline</div><div class="line">    border</div><div class="line">    background</div><div class="line"><span class="comment">/* 文本属性 */</span></div><div class="line">    <span class="keyword">color</span></div><div class="line">    font</div><div class="line">    <span class="keyword">text</span>-overflow</div><div class="line">    <span class="keyword">text</span>-<span class="keyword">align</span></div><div class="line">    <span class="keyword">text</span>-indent</div><div class="line">    line-height</div><div class="line">    white-space</div><div class="line">    vertical-<span class="keyword">align</span></div><div class="line">    cursor</div><div class="line">    content</div><div class="line">    };</div></pre></td></tr></table></figure>
+
+<ul>
+<li>兼容多个浏览器时，将标准属性写在底部。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">moz-border-<span class="symbol">radius:</span> <span class="number">15</span>px; <span class="regexp">/* Firefox */</span></span></div><div class="line">-<span class="ruby">webkit-border-<span class="symbol">radius:</span> <span class="number">15</span>px; <span class="regexp">/* Safari和Chrome */</span></span></div><div class="line">border-radius: 15px; /* Opera 10.5+, 以及使用了IE-CSS3的IE浏览器 *//标准属性</div></pre></td></tr></table></figure>
+
+<ul>
+<li>使用选择器时，命名比较短的词汇或者缩写的不允许直接定义样式。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">.hd,.bd,.td{};<span class="comment">//如这些命名</span></div></pre></td></tr></table></figure>
+
+<p>可用上级节点进行限定。<code>.recommend-mod .hd</code></p>
+<ul>
+<li>多选择器规则之间换行，即当样式针对多个选择器时每个选择器占一行。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">button.btn,</div><div class="line">input.btn,</div><div class="line">input[<span class="keyword">type</span>=<span class="string">"button"</span>] {…};</div></pre></td></tr></table></figure>
+
+<ul>
+<li>优化CSS选择器。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="id">#header</span> <span class="tag">a</span> <span class="rules">{ <span class="rule"><span class="attribute">color</span>:<span class="value"> <span class="hexcolor">#444</span></span></span>; <span class="rule">}</span></span>;<span class="comment">/*CSS选择器是从右边到左边进行匹配*/</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li>浏览器将检查整个文档中的所有链接和每个链接的父元素，并遍历文档树去查找ID为header的祖先元素，如果找不到header将追溯到文档的根节点，解决方法如下。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">避免使用通配规则和相邻兄弟选择符、子选择符,、后代选择符、属性选择符等选择器</div><div class="line">不要限定id选择符，如<span class="operator">div</span><span class="comment">#header（提权的除外）</span></div><div class="line">不要限定类选择器，如ul.recommend（提权的除外）</div><div class="line">不要使用 ul li <span class="operator">a</span> 这样长的选择符</div><div class="line">避免使用标签子选择符，如<span class="comment">#header &gt; li &gt; a</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li><p>使用z-index属性尽量z-index的值不要超过150（通用组的除外），页面中的元素内容的z-index不能超过10（提示框等模块除外但维持在150以下），不允许直接使用（999~9999）之间大值。</p>
+</li>
+<li><p>尽量避免使用CSS Hack。</p>
+</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="tag">property</span><span class="pseudo">:value</span>; <span class="comment">/* 所有浏览器 */</span></div><div class="line">+<span class="tag">property</span><span class="pseudo">:value</span>; <span class="comment">/* IE7 */</span></div><div class="line">_<span class="tag">property</span><span class="pseudo">:value</span>; <span class="comment">/* IE6 */</span></div><div class="line">*<span class="tag">property</span><span class="pseudo">:value</span>; <span class="comment">/* IE6/7 */</span></div><div class="line"><span class="tag">property</span><span class="pseudo">:value</span>\9; <span class="comment">/* IE6/7/8/9，即所有IE浏览器 */</span></div><div class="line"></div><div class="line">\* <span class="tag">html</span> <span class="tag">selector</span> <span class="rules">{ <span class="rule">… }</span></span>; <span class="comment">/* IE6 */</span></div><div class="line">\*<span class="pseudo">:first-child+html</span> <span class="tag">selector</span> <span class="rules">{ <span class="rule">… }</span></span>; <span class="comment">/* IE7 */</span></div><div class="line"><span class="tag">html</span>&gt;<span class="tag">body</span> <span class="tag">selector</span> <span class="rules">{ <span class="rule">… }</span></span>; <span class="comment">/* 非IE6 */</span></div><div class="line"><span class="at_rule">@<span class="keyword">-moz-document</span> <span class="function">url-prefix</span>() </span>{ … }; <span class="comment">/* firefox */</span></div><div class="line"><span class="at_rule">@<span class="keyword">media</span> all and (-webkit-min-device-pixel-ratio:<span class="number">0</span>) </span>{ … }; <span class="comment">/* saf3+/chrome1+ */</span></div><div class="line"><span class="at_rule">@<span class="keyword">media</span> all and (-webkit-min-device-pixel-ratio:<span class="number">10000</span>),not all and (-webkit-min-device-pixel-ratio:<span class="number">0</span>) </span>{ … }; <span class="comment">/* opera */</span></div><div class="line"><span class="at_rule">@<span class="keyword">media</span> screen and (max-device-width: <span class="number">480px</span>) </span>{ … }; <span class="comment">/* iPhone/mobile webkit */</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li>避免使用低效的选择器。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">body</span> &gt; * <span class="rules">{<span class="rule">…}</span></span>;</div><div class="line"><span class="tag">ul</span> &gt; <span class="tag">li</span> &gt; <span class="tag">a</span> <span class="rules">{<span class="rule">…}</span></span>;</div><div class="line"><span class="id">#footer</span> &gt; <span class="tag">h3</span> <span class="rules">{<span class="rule">…}</span></span>;</div><div class="line"><span class="tag">ul</span><span class="id">#top_blue_nav</span> <span class="rules">{<span class="rule">…}</span></span>;</div><div class="line"><span class="id">#searbar</span> <span class="tag">span</span><span class="class">.submit</span> <span class="tag">a</span> <span class="rules">{ <span class="rule">… }</span></span>; <span class="comment">/* 反面示例 */</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li><p>六个不要三个避免一个使用。</p>
+<ul>
+<li>不要在标签上直接写样式</li>
+<li>不要在CSS中使用<code>expression</code></li>
+<li>不要在CSS中使用<code>@import</code></li>
+<li>不要在CSS中使用<code>!important</code></li>
+<li>不要在CSS中使用<code>“*”</code>选择符</li>
+<li>不要将CSS样式写为单行</li>
+<li>避免使用filter</li>
+<li>避免使用行内<code>（inline）</code>样式</li>
+<li>避免使用<code>“*”</code>设置<code>{margin: 0; padding: 0;}</code></li>
+<li>使用<code>after</code>或<code>overflow</code>的方式清浮动</li>
+</ul>
+</li>
+<li><p>减少使用影响性能的属性。</p>
+</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">position</span><span class="value">:absolute;</span></div><div class="line"><span class="attribute">float</span><span class="pseudo">:left</span>;<span class="comment">//如这些定位或浮动属性</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>减少在CSS中使用滤镜表达式和图片repeat</strong>,尤其在body当中,渲染性能极差, 如果需要用repeat的话,图片的宽或高不能少于8px。</li>
+</ul>
+<h2 id="JavaScript书写规范">JavaScript书写规范</h2>
+<ul>
+<li>命名规范。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">常量名</div><div class="line">    全部大写并单词间用下划线分隔</div><div class="line">    如：CSS_BTN_CLOSE、TXT_LOADING</div><div class="line">对象的属性或方法名</div><div class="line">    小驼峰式（little camel-case）</div><div class="line">    如：init、bindEvent、updatePosition</div><div class="line">    示例：Dialog.prototype = {</div><div class="line">                init: <span class="function"><span class="keyword">function</span> <span class="params">()</span></span> {},</div><div class="line">                bindEvent: <span class="function"><span class="keyword">function</span> <span class="params">()</span></span> {},</div><div class="line">                updatePosition: <span class="function"><span class="keyword">function</span> <span class="params">()</span></span> {}</div><div class="line">                …</div><div class="line">                };</div><div class="line">类名（构造器）</div><div class="line">    <span class="comment">--&gt;小驼峰式但首字母大写</span></div><div class="line">    <span class="comment">--&gt;如：Current、DefaultConfig</span></div><div class="line">函数名</div><div class="line">    <span class="comment">--&gt;小驼峰式</span></div><div class="line">    <span class="comment">--&gt;如：current()、defaultConfig()</span></div><div class="line">变量名</div><div class="line">    <span class="comment">--&gt;小驼峰式</span></div><div class="line">    <span class="comment">--&gt;如：current、defaultConfig</span></div><div class="line">私有变量名</div><div class="line">    <span class="comment">--&gt;小驼峰式但需要用_开头</span></div><div class="line">    <span class="comment">--&gt;如：_current、_defaultConfig</span></div><div class="line">变量名的前缀</div><div class="line">    <span class="comment">--&gt;续</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li>代码格式。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="string">"()"</span>前后需要跟空格</div><div class="line"><span class="string">"="</span>前后需要跟空格</div><div class="line"><span class="string">","</span>后面需要跟空格</div><div class="line"><span class="built_in">JSON</span>对象需格式化对象参数</div><div class="line"><span class="keyword">if</span>、<span class="keyword">while</span>、<span class="keyword">for</span>、<span class="keyword">do</span>语句的执行体用<span class="string">"{}"</span>括起来</div><div class="line"><span class="keyword">if</span> (a==<span class="number">1</span>) {</div><div class="line">    <span class="comment">//代码</span></div><div class="line">};</div></pre></td></tr></table></figure>
+
+<ul>
+<li>避免额外的逗号。<code>var arr = [1,2,3,];</code></li>
+<li><p><strong>for-in循环体中必须用hasOwnProperty方法检查成员是否为自身成员，避免来自原型链上的污染。</strong></p>
+</li>
+<li><p>长语句可考虑断行。</p>
+</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">TEMPL_SONGLIST.replace(<span class="string">'{TABLE}'</span>, da[<span class="string">'results'</span>])</div><div class="line">    .replace(<span class="string">'{PREV_NUM}'</span>, <span class="keyword">prev</span>)</div><div class="line">    .replace(<span class="string">'{NEXT_NUM}'</span>, <span class="keyword">next</span>)</div><div class="line">    .replace(<span class="string">'{CURRENT_NUM}'</span>, current)</div><div class="line">    .replace(<span class="string">'{TOTAL_NUM}'</span>, da.page_total);</div></pre></td></tr></table></figure>
+
+<p> -为了避免和<code>JSLint</code>的检验机制冲突，“.”或“+”这类操作符放在行尾。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">TEMPL_SONGLIST.replace('{TABLE}', da['results']).</div><div class="line">    <span class="operator"><span class="keyword">replace</span>(<span class="string">'{PREV_NUM}'</span>, prev).</span></div><div class="line">    <span class="keyword">replace</span>(<span class="string">'{NEXT_NUM}'</span>, <span class="keyword">next</span>).</div><div class="line">    <span class="keyword">replace</span>(<span class="string">'{CURRENT_NUM}'</span>, <span class="keyword">current</span>).</div><div class="line">    <span class="keyword">replace</span>(<span class="string">'{TOTAL_NUM}'</span>, da.page_total);</div></pre></td></tr></table></figure>
+
+<p>如果模块代码中，使用其它全局变量想跳过JSLint的检查，可以在该文件中加入/<em>global</em>/声明。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/*global alert: <span class="literal">true</span>, console: <span class="literal">true</span>, top: <span class="literal">true</span>, <span class="keyword">set</span>Timeout: <span class="literal">true</span> */</div></pre></td></tr></table></figure>
+
+<ul>
+<li>使用严格的条件判断符。用===代替==，用!==代替!=，避免掉入==造成的陷阱,在条件判断时，这样的一些值表示false。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="literal">null</span></div><div class="line"><span class="literal">undefined</span>与<span class="literal">null</span>相等</div><div class="line">字符串<span class="string">''</span></div><div class="line">数字<span class="number">0</span></div><div class="line"><span class="literal">NaN</span></div></pre></td></tr></table></figure>
+
+<p>在==时，则会有一些让人难以理解的陷阱，比如：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">(<span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>{</div><div class="line">    <span class="keyword">var</span> <span class="literal">undefined</span>;</div><div class="line">    <span class="literal">undefined</span> == <span class="literal">null</span>; <span class="comment">// true</span></div><div class="line">    <span class="number">1</span> == <span class="literal">true</span>; <span class="comment">//true</span></div><div class="line">    <span class="number">2</span> == <span class="literal">true</span>; <span class="comment">// false</span></div><div class="line">    <span class="number">0</span> == <span class="literal">false</span>; <span class="comment">// true</span></div><div class="line">    <span class="number">0</span> == <span class="string">''</span>; <span class="comment">// true</span></div><div class="line">    <span class="literal">NaN</span> == <span class="literal">NaN</span>;<span class="comment">// false</span></div><div class="line">    [] == <span class="literal">false</span>; <span class="comment">// true</span></div><div class="line">    [] == ![]; <span class="comment">// true</span></div><div class="line">})();</div></pre></td></tr></table></figure>
+
+<p>对于不同类型的 == 判断，有这样一些规则，顺序自上而下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="literal">undefined</span>与<span class="literal">null</span>相等</div><div class="line">一个是<span class="built_in">number</span>一个是<span class="built_in">string</span>时，会尝试将<span class="built_in">string</span>转换为<span class="built_in">number</span></div><div class="line">尝试将<span class="built_in">boolean</span>转换为<span class="built_in">number</span></div><div class="line"><span class="number">0</span>或<span class="number">1</span></div><div class="line">尝试将<span class="built_in">Object</span>转换成<span class="built_in">number</span>或<span class="built_in">string</span></div></pre></td></tr></table></figure>
+
+<p>而这些取决于另外一个对比量，即值的类型，所以对于0、空字符串的判断，建议使用===。===会先判断两边的值类型，类型不匹配时为false。</p>
+<ul>
+<li>下面类型的对象不建议用new构造。引用对象成员用<code>obj.prop</code>代替<code>obj[“prop”]</code>，除非属性名是变量。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">new</span> <span class="built_in">Number</span></div><div class="line"><span class="keyword">new</span> <span class="built_in">String</span></div><div class="line"><span class="keyword">new</span> <span class="built_in">Boolean</span></div><div class="line"><span class="keyword">new</span> <span class="built_in">Object</span> <span class="comment">//用{}代替</span></div><div class="line"><span class="keyword">new</span> <span class="built_in">Array</span> <span class="comment">//用[]代替</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li>从number到string的转换。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="javadoc">/** 推荐写法*/</span></div><div class="line"><span class="keyword">var</span> a = <span class="number">1</span>;</div><div class="line">typeof(a); <span class="comment">//"number"</span></div><div class="line">console.log(a); <span class="comment">//1</span></div><div class="line"><span class="keyword">var</span> aa=a+'';</div><div class="line">typeof(aa); <span class="comment">//"string"</span></div><div class="line">console.log(aa); <span class="comment">//'1'</span></div><div class="line"><span class="javadoc">/** 不推荐写法*/</span></div><div class="line"><span class="keyword">new</span> String(a)或a.toString()</div></pre></td></tr></table></figure>
+
+<p>从string到number的转换，使用parseInt，必须显式指定第二个参数的进制。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="javadoc">/** 推荐写法*/</span></div><div class="line"><span class="keyword">var</span> a = '<span class="number">1</span>';</div><div class="line"><span class="keyword">var</span> aa = parseInt(a,<span class="number">10</span>);</div><div class="line">typeof(a); <span class="comment">//"string"</span></div><div class="line">console.log(a); <span class="comment">//'1'</span></div><div class="line">typeof(aa); <span class="comment">//"number"</span></div><div class="line">console.log(aa); <span class="comment">//1</span></div></pre></td></tr></table></figure>
+
+<p>从float到integer的转换。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="javadoc">/** 推荐写法*/</span></div><div class="line">Math.floor/Math.round/Math.ceil</div><div class="line"><span class="javadoc">/** 不推荐写法*/</span></div><div class="line">parseInt</div></pre></td></tr></table></figure>
+
+<ul>
+<li>字符串拼接应使用数组保存字符串片段，使用时调用join方法。避免使用+或+=的方式拼接较长的字符串，每个字符串都会使用一个小的内存片段，过多的内存片段会影响性能。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="javadoc">/**推荐的拼接方式array的push、join*/</span></div><div class="line">var str=[],</div><div class="line">    list=[<span class="string">'测试A'</span>,<span class="string">'测试B'</span>];</div><div class="line"><span class="keyword">for</span> (var i=<span class="number">0</span> , len=list.length; i &lt; len; i++) {</div><div class="line">    str.push( <span class="string">'&lt;div&gt;'</span>+ list[i] + <span class="string">'&lt;/div&gt;'</span>);</div><div class="line">};</div><div class="line">console.log(str.join(<span class="string">''</span>)); <span class="comment">//&lt;div&gt;测试A&lt;/div&gt;&lt;div&gt;测试B&lt;/div&gt;</span></div><div class="line"><span class="javadoc">/** 不推荐的拼接方式+=*/</span></div><div class="line">var str = <span class="string">''</span>,</div><div class="line">    list=[<span class="string">'测试A'</span>,<span class="string">'测试B'</span>];</div><div class="line"><span class="keyword">for</span> (var i = <span class="number">0</span>, len = list.length; i&lt; len; i++) {</div><div class="line">    str+=<span class="string">'&lt;div&gt;'</span> + list[i] + <span class="string">'&lt;/div&gt;'</span>;</div><div class="line">};</div><div class="line">console.log(str); <span class="comment">//&lt;div&gt;测试A&lt;/div&gt;&lt;div&gt;测试B&lt;/div&gt;</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li>尽量避免使用存在兼容性及消耗资源的方法或属性。不要使用with，void，evil，eval_r，innerText。</li>
+<li>注重HTML分离, 减小reflow, 注重性能。</li>
+</ul>
+<h2 id="图片规范">图片规范</h2>
+<ul>
+<li>命名应用小写英文、数字、_组合，便于团队其他成员理解。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">header_btn.gif</div><div class="line"> header_btn2.gif</div></pre></td></tr></table></figure>
+
+<ul>
+<li>页面元素类图片均放入img文件夹，测试用图片放于<code>img/testimg</code>文件夹，psd源图放入img/psdimg文件夹。</li>
+<li>图片格式仅限于gif、png、jpg等。</li>
+<li>用png图片做图片时,要求图片格式为png-8格式,若png-8实在影响图片质量或其中有半透明效果,请为ie-6单独定义背景，并尽量避免使用半透明的png图片。</li>
+<li>背景图片请尽可能使用<code>sprite</code>（将一个页面涉及到的所有零星图片都包含到一张大图中去）技术, 减小http请求。</li>
+</ul>
+<h2 id="注释规范">注释规范</h2>
+<ul>
+<li>JAVASCRIPT、CSS文件注释需要标明作者、文件版本、创建/修改时间、重大版本修改记录、函数描述、文件版本、创建或者修改时间、功能、作者等信息。中间可添加如下信息：</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="variable">@file</span> 文件名</div><div class="line"><span class="variable">@addon</span> 把一个函数标记为另一个函数的扩张，另一个函数的定义不在源文件中</div><div class="line"><span class="variable">@argument</span> 用大括号中的自变量类型描述一个自变量</div><div class="line"><span class="variable">@author</span> 函数/类作者的姓名</div><div class="line"><span class="variable">@base</span> 如果类是继承得来，定义提供的类名称</div><div class="line"><span class="variable">@class</span> 用来给一个类提供描述，不能用于构造器的文档中</div><div class="line"><span class="variable">@constructor</span> 描述一个类的构造器</div><div class="line"><span class="variable">@deprecated</span> 表示函数/类已被忽略</div><div class="line"><span class="variable">@exception</span> 描述函数/类产生的一个错误</div><div class="line"><span class="variable">@exec</span> <span class="variable">@extends</span> 表示派生出当前类的另一个类</div><div class="line"><span class="variable">@fileoverview</span> 表示文档块将用于描述当前文件，这个标签应该放在其它任何标签之前</div><div class="line"><span class="variable">@final</span> 指出函数/类</div><div class="line"><span class="variable">@ignore</span> 让jsdoc忽视随后的代码</div><div class="line"><span class="variable">@link</span> 类似于<span class="variable">@link</span>标签，用于连接许多其它页面</div><div class="line"><span class="variable">@member</span> 定义随后的函数为提供的类名称的一个成员</div><div class="line"><span class="variable">@param</span> 用大括号中的参数类型描述一个参数</div><div class="line"><span class="variable">@private</span> 表示函数/类为私有，不应包含在生成的文档中</div><div class="line"><span class="variable">@requires</span> 表示需要另一个函数/类</div><div class="line"><span class="variable">@return</span> 描述一个函数的返回值</div><div class="line"><span class="variable">@see</span> 连接到另一个函数/类</div><div class="line"><span class="variable">@throws</span> 描述函数/类可能产生的错误</div><div class="line"><span class="variable">@type</span> 指定函数/成员的返回类型</div><div class="line"><span class="variable">@version</span> 函数/类的版本号</div></pre></td></tr></table></figure>
+
+<h2 id="开发和测试工具约定">开发和测试工具约定</h2>
+<ul>
+<li>编码格式化，三码统一。</li>
+<li>测试工具: 前期开发仅测试FireFox &amp; IE6 &amp; IE7 &amp; IE8 &amp; IE9 &amp; Opera &amp; Chrome &amp; Safari</li>
+</ul>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>from: <a href="">Github</a></p>
+<h2 id="通用规范">通用规范</h2>
+<ul>
+<li>使用空格代替TAB，windows和Linux的Tab占位不同。</li>
+<li>CSS样式属性和 JavaScript代码后边添加分号<code>;</code> ，方便断句，利于压缩。</li>
+<li>文件内容编码均统一为UTF-8。</li>
+<li>CSS、JAVASCRIPT中的非注释类中文字符须转换成unicode编码使用，以避免编码错误时乱码显示。</li>
+</ul>
+<h2 id="文件规范">文件规范</h2>
+<ul>
+<li>文件名用英文单词，多个单词用驼峰命名法。</li>
+<li>一些浏览器会将含有这些词的作为广告拦截，文件命名、ID、CLASS等所有命名避免以上词汇。<code>ad`、`ads`、`adv`、`banner`、`sponsor`、`gg`、`guangg`、`guanggao</code><br>]]>
+    
+    </summary>
+    
+      <category term="web" scheme="http://yoursite.com/tags/web/"/>
+    
+      <category term="前端" scheme="http://yoursite.com/categories/%E5%89%8D%E7%AB%AF/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[《增长黑客》读书笔记]]></title>
@@ -1501,59 +1772,6 @@
       <category term="JavaScript" scheme="http://yoursite.com/tags/JavaScript/"/>
     
       <category term="JavaScript复习笔记" scheme="http://yoursite.com/categories/JavaScript%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[杂读乱记（2014第一周2）]]></title>
-    <link href="http://yoursite.com/2014/12/02/%E6%9D%82%E8%AF%BB%E4%B9%B1%E8%AE%B0%EF%BC%882014%E7%AC%AC%E4%B8%80%E5%91%A82%EF%BC%89/"/>
-    <id>http://yoursite.com/2014/12/02/杂读乱记（2014第一周2）/</id>
-    <published>2014-12-02T15:03:01.000Z</published>
-    <updated>2014-12-02T15:06:58.000Z</updated>
-    <content type="html"><![CDATA[<p>本来想着精练的写一写，但是话唠的特质让我一下子又放开了话匣子，每一条都想要单开一文做以阐述。不过我还是希望自己能够尽量试着用更精炼的语言表达思路，这也能提高工作效率。</p>
-<h2 id="from_《开放的智力》_by_釆铜">from 《开放的智力》 by 釆铜</h2>
-<hr>
-<h3 id="1">1</h3>
-<blockquote>
-<p>伟大的哲学家、数学家和教育思想家怀特海（Alfred North Whitehead）在《教育的目的》一书中就直言道：「空泛无益的知识是微不足道的，实际上是有害的。知识的重要意义在于它的应用，在于人们对它的积极的掌握，即存在于智慧之中。人们习惯上认为，知识本身——而不是和智慧一起——会使知识的拥有者享有一种特殊的尊贵。我对这种知识却缺乏敬意。知识的价值完全取决于谁掌握知识以及他用知识做什么。」</p>
-</blockquote>
-<p>有句话记得很清，“知识不等于智慧”。一个人掌握了多少知识，不能决定这个人就能够处理好自己的生活，不能决定一个人是否有更高的辨别力。看看新闻里常常出现的上当受骗的人，其中不乏大学教授，明星，领导。并不能说他们所掌握的知识是空乏无益的，而是说，很多人对知识的过度崇拜造成了思想上和头脑上的退化，更愿意让自己的头脑成为他人思想的跑马场，更愿意将自己埋进故纸堆里，并认为这样的自己就显得更加高人一等。最后被小学文化的骗子欺骗也是再正常不过了。知识的价值，从本质上讲，只有在应用到自己的人生经历中，才可能获得所说的智慧。</p>
-<h3 id="2">2</h3>
-<blockquote>
-<p>这些话的背后，都是同一种思维模式，即「单因素模型」。所谓单因素模型，顾名思义，就是把一个复杂的事物或者现象归结到一个影响因素中，认为只要抓住这个因素，就能达至想要的成果。虽然可能很多人并不承认自己会这么简单地去思考问题，但是这种思维模式更多的时候，是以以上这些流行句子的方式深入到你的潜意识中，潜移默化地影响你的思维、决策和行动的。</p>
-</blockquote>
-<p>其实在所谓成功学的教育中，甚至是普罗大众的惯性思想中，受单因素模型影响是非常广泛的。正如我们看到某个人成功，常常会简单的给别人下一个定论。比如认为他就是因为出身好，他就是智商高，他就是太有钱，他就是长得帅。而其实一件结果，往往需要许多复杂的因共同作用，所以成功学上简单的复制成功的秘诀，其体系是脆弱的。<br>每个人，都是一个独立的个体，拥有着各不相同的特点，家庭，性格，朋友，社会，机遇，健康等等因素，都能影响着一个人的发展前景，所以不要简单地去模仿所谓成功人士，或者简单的相信，“我只要做了XXX，我就能XXX。”在成长的路上，你只能是一个人战斗，你必须有足够的<strong>自省力</strong>，认识自己，才能寻找出一条适合自己的道路，沿着这路一直走下去，你不一定能成功，但你一定是在成长。在触摸真实自我的过程中，你会时刻充满着遇见自己的欣喜，你会因为内在世界的强大而无惧任何风暴，这也是成长的回报。</p>
-<h3 id="3">3</h3>
-<blockquote>
-<p>心理学家早就发现，当你从任务 A 切换到任务 B 后，执行任务 B 的绩效要明显比非任务切换条件下执行 B 的绩效差，这个差异称为「切换代价（switching cost）」。切换代价的形成原因主要有两种，一是任务 A 留下的认知惯性，也就是我之前已经习惯了任务 A 的认知情境、反应方式，这个惯性会对完成任务 B 造成干扰，二是做 B 的时候需要对 B 进行认知重构，重新回忆起 B 的相关背景和信息，这个重构也需要时间，而且可能不完整。</p>
-</blockquote>
-<p>切换代价，在我现在的环境里，实在太常见，所以我才觉得看似每天事情不多，但是让我真正获得的有效学习时间，太稀少了。太多的打断次数，让核心学习时间缩减了许多。现在火热的番茄工作法，其本质也是为了防止工作被经常打断，提高核心时间。它专门设置了打断次数，完成蕃茄的数量，来考量每日的工作效果，激励人能够更专心的完成每一个工作阶段。所以依据这个基础，我希望能够在有限的条件下，能更好地合理配置自己的时间，提高更大的时间利用率。</p>
-<h3 id="4">4</h3>
-<blockquote>
-<p>在今天的互联网时代里，人们每天都在接触着过剩的信息，就像浸在一个大浴缸里洗「信息泡泡浴」。</p>
-</blockquote>
-<p>互联网所代表的信息爆炸时代下，每个人在信息的洪流里都显得渺小和脆弱，这也是为什么很多年龄大一些的人，拒绝网络，甚至执拗的进一步拒绝电脑，并将拒绝电脑写作或者是电脑办公，当做是一种更为自我的标签，甚至有些人以此为傲。对这样的事，我向来嗤之以鼻。读KK的《失控》之后，我也有了一些更多的看法。如果说，人类社会如今的发展，一定程度上和蜂群聚集有着相似之处，而通过聚集，整个生物层级有了一个明显的提高。那么如果人类属于生物层级的顶端，那么人类聚集而成的社会，就应该算是一个全新的层级。</p>
-<p>而这个层级，其显著特点就是拥有着<strong>巨量信息交换</strong>，而互联网，就像是这个巨量信息交换的显式平台，在这个平台之上，每个人都拥有着放眼全局的能力，也可以说是拥有着窥探这个更高层级生物的能力。如果你每天被这种巨量的信息洪流所淹没，这只能说，你不具备使用这个能力的能力（话说的有点绕）。互联网所带给个体的便利，可以说是前所未有的，它赋予了每一个个体延伸的能力。如果你能有有效的获取，过滤，筛选，吸收来自于互联网的信息，必然会对你有着无法比拟的正作用。</p>
-<p>当然，大多数人，面对互联网时，都是手足无措的。包括我自己，也常常深陷其中，比如在检索信息时候，往往视线的焦点会一再的被互联网带偏，比如在准备建立博客的时候，我的视线焦点从博客转移到theme,从theme转移到CSS，于是我又开始检索CSS的几个预编译器,CSS转移到字体设计，于是我开始研究字体设计的原理和发展趋势，字体设计转移到当代艺术，于是我开始研究波普艺术和复古艺术，从当代艺术转移到UI设计，于是又开始研究UI设计原则……转移来转移去，最后发现我花费了更多与核心目的无关的时间。不能说这样是错误的，但至少能说明，个人在面对巨量信息前，行为往往会变得不由自主，这就需要有足够的<strong>自控力</strong>，去合理使用手里的能力。</p>
-<h3 id="5">5</h3>
-<blockquote>
-<p>演讲的成功体现在观众们情感上的共鸣和理念上的认同，演讲不需要严谨性，不需要给出观点的证明过程。有些人可能有切身体会，他们在演讲结束一段日子之后，再回忆演讲的内容，通常只能清楚地记起演讲的第一句和最后一句。</p>
-</blockquote>
-<p>这在心理学上叫“选择性注意”，例子可参见罗永浩的演讲，往往人们听演讲到最后，说了多少东西忘记的差不多，但都记住了罗永浩那偏执和认真的性格，以及他最后的一句话：“我不是为了输赢，我就是认真。”明白了这个道理，我希望能在自己以后可能会遇到的演讲，甚至是讲话中，能够聪明的利用这个原理，学会讲话的艺术。你的语言，不一定有足够的严谨性，但是讲话必须要有足够的深入人心的感受，或是让听者能够有切身体会，也就是人们所说的<strong>感染力</strong>。这需要我能够多加练习，注意摒弃不需要的，强化核心，会有助于提高自己讲话的艺术。</p>
-<h3 id="6">6</h3>
-<blockquote>
-<p>人生本就是，由一串奇遇组成。一个人的成功，是许许多多因素的共振。这些因素或明或显，或可缜密筹划或是全然因缘际会，它们缠绕在一起，在他者围观的水面上，只浮出冰山一角。</p>
-</blockquote>
-<p>这句和前边所讲的批判成功学里提到的“单因素模型”之谬。再引一次，希望能提醒自己，少谈他人成功的经验，多省自身的行为。我所经历的路，是少有人所经历的路，成功与失败，不能用简单的二元对立思维去评判，只要在这条路上走下去，能让我不停地寻找新的兴奋点，刺激我不断去挖掘自己的能力，去追求给自己设定的未来，这也许已经是成功的了。</p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<p>本来想着精练的写一写，但是话唠的特质让我一下子又放开了话匣子，每一条都想要单开一文做以阐述。不过我还是希望自己能够尽量试着用更精炼的语言表达思路，这也能提高工作效率。</p>
-<h2 id="from_《开放的智力》_by_釆铜">from 《开放的智力》 by 釆铜</h]]>
-    </summary>
-    
-      <category term="weekly note" scheme="http://yoursite.com/tags/weekly-note/"/>
-    
-      <category term="读书笔记" scheme="http://yoursite.com/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
     
   </entry>
   
