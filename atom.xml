@@ -4,7 +4,7 @@
   <subtitle><![CDATA[把日子过成一个一个的明天]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-10-08T14:36:33.939Z</updated>
+  <updated>2015-10-08T14:46:07.960Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -19,13 +19,14 @@
     <link href="http://yoursite.com/2015/10/08/%E3%80%8AC%E9%99%B7%E9%98%B1%E4%B8%8E%E7%BC%BA%E9%99%B7%E3%80%8B%E7%AC%94%E8%AE%B0/"/>
     <id>http://yoursite.com/2015/10/08/《C陷阱与缺陷》笔记/</id>
     <published>2015-10-08T14:27:37.000Z</published>
-    <updated>2015-10-08T14:33:55.000Z</updated>
+    <updated>2015-10-08T14:45:50.000Z</updated>
     <content type="html"><![CDATA[<p>这本书超薄，但含金量很高，里边一些常见的陷阱也是面试的时留的坑，适合没事翻一翻，指不定什么时候还有意外惊喜。<br><a id="more"></a></p>
 <h2 id="词法陷阱">词法陷阱</h2>
 <p><strong>词法分析中的『贪心法』</strong>：<br>编译器将程序分解成符号的方法是,从左到右一个字符一个字符地读入,如果该字符可能组成一个符号,那么再读入下一个字符,判断已经读入的两个字符组成的字符串是否可能是一个符号的组成部分;如果可能,继续读入下一个字符,重复上述判断,直到读入的字符组成的字符串已不再可能组成一个有意义的符号。<br>比如：<code>y = x/*p</code>与<code>y = x / *p</code>一个将<code>/*</code> 理解为注释的开始，一个理解为指针。</p>
 <p><strong>双引号与单引号</strong>：<br>也就是字符与字符串的区别，在C语言里，单引号引起的一个字符实际上代表的是一个张数，与ASCII严格对应。而双引号引起的字符串，代表的是一个指向无名数组起始字符的指针，该数组被双引号之间的字符以及一个额外的二进制值为0的字符<code>\0</code> 初始化。</p>
 <h2 id="语法陷阱">语法陷阱</h2>
-<p><strong><code>（*(void(*)())0）()</code>所代表的含义</strong><br>实际上一层一层看即可，<code>void(*)()</code>是一个函数指针,该函数返回<code>void</code>型数据<br><em>`(void(</em>)())0<code>*就是将常数0转换为指向返回值为</code>void<code>的函数的指针</code>(<em>(void(</em>)())0)();<code>就是一个表达式,调用</code>0`地址的函数</p>
+<p><strong><code>（*(void(*)())0）()</code>所代表的含义</strong><br>实际上一层一层看即可，<code>void(*)()</code>是一个函数指针,该函数返回<code>void</code>型数据<br><em>`(void(</em>)())0<code>*就是将常数0转换为指向返回值为</code>void<code>的函数的指针
+而</code>(<em>(void(</em>)())0)();<code>就是一个表达式,调用</code>0`地址的函数</p>
 <p>而它的等价表达式为：</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">typedef void (<span class="keyword">*</span>funcptr)();</div><div class="line">(<span class="keyword">*</span>(funcptr)0)();</div></pre></td></tr></table></figure>
 
