@@ -116,7 +116,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/C-C/" style="font-size: 10.00px;">C/C++</a><a href="/tags/Diary/" style="font-size: 10.00px;">Diary</a><a href="/tags/Docker/" style="font-size: 10.00px;">Docker</a><a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a><a href="/tags/PM/" style="font-size: 10.00px;">PM</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 13.33px;">life</a><a href="/tags/web/" style="font-size: 10.00px;">web</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 10.00px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
+						<a href="/tags/C-C/" style="font-size: 10.00px;">C/C++</a><a href="/tags/Diary/" style="font-size: 10.00px;">Diary</a><a href="/tags/Docker/" style="font-size: 10.00px;">Docker</a><a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a><a href="/tags/Linux/" style="font-size: 10.00px;">Linux</a><a href="/tags/PM/" style="font-size: 10.00px;">PM</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 13.33px;">life</a><a href="/tags/web/" style="font-size: 10.00px;">web</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 10.00px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
 					</div>
 				</section>
 				
@@ -187,6 +187,97 @@
 	</div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-Docker学习笔记-一" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/09/25/Docker学习笔记-一/" class="article-date">
+  	<time datetime="2015-09-25T07:27:44.000Z" itemprop="datePublished">9月 25 2015</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/09/25/Docker学习笔记-一/">Docker学习笔记(一)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>来自：<a href="https://www.gitbook.com/book/yeasy/docker_practice/details" target="_blank" rel="external">Docker 从入门到实战 Gitbook</a></p>
+<h2 id="什么是Docker">什么是Docker</h2>
+<hr>
+<p>Docker 是一个开源的项目，于2013年诞生，基于Go语言实现，代码在<a href="https://github.com/docker/docker" target="_blank" rel="external">Github</a>上维护。</p>
+<p><strong>Docker 项目的目标是实现轻量级的操作系统虚拟化解决方案</strong>，Docker 的基础是Linux 容器等技术。</p>
+<p>在 LXC 的基础上 Docker 进行了进一步的封装，让用户不需要去关心容器的管理，使得操作更为简便。用户操作 Docker 的容器就像操作一个快速轻量级的虚拟机一样简单。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/30117-b2fb8aee9f40c436.png?imageMogr2/auto-orient/strip%7CimageView2/2" alt="Alt text"></p>
+<p>与传统虚拟机相比，Docker 容器是在操作系统层面实现了虚拟化，直接复用本地主机的操作系统，传统的方式仅在硬件层面上实现。</p>
+<h2 id="Docker优点">Docker优点</h2>
+<hr>
+<p>秒级实现，资源利用率高，除运行应用外，基本不消耗额外系统资源，使应用性能很高，开销更小。</p>
+<h3 id="更快的交付和部署">更快的交付和部署</h3>
+<p>开发者使用标准镜像构建一套开发容器，完成后，运维可以直接使用容器来部署代码。Docker可以快速创建，快速迭代，全程可见。</p>
+<h3 id="更高效的虚拟化">更高效的虚拟化</h3>
+<p>内核级的虚拟化，不需要额外的hypervisor支持。</p>
+<h3 id="更轻松的迁移和扩展">更轻松的迁移和扩展</h3>
+<p>可在任意平台运行，更好的实现迁移。</p>
+<h3 id="更简单的管理">更简单的管理</h3>
+<p>简单修改，以增量的方式分发和更新，实现自动化和高效管理。</p>
+<h2 id="基本概念">基本概念</h2>
+<hr>
+<h3 id="镜像（Image）">镜像（Image）</h3>
+<p>Docker镜像就是一个只读模板。<strong>例如：一个镜像可以包含一个完整的 ubuntu 操作系统环境，里面仅安装了 Apache 或用户需要的其它应用程序。</strong></p>
+<p>用户通过简单的机制创建或者更新现有的镜像。</p>
+<h3 id="容器（Container）">容器（Container）</h3>
+<p>Docker利用容器运行应用。容器是从镜像创建的运行实例。它可以被启动、开始、停止、删除。<strong>每个容器都是相互隔离的、保证安全的平台</strong>。</p>
+<h3 id="仓库（Repository）">仓库（Repository）</h3>
+<p>仓库是集中存放镜像文件的场所。概念与Git相似，注册服务器可以理解为Github这样的托管服务。所以Docker也有仓库和仓库注册服务器的概念。</p>
+<p>仓库分为公开仓库（Public）和私有仓库（Private）两种形式。最大的公开仓库是 <a href="https://hub.docker.com/" target="_blank" rel="external">Docker Hub</a>，存放了数量庞大的镜像供用户下载。 国内的公开仓库包括 <a href="http://dockerpool.com/" target="_blank" rel="external">Docker Pool</a> 等，可以提供大陆用户更稳定快速的访问。</p>
+<p>用户也可以自己创建一个私有仓库，通过<code>push</code>命令上传，通过<code>pull</code>命令下载。</p>
+<h2 id="安装">安装</h2>
+<hr>
+<p>官方网站上有各种环境下的 <a href="https://docs.docker.com/installation/#installation" target="_blank" rel="external">安装指南</a> ， 不再赘述。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/Docker/">Docker</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
   
     <article id="post-阶段读书总结" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -631,101 +722,6 @@
       
 	<div class="article-category tagcloud">
 	<a class="article-category-link" href="/categories/随笔/">随笔</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
-    <article id="post-如何科学午睡" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/01/04/如何科学午睡/" class="article-date">
-  	<time datetime="2015-01-04T15:08:38.000Z" itemprop="datePublished">1月 4 2015</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/01/04/如何科学午睡/">如何科学午睡</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>一直以来，对午睡这件事说不清它的对与错，网上的争论也比较多。一方人认为午睡是必须的且是最重要的养生手段，不午睡的身体伤害很大。另一部分人认为午睡不是必要的，而且可以尽可能的减少自己的午睡习惯。</p>
-<p>就我现在的习惯来说，午睡是必不可少的，而且时间还不短，如果中午十二点半睡觉，大约三点前起床，那么中午就睡了两个半小时，一直觉得这个时间有些太长了，每次醒过来，还得大约半个小时时间才能从午睡的状态中清醒过来。而如果不睡午觉的话，在下午四点左右的时候，整个人的状态就会特别的差。所以我一直在试图寻找一种办法，有效地减少午睡时间，而且又能调节好身体状况。<br>所以我今天试着研究一下这个午睡的前前后后，看有没有一个提高工作效率且注重身体的方法。</p>
-<p>首先考虑午睡的成因。</p>
-<h2 id="餐后犯困">餐后犯困</h2>
-<p>参考知乎这条问题。<a href="http://www.zhihu.com/question/27046074" target="_blank" rel="external">如何解决餐后犯困</a><br>知乎上对餐后犯困有几个不同阵营的解释，一个是餐后碱潮，一个是血液重分配，还有一个是胰岛素分泌，一个是食欲素减少，不过主要被承认的是后两个原因。<br><strong>餐后碱潮</strong></p>
-<blockquote>
-<p>其形成原理也确实是由于胃酸分泌，氢离子大量释放而使得相对应的HCO3-进入血液，使血液碱化。但是这种程度的碱化就能引起嗜睡了么？人体不会放任身体处于一个失衡的碱性状态，代偿机制会使得人体的呼吸变得更慢更浅，以储存更多的CO2来对抗新生成的HCO3-，这种轻度的CO2增加，对皮质下层的刺激加强，可间接的引起皮质兴奋 。也就是说，轻度代谢性碱潴留，是使人兴奋的，而不是我们这里讨论的昏昏欲睡。</p>
-</blockquote>
-<p><strong>血液分配</strong><br>这个在老一辈人中间传的比较多，意思就是我们在吃完饭后，血液涌进胃部帮助消化，这样供应大脑的血液就少了，所以才比较嗜睡。不过这一理论也不正确。</p>
-<blockquote>
-<p>人体对于缺血的应答机制最首选保全的就是“司令部”大脑，比如你在剧烈运动，血液大量进入骨骼肌的时候，供大脑使用的血供并没有减少。而仅仅只是为了消化食物就让大脑缺血运转，这是和大原则相悖的。而且最近也有实验证据显示，在用餐前后，颈动脉内的血液量是没有明显改变的。但是为了更好的消化食物，血液确实更多的进入了胃部，这些血供一部分来自骨骼肌施舍的血液，另一部分通过心脏的加班加点来实现。</p>
-</blockquote>
-<p><strong>副交感神经兴奋</strong>，<strong>胰岛素</strong>，<strong>食欲素</strong>，这三个是目前比较认同的原因，是说进餐之后，副交感神经兴奋，一直交感神经，而副交感神经主司修正恢复，储蓄能量等作用，所以会犯困。胰岛素是会让人进入轻度的低钾状态，感到疲劳，同时促进褪黑素产生，增加睡意。食欲素是因为吃饱后食欲素含量下降，人就会变得昏昏欲睡。</p>
-<p>三种原因可见，其实午睡最重要的原因在于午餐，人们发现餐后嗜睡的情况与餐前的饥饿程度，进餐量有关，但和饮食结构的关系并不大。相信这与胰岛素的峰值曲线有很大的关系。如果养成少食多餐的进食习惯，减少过量饮食对餐后嗜睡有很大的益处。</p>
-<h2 id="午睡有益？有害？">午睡有益？有害？</h2>
-<p>在这个专家打架的社会，基本上没有一个权威的说法，而且不同的人确实也有不同的生活方式。比如有很多国家的人基本上不午睡，比如美国，美国人基本上中午没有午睡时间，而中国现在大城市的民营企业，很多按照西方的企业模式，中午也基本上没有什么午睡的时间。而在中国，基本上都是有午睡的空余的，小时候比较活跃，中午完全没有睡意，很不喜欢午睡，父母总是会强制要求午睡，现在长大了，也习惯午睡，而且餐后确实很容易犯困，所以午睡习惯也就养成了。</p>
-<p>我综合了一下网上的信息，大致可以得出一个公共承认的结论：<strong>午睡是有益的，但是睡久了，就无益了</strong>。很明显，如果按照目前我的睡觉方式，基本上是错误的睡觉方式。</p>
-<p><a href="http://www.guokr.com/article/1619/" target="_blank" rel="external">午睡有益，睡觉了白睡</a>做了解释：</p>
-<blockquote>
-<p>美国加州大学伯克利分校（UC Berkeley）的一个睡眠研究小组近日解释了为什么午睡对于整日的工作有着很重要的意义。</p>
-<p>在这项研究中，研究小组发现，一个人无论白天黑夜，都在不断遗忘。白天，我们睁着眼的时间越长，我们的意识就越不清楚，就会开始遗忘当天发生的事情——就像电脑清理临时文件，以提高整体运行速度。黑夜，深度的“眼动睡眠”（REM）让脑部一些重要区域关闭，也会造成遗忘（遗忘当天新产生记忆的40%）——就像电脑在重启过程中强制清除内存。</p>
-<p>那人们什么时候用来记忆，或者说，什么时候把短时记忆从“临时文件夹”海马中“转存”到“硬盘”前额皮质里呢？答案是：睡眠。但与造成遗忘的“眼动睡眠”不同，记忆发生在它之前的非眼动睡眠（non-REM）。</p>
-<p>这样你是不是就明白多了？醒着的时候会遗忘，睡深了也会遗忘，而能用来保存记忆的，就只剩下浅浅的睡眠——午睡了。所以说，午睡的好处很多，一方面可以有效地把你的短时记忆转存为长期记忆，一方面帮助你“轻装上阵”，大大提高下午的工作效率。</p>
-<p>所以午睡不宜久，如果睡时间长了，进入深度睡眠，除了上面提到的“转存”问题外，如果一个人被从深度睡眠中吵醒，他就会感觉十分疲惫，昏昏欲睡……早上被闹钟叫醒不就是这个状态吗？</p>
-</blockquote>
-<p>所以，很明显目前自己的睡觉方式急需要修改。</p>
-<h2 id="如何午睡">如何午睡</h2>
-<p>午睡可以被分为5个级别，其中20-30分钟属于普通级别，这个时间段的休息，不仅可以解除疲劳、提高敏锐度和记忆力。因此，对大脑来说，睡眠是最好休息时间，短短的20分钟足以。</p>
-<p>人的睡眠可以分为浅睡眠和深睡眠，30分钟后的睡眠已经逐渐进入深度睡眠，大脑的各中枢神经的抑制过程加深，体内代谢过程逐渐减少，若在此时醒来，就会感到周身不舒服而更加困倦。这种困倦会持续半到一个小时才能消失。</p>
-<p>下面进入重点，如何午睡，目前给自己定了这么几个原则：</p>
-<ul>
-<li>午睡时间控制在30分钟以为，时间确定在饭后一小时进行，大约是一点至一点三十之间。</li>
-<li>起床后可以以喝咖啡的方式缓解困意，并且利用醒后的时间学习工作。</li>
-<li>千万不要让睡眠时间超过40分钟，这样转入深度睡眠，即使醒过来之后，很头疼和起床困难。</li>
-<li>睡眠时保持良好睡姿，不要将就。</li>
-<li>要贯彻这个原则，形成习惯。</li>
-</ul>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/life/">life</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/生活/">生活</a>
 	</div>
 
 

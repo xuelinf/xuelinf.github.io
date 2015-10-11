@@ -4,7 +4,7 @@
   <subtitle><![CDATA[把日子过成一个一个的明天]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-10-08T14:49:26.327Z</updated>
+  <updated>2015-10-11T08:30:00.194Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,69 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[阿里云上CentOS的图形访问]]></title>
+    <link href="http://yoursite.com/2015/10/11/%E9%98%BF%E9%87%8C%E4%BA%91%E4%B8%8ACentOS%E7%9A%84%E5%9B%BE%E5%BD%A2%E8%AE%BF%E9%97%AE/"/>
+    <id>http://yoursite.com/2015/10/11/阿里云上CentOS的图形访问/</id>
+    <published>2015-10-11T08:14:49.000Z</published>
+    <updated>2015-10-11T08:29:28.000Z</updated>
+    <content type="html"><![CDATA[<p>因为阿里云给学生白菜价格购买ECS，那我就买来玩玩，顺便用来学习Linux/UNIX。买回来之后，发现闲着也是闲着，就现在上边搭了个博客，用 WordPress。因为WordPress这个建站很厉害，但是以前在自己的电脑上，不想为了玩一下wordpress 配置一堆东西，把电脑搞乱了，所以一直用的 Hexo这个用node.js写的轻量博客系统，挂在Github上。<br><a id="more"></a><br>这个新的博客先放在二级域名上 new.xuelinf.cc ，不过阿里云上建站要备案，目前还在备案中（备案是一个坑坑的过程），想要访问还是用IP访问吧 ：）。目前想法是吧这个网站做成一个小小的圈子，放一些干货，文章之类的东西上去。<a href="115.28.190.231">地址在这里</a></p>
+<p>WordPress 现在这个系统真的是太大了，传说全球百分之二十多的网站都是使用WordPress搭建的，也就是每进入四个网站，就有一个是用WP做的，当然了，不同水平有不同的效果，有闲功夫我也会做几个WP的小插件或者主题玩玩。</p>
+<p>回到正题，搭完WordPress之后，无聊之余，我就想建立图形访问，像远程登陆一样登陆CentOS，这样有时候学习Linux的话，更直观一些了。在阿里云文档的帮助下，解决了问题。下面是步骤：</p>
+<hr>
+<p>首先查看一下自己的centos的版本。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">cat</span> /etc/redhat-release</div></pre></td></tr></table></figure>
+
+<p>检查版本之后，导入CentOS 6 的证书</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">#rpm</span> <span class="subst">--</span><span class="keyword">import</span> http:<span class="comment">//mirrors.163.com/centos/RPM-GPG-KEY-CentOS-6</span></div></pre></td></tr></table></figure>
+
+<p>为了让下载速度快一些，所以选用网易的源：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor">#cd /etc/yum.repos.d/</span></div><div class="line"><span class="preprocessor">#wget http://mirrors.163.com/.help/CentOS-Base-163.repo</span></div></pre></td></tr></table></figure>
+
+<p>所有mirrorlist前面加上#，把所有$releasever替换成6，保存</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="array">#sed </span>-i <span class="string">'/mirrorlist/d'</span> CentOS-Base-<span class="number">163.</span>repo</div><div class="line"><span class="array">#sed </span>-i <span class="string">'/\[addons\]/,/^$/d'</span> CentOS-Base-<span class="number">163.</span>repo</div><div class="line"><span class="array">#sed </span>-i <span class="string">'s/\$releasever/6/'</span> CentOS-Base-<span class="number">163.</span>repo</div><div class="line"><span class="array">#sed </span>-i <span class="string">'s/RPM-GPG-KEY-CentOS-5/RPM-GPG-KEY-CentOS-6/'</span> CentOS-Base-<span class="number">163.</span>repo</div></pre></td></tr></table></figure>
+
+<p>完成后，清理并重新生成yum缓存</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor">#yum clean metadata</span></div><div class="line"><span class="preprocessor">#yum makecache</span></div></pre></td></tr></table></figure>
+
+<p>因为想要远程图形访问，那么就首先要让CentOS有一个图形界面，下面就是安装 gnome 的图形界面了</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="array">#yum groupinstall </span>-y <span class="string">"X Window System"</span></div><div class="line"><span class="array">#yum groupinstall </span>-y <span class="string">"Desktop"</span></div><div class="line"><span class="array">#yum groupinstall </span>-y <span class="string">"Chinese Support"</span></div></pre></td></tr></table></figure>
+
+<p>系统有了图形界面之后，就是安装和配置VNCserver了<br>首先看一下你有没有已经安装了vncserver</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># rpm -<span class="keyword">qa</span> |<span class="keyword">grep</span> vnc</div></pre></td></tr></table></figure>
+
+<p>如果显示了<code>tigervnc-server-1.0.90-0.17.20110314svn4359.el6.x86_64</code>类似的一条，那么久已经安装过了，就不需要再安装了。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#yum <span class="operator"><span class="keyword">install</span> -y tigervnc-<span class="keyword">server</span></span></div></pre></td></tr></table></figure>
+
+<p>如果想设置为开机启动，那么可以<code>#chkconfig --level 345 vncserver on</code></p>
+<p>配置vnc密码</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#vncserver</span></div><div class="line">You will <span class="built_in">require</span> <span class="operator">a</span> password <span class="built_in">to</span> access your desktop.</div><div class="line">Password:</div><div class="line">Verify:</div></pre></td></tr></table></figure>
+
+<p>将桌面配置为使用gnome桌面，修改 /root/.vnc/xstartup文件，把最后的 twm &amp; 删掉 加上 gnome-session &amp;。<br>配置VNCserver 启动监听端口和环境参数<br>修改/etc/sysconfig/vncservers 文件添加以下内容</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="constant">VNCSERVERS</span>=<span class="string">"1:root"</span></div><div class="line"># 桌面号:用户    监听 <span class="number">590</span>* 端口</div><div class="line"><span class="constant">VNCSERVERARGS[1]</span>=<span class="string">"-geometry 1200x800"</span></div></pre></td></tr></table></figure>
+
+<p>配置完成后，就是需要允许我们的root用户访问图形界面了，同时生成一个新的machine-id</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor">#sed -i 's/.*!= root.*/#&/' /etc/pam.d/gdm </span></div><div class="line"><span class="preprocessor">#dbus-uuidgen &gt;/var/lib/dbus/machine-id</span></div></pre></td></tr></table></figure>
+
+<p>同时，一不做二不休，我把防火墙都关掉了。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor"># service iptables stop </span></div><div class="line"><span class="preprocessor"># chkconfig iptables off</span></div></pre></td></tr></table></figure>
+
+<p>然后在你的主机上下载<a href="http://www.realvnc.com/download/viewer/" target="_blank" rel="external">VNC Viewer</a>，这个软件支持我所能想到的所有设备了，连手机端也有。下载之后运行，host填入<code>address:1</code>，输入密码就可以远程访问了。</p>
+<p><img src="http://i2.wp.com/upload-images.jianshu.io/upload_images/30117-4a0ebd4f135228eb.png?w=690" alt="pc_vncview"></p>
+<p><img src="http://i0.wp.com/upload-images.jianshu.io/upload_images/30117-e3429711db2fc233.jpg?w=690" alt="ios_vncview"><br>当然，平时我也不能老开着这个VNCserver , 虽说阿里云上不开白不开。输入<code>vncserver -kill :2</code> 就行了。</p>
+<p>感谢<a href="http://help.aliyun.com/knowledge_detail.htm?knowledgeId=5974462" target="_blank" rel="external">阿里云的帮助</a></p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>因为阿里云给学生白菜价格购买ECS，那我就买来玩玩，顺便用来学习Linux/UNIX。买回来之后，发现闲着也是闲着，就现在上边搭了个博客，用 WordPress。因为WordPress这个建站很厉害，但是以前在自己的电脑上，不想为了玩一下wordpress 配置一堆东西，把电脑搞乱了，所以一直用的 Hexo这个用node.js写的轻量博客系统，挂在Github上。<br>]]>
+    
+    </summary>
+    
+      <category term="Linux" scheme="http://yoursite.com/tags/Linux/"/>
+    
+      <category term="Study" scheme="http://yoursite.com/categories/Study/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[《C陷阱与缺陷》笔记]]></title>
@@ -1725,68 +1788,6 @@
       <category term="正则表达式" scheme="http://yoursite.com/tags/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"/>
     
       <category term="Study" scheme="http://yoursite.com/categories/Study/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[杂读乱记（2014 第二周）]]></title>
-    <link href="http://yoursite.com/2014/12/06/%E6%9D%82%E8%AF%BB%E4%B9%B1%E8%AE%B0%EF%BC%882014-%E7%AC%AC%E4%BA%8C%E5%91%A8%EF%BC%89/"/>
-    <id>http://yoursite.com/2014/12/06/杂读乱记（2014-第二周）/</id>
-    <published>2014-12-06T14:58:42.000Z</published>
-    <updated>2014-12-06T15:00:02.000Z</updated>
-    <content type="html"><![CDATA[<h2 id="from_《乌合之众》">from 《乌合之众》</h2>
-<p>by 勒庞</p>
-<h3 id="1">1</h3>
-<blockquote>
-<p>一个民族所热衷的重大变革，对它来说往往有着致命的危险，无论这些变革在理论上说得多么的出色。只有当这种变革能够使得民族的气质在短时间里出现变化时，才能说明这种变革是有用的。</p>
-</blockquote>
-<p>韩寒在还喜欢在博客上讲讲话的时候，大约是二零一一年吧（专门跑到博客上去翻了翻，没想到转眼时间三年就过去了），吵的最火的是那三篇有关政治民主的讨论，其实韩寒说的都是大实话，也都是基本正确却少有人说的话，但是却被吵得沸沸扬扬。有兴趣的可以再去看看：<a href="http://blog.sina.com.cn/s/blog_4701280b0102dz84.html" target="_blank" rel="external">说民主</a>。</p>
-<p>有时候，当社会形态出现有违群体愿景的情况，或者社会制度不适应发展要求时，普罗大众此时往往寄希望于一场轰轰烈烈的社会变革，去强行的扭转社会状态，转向一个令人满意的方式。但不得不说，这样的变革往往是无谓的、徒劳的。正如勒庞所说的，只有变革能够使民族的气质发生变化，变革才是有用的。而中国的群体，上千的固有传统传承一直不曾中断改变，所以要想出现所谓的短时间的变化，基本上是天方夜谭。所以所谓的颜色革命也是基本上没有任何意义的。</p>
-<p>当然，如果话题回到民族素质上去，这讨论也就没有意义了，民族的素质提高，依靠的是强大的物质基础和政府意识形态上的主导，这是需要花费更长的时间才能完成的转变，现在所能寄希望的，也只是每个政策细节上的完善和调整。<br>这东西再聊下去，就是被禁的节奏了……</p>
-<h3 id="2">2</h3>
-<blockquote>
-<p>群体不善于推理，但是却总是急于采取行动。它们目前的组织往往会赋予它们巨大的力量。在我们亲眼目睹下所诞生的那些教条，也很快就会具有旧式教条的威力，也就是说，对于专横武断的力量来说是从来都不容讨论的。群众的神权很快就要取代国王的神权了。</p>
-</blockquote>
-<p>看文字很明显感觉到勒庞对群体的不信任，甚至将群体比喻成国王一样的神权。在勒庞眼里，群体的能力，和一个普通国王的能力，并没有本质的差别，甚至上，一个优秀的国王要比群体的好上许多。群体的力量强大，在于没有任何形式的其他力量可以阻止它，因为所有试图阻止群体意见的个体，往往都是凤毛麟角，没有任何力量可以逆潮流行动。</p>
-<h3 id="3">3</h3>
-<blockquote>
-<p>然而，如果我们站在事实的角度来看，世上的任何一个伟人，任何一个宗教和帝国的建立者，任何信仰的使徒和杰出政治家，甚至于任何一伙人里的小头目，他们都是不自觉的心理学家——他们对群体的性格都有着出自本能的但却常常非常可靠的了解。正是基于这种了解，他们才能够轻而易举地建立起自己的领导地位。</p>
-</blockquote>
-<p>好的领导者，必然是一个好的心理学家，其最重要的能力是能够把握如何引导甚至是煽动群体的情绪。往前追溯，前至拿破仑，法西斯，后至斯大林，毛泽东。在演说家们的眼中，对于他们试图说服的群体来说，寥寥几句具有号召力的话远远比无数滔滔不绝的长篇论证更有用，尽管这些论证是认真思考的产物。</p>
-<h3 id="4">4</h3>
-<blockquote>
-<p>在群体中，个人很容易产生这样的念头：群体是个无名氏，因此也不必承担任何责任。这样一来，责任感对个人的约束就彻底消失了。</p>
-</blockquote>
-<p>这也就是所谓的羊群效应，在中国叫法不责众，由于群体的存在，弱化了个人的符号特征，个人成为了集体的一种表象形式，所以个人在行动上完全失去了道德律的作用，因为他的一切行为都可以以群体的利益为借口，而无需承担任何责任。这在西方最明显的例子就是法国大革命，法国大革命在中国地教科书上被各种称赞，说这是一场人民胜利，但是真的去翻翻史料就知道了，法国大革命的整个过程，伴随着血腥和野蛮，人性在成为群体的瞬间消失殆尽，勒庞就讲述了一段有关巴士底狱狱长被杀的经历，有兴趣的可以去搜索一下，所谓正义之名的群体，却拥有着典型的犯罪群体的特征。</p>
-<p>在中国最近的例子，当然就是文化大革命，那场轰轰烈烈带着毁灭特质的闹剧，在十年的时间里，荒谬和暴力，愚昧和血腥并存，个体在这一瞬间变得狂热。其原因，正好在下边这一条引文里。</p>
-<h3 id="5">5</h3>
-<blockquote>
-<p>任何一种感情和行动在群体中都具有一定的传染性，其程度之大，足以使个人在为集体利益牺牲自己的个人利益时而显得毫不犹豫。如果不是因为属于成为群体中的一员，他肯定很少会具备这样的能力，这种倾向与他的天性极为对立。<br>大体上，作为心理群体中的个人也处在类似的被催眠的状态之中。他就像那些受到催眠的人一样，不再能够意识到自己的所作所为。在他的身上，一些能力遭到了破坏，同时另一些能力却有可能得到了极大的强化。如果在这时候，恰巧出现某种暗示对其进行影响，那么他就会因为难以抗拒的冲动而采取某种行动。</p>
-</blockquote>
-<p>分析文化大革命中的群体，就正好符合里勒庞所说的被催眠的状态。人们仿佛一瞬间失去了个体的意义，而不再意识到自己的所作所为，他们甚至为了这所谓集体的利益，牺牲个人利益。在今天看来荒谬愚昧的心理状态，在那个年代却成了群体性心理。这种暴虐的群体特质，甚至比西方的法国大革命更加令人发指，因为这种暴力性的目标，往往针对这自己身边的人，亲朋好友一瞬间变得完全对立。<br>所以当代的伤痕文学在反思那段历史时，都带着难以名状的悲伤和不解，十年里，就好像经历了一场噩梦，或者是像勒庞所说的，一种奇特的被催眠的状态。但是，目前对于这十年的反思仍然有些肤浅，或者是经历过的人不愿提起，没经历过的人无法体会的原因吧。</p>
-<h3 id="6">6</h3>
-<blockquote>
-<p>时间是对社会问题最具影响力的因素之一，这在它对生物学问题上的表现如出一辙。它是唯一伟大的毁灭者，也是唯一真正的创造者。</p>
-</blockquote>
-<p>单纯喜欢这句话。</p>
-<h3 id="7">7</h3>
-<blockquote>
-<p>上个世纪的哲学家们曾一度满怀热情地投身于各种对政治、社会幻想和宗教的破坏，从来不曾考虑过在这种幻想中我们的祖辈已经生活了许多世纪。这些幻想被他们一一毁灭了，随之枯竭的也就是人类希望和顺从的源泉。在幻想遭到扼杀之后，他们所面对着的自然力量是盲目的、无声无息的，这种力量对软弱和慈悲心肠一概无动于衷。不管哲学发展取得了多大进步，它至今为止仍没有能够给群众提供任何一个能让他们着迷的理想。然而对群众来说，他们必须拥有自己的幻想，无论拥有这一幻想需要他们付出多大的代价。</p>
-</blockquote>
-<p>前两天刚看了一本书叫《饥饿的信仰》，正是讲的当代中国信仰缺失的状态。而回溯西方哲学史，哲学家们其实也是一直陷入这种痛苦的思考中，一度为了破除所谓荒谬的信仰，却造成了信仰的崩溃最后会引发全人类的信仰危机，尼采说的：“上帝死了！”正是对所谓信仰崩塌的描述。对于普罗大众来说，信仰往往是形成人类生存的软基础，从上古人类依靠信仰建立部落，发展国家，形成社会，信仰人类赖以生存的精神食粮。</p>
-<p>但是这信仰在聪明人看来毫无意义，荒诞不经。于是哲学家们试图去告诉世人这信仰的荒谬性，正如叔本华的悲观主义所说的，人类的存在毫无意义。像勒庞所说的，由于这种社会幻想和信仰的破坏，随之枯竭的是人类希望和顺从的源泉，变得更加盲目和沉默，这对人类来说，是灾难性的。虽然在随后哲学家们试图去重塑所谓意义，都收效不大，比如尼采希望通过酒神，或者是超人意志，去试图给生命以意义，结局可想而知。</p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<h2 id="from_《乌合之众》">from 《乌合之众》</h2>
-<p>by 勒庞</p>
-<h3 id="1">1</h3>
-<blockquote>
-<p>一个民族所热衷的重大变革，对它来说往往有着致命的危险，无论这些变革在理论上说得多么的出色。只有当这种变革能够使]]>
-    </summary>
-    
-      <category term="weekly note" scheme="http://yoursite.com/tags/weekly-note/"/>
-    
-      <category term="读书笔记" scheme="http://yoursite.com/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
     
   </entry>
   
