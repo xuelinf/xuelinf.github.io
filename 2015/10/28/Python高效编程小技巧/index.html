@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Python高效编程小技巧 | 临风|刀背藏身</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Python 高效编程小技巧
+Python 一直被我拿来写算法题，小程序，因为他使用起来太方便了，各种niubi闪闪的技能点也在写算法的过程中逐渐被挖掘到，感谢万能的谷哥度娘SOF以及各大博客网站，在这里整理一二。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python高效编程小技巧">
+<meta property="og:url" content="http://yoursite.com/2015/10/28/Python高效编程小技巧/">
+<meta property="og:site_name" content="临风|刀背藏身">
+<meta property="og:description" content="Python 高效编程小技巧
+Python 一直被我拿来写算法题，小程序，因为他使用起来太方便了，各种niubi闪闪的技能点也在写算法的过程中逐渐被挖掘到，感谢万能的谷哥度娘SOF以及各大博客网站，在这里整理一二。">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python高效编程小技巧">
+<meta name="twitter:description" content="Python 高效编程小技巧
+Python 一直被我拿来写算法题，小程序，因为他使用起来太方便了，各种niubi闪闪的技能点也在写算法的过程中逐渐被挖掘到，感谢万能的谷哥度娘SOF以及各大博客网站，在这里整理一二。">
+
+  
+    <link rel="alternative" href="/atom.xml" title="临风|刀背藏身" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="http://7s1s1q.com1.z0.glb.clouddn.com/love.png" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">临风</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">代码是一棱刀背，幸好，有此藏身。</p>
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						<li>友情链接</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="/github.com/xuelinf" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/1221903300" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="/#" title="rss">rss</a>
+					        
+								<a class="zhihu" target="_blank" href="/zhihu.com/people/xuelinf" title="zhihu">zhihu</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/C-C/" style="font-size: 10.00px;">C/C++</a><a href="/tags/Diary/" style="font-size: 10.00px;">Diary</a><a href="/tags/Docker/" style="font-size: 10.00px;">Docker</a><a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a><a href="/tags/Linux/" style="font-size: 10.00px;">Linux</a><a href="/tags/PM/" style="font-size: 10.00px;">PM</a><a href="/tags/Python/" style="font-size: 10.00px;">Python</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 13.33px;">life</a><a href="/tags/web/" style="font-size: 10.00px;">web</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 10.00px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">待添加</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">请赐予我意志力</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">临风</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img lazy-src="http://7s1s1q.com1.z0.glb.clouddn.com/love.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author">临风</h1>
+			</hgroup>
+			
+			<p class="header-subtitle">代码是一棱刀背，幸好，有此藏身。</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="/github.com/xuelinf" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/1221903300" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="/#" title="rss">rss</a>
+			        
+						<a class="zhihu" target="_blank" href="/zhihu.com/people/xuelinf" title="zhihu">zhihu</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <div class="body-wrap"><article id="post-Python高效编程小技巧" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/10/28/Python高效编程小技巧/" class="article-date">
+  	<time datetime="2015-10-28T13:34:59.000Z" itemprop="datePublished">10月 28 2015</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Python高效编程小技巧
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+	</div>
+
+        
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/Study/">Study</a>
+	</div>
+
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Python_高效编程小技巧">Python 高效编程小技巧</h1>
+<p>Python 一直被我拿来写算法题，小程序，因为他使用起来太方便了，各种niubi闪闪的技能点也在写算法的过程中逐渐被挖掘到，感谢万能的谷哥度娘SOF以及各大博客网站，在这里整理一二。<br><a id="more"></a><br><strong>几句废话：</strong></p>
+<blockquote>
+<p>因为我是懒癌晚期，最不喜欢在文章里发图片，因为Mweb写作或者是马克飞象写作，可以直接拖图进来，但是上传博客的话，就需要考虑是使用服务器上的媒体库，还是放七牛，放七牛上还得用它的命令行工具，或者是Web端操作，想想都好麻烦。所以，本地一直存放着几篇写完的文章楞是没有上传（一篇探索红黑树，一篇是设计模式C++版半完全指南，一篇是Linux的小文章），就是因为往里边塞了太多图片的原因。所以以后写文，尽量控制图片 &lt;= 3。</p>
+</blockquote>
+<p>下面进入密集式正题，过于炫技的部分被我去掉了，因为我看过之后只是碎了膝盖，然而并不常用。因为自己很少做整理，现在知道整理的强大之处了，所以以后也会注意相关知识的整理。以下方法的适用场景我也就不用多说了，因为都是最最常见的场景：</p>
+<h2 id="1-_拆箱（这个方法比较常见，非常高效）">1. 拆箱（这个方法比较常见，非常高效）</h2>
+<p>变量声明利用拆箱这种方式，非常高效，这也算是Python 里最常用的技巧了，也是我最开始使用 Python 时感觉非常惊奇的功能。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a, b, c = <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a, b, c</div><div class="line">(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a, b, c = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a, b, c</div><div class="line">(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a, b, c = (<span class="number">2</span> * i + <span class="number">1</span> <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>))</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a, b, c</div><div class="line">(<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>)</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a, (b, c), d = [<span class="number">1</span>, (<span class="number">2</span>, <span class="number">3</span>), <span class="number">4</span>]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a, b, c, d</div><div class="line"><span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span></div></pre></td></tr></table></figure>
+
+<p>拆箱也可用于变量交换</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a, b = <span class="number">1</span>, <span class="number">2</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a, b = b, a</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a, b</div><div class="line">(<span class="number">2</span>,<span class="number">1</span>)</div></pre></td></tr></table></figure>
+
+<h2 id="2-_指定步长的切割">2. 指定步长的切割</h2>
+<p>刚开始接触Python 的时候，被Python 深拷贝的方式逗乐了，写Python 你可以利用想象力写代码。深拷贝利用的就是这个指定步长的切割。</p>
+<figure class="highlight Python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a[::<span class="number">2</span>]</div><div class="line">[<span class="number">0</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a[<span class="number">2</span>:<span class="number">8</span>:<span class="number">2</span>]</div><div class="line">[<span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>]</div><div class="line"><span class="comment"># 下边这个实现深拷贝</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span><span class="keyword">print</span> a[::<span class="number">1</span>]</div><div class="line">[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</div><div class="line"><span class="comment"># 逆序拷贝</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span><span class="keyword">print</span> a[::-<span class="number">1</span>]</div><div class="line">[<span class="number">10</span>, <span class="number">9</span>, <span class="number">8</span>, <span class="number">7</span>, <span class="number">6</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">0</span>]</div><div class="line"><span class="comment"># 你还可以给切割的部分赋值，也可以借此插入数组</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a[<span class="number">2</span>:<span class="number">3</span>] = [<span class="number">0</span>, <span class="number">0</span>]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">4</span>, <span class="number">5</span>]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a[<span class="number">1</span>:<span class="number">1</span>] = [<span class="number">8</span>, <span class="number">9</span>]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a</div><div class="line">[<span class="number">1</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">4</span>, <span class="number">5</span>]</div><div class="line"><span class="comment"># 还有命名列表切割方式</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>last_three = slice(-<span class="number">3</span>, <span class="keyword">None</span>)</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>last_three</div><div class="line">slice(-<span class="number">3</span>, <span class="keyword">None</span>, <span class="keyword">None</span>)</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a[last_three]</div><div class="line">[<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]</div></pre></td></tr></table></figure>
+
+<h2 id="3-_压缩器zip">3. 压缩器zip</h2>
+<p>zip 这个也是靠想象力实现各种各样的功能。</p>
+<ol>
+<li>列表 or 迭代器的压缩与解压缩</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>b = [<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>z = zip(a, b)</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>z</div><div class="line">[(<span class="number">1</span>, <span class="string">'a'</span>), (<span class="number">2</span>, <span class="string">'b'</span>), (<span class="number">3</span>, <span class="string">'c'</span>)]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>zip(*z)</div><div class="line">[(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>), (<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>)]</div></pre></td></tr></table></figure>
+
+<ol>
+<li>列表相邻元素压缩器</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>zip(*([iter(a)] * <span class="number">2</span>))</div><div class="line">[(<span class="number">1</span>, <span class="number">2</span>), (<span class="number">3</span>, <span class="number">4</span>), (<span class="number">5</span>, <span class="number">6</span>)]</div><div class="line"></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>group_adjacent = <span class="keyword">lambda</span> a, k: zip(*([iter(a)] * k))</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>group_adjacent(a, <span class="number">3</span>)</div><div class="line">[(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>), (<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>)]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>group_adjacent(a, <span class="number">2</span>)</div><div class="line">[(<span class="number">1</span>, <span class="number">2</span>), (<span class="number">3</span>, <span class="number">4</span>), (<span class="number">5</span>, <span class="number">6</span>)]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>group_adjacent(a, <span class="number">1</span>)</div><div class="line">[(<span class="number">1</span>,), (<span class="number">2</span>,), (<span class="number">3</span>,), (<span class="number">4</span>,), (<span class="number">5</span>,), (<span class="number">6</span>,)]</div><div class="line"></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>zip(a[::<span class="number">2</span>], a[<span class="number">1</span>::<span class="number">2</span>])</div><div class="line">[(<span class="number">1</span>, <span class="number">2</span>), (<span class="number">3</span>, <span class="number">4</span>), (<span class="number">5</span>, <span class="number">6</span>)]</div><div class="line"></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>zip(a[::<span class="number">3</span>], a[<span class="number">1</span>::<span class="number">3</span>], a[<span class="number">2</span>::<span class="number">3</span>])</div><div class="line">[(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>), (<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>)]</div><div class="line"></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>group_adjacent = <span class="keyword">lambda</span> a, k: zip(*(a[i::k] <span class="keyword">for</span> i <span class="keyword">in</span> range(k)))</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>group_adjacent(a, <span class="number">3</span>)</div><div class="line">[(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>), (<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>)]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>group_adjacent(a, <span class="number">2</span>)</div><div class="line">[(<span class="number">1</span>, <span class="number">2</span>), (<span class="number">3</span>, <span class="number">4</span>), (<span class="number">5</span>, <span class="number">6</span>)]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>group_adjacent(a, <span class="number">1</span>)</div><div class="line">[(<span class="number">1</span>,), (<span class="number">2</span>,), (<span class="number">3</span>,), (<span class="number">4</span>,), (<span class="number">5</span>,), (<span class="number">6</span>,)]</div></pre></td></tr></table></figure>
+
+
+<ol>
+<li>用压缩器翻转字典</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="prompt">&gt;&gt;&gt; </span>m = {<span class="string">'a'</span>: <span class="number">1</span>, <span class="string">'b'</span>: <span class="number">2</span>, <span class="string">'c'</span>: <span class="number">3</span>, <span class="string">'d'</span>: <span class="number">4</span>}</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>m.items()</div><div class="line">[(<span class="string">'a'</span>, <span class="number">1</span>), (<span class="string">'c'</span>, <span class="number">3</span>), (<span class="string">'b'</span>, <span class="number">2</span>), (<span class="string">'d'</span>, <span class="number">4</span>)]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>zip(m.values(), m.keys())</div><div class="line">[(<span class="number">1</span>, <span class="string">'a'</span>), (<span class="number">3</span>, <span class="string">'c'</span>), (<span class="number">2</span>, <span class="string">'b'</span>), (<span class="number">4</span>, <span class="string">'d'</span>)]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>mi = dict(zip(m.values(), m.keys()))</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>mi</div><div class="line">{<span class="number">1</span>: <span class="string">'a'</span>, <span class="number">2</span>: <span class="string">'b'</span>, <span class="number">3</span>: <span class="string">'c'</span>, <span class="number">4</span>: <span class="string">'d'</span>}</div></pre></td></tr></table></figure>
+
+<h2 id="4-_列表展开">4. 列表展开</h2>
+<p>列表展开的方式五花八门，动用大脑可以创造各种各样的方法，最便于理解的是以下两种：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="prompt">&gt;&gt;&gt; </span>a = [[<span class="number">1</span>, <span class="number">2</span>], [<span class="number">3</span>, <span class="number">4</span>], [<span class="number">5</span>, <span class="number">6</span>]]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>sum(a, [])</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>[x <span class="keyword">for</span> l <span class="keyword">in</span> a <span class="keyword">for</span> x <span class="keyword">in</span> l]</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</div></pre></td></tr></table></figure>
+
+<h2 id="5-_生成器表达式">5. 生成器表达式</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="prompt">&gt;&gt;&gt; </span>g = (x ** <span class="number">2</span> <span class="keyword">for</span> x <span class="keyword">in</span> xrange(<span class="number">10</span>))</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>next(g)</div><div class="line"><span class="number">0</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>next(g)</div><div class="line"><span class="number">1</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>next(g)</div><div class="line"><span class="number">4</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>sum(x ** <span class="number">3</span> <span class="keyword">for</span> x <span class="keyword">in</span> xrange(<span class="number">10</span>))</div><div class="line"><span class="number">2025</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>sum(x ** <span class="number">3</span> <span class="keyword">for</span> x <span class="keyword">in</span> xrange(<span class="number">10</span>) <span class="keyword">if</span> x % <span class="number">3</span> == <span class="number">1</span>)</div><div class="line"><span class="number">408</span></div></pre></td></tr></table></figure>
+
+<h2 id="6-_字典推导和集合推导">6. 字典推导和集合推导</h2>
+<p>一上来我打成了推倒是什么心理，相信在平时推导过列表，他还有更多的应用方式。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 这个是最常见的推导</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>list1 = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>list2 = [x + <span class="number">1</span> <span class="keyword">for</span> x <span class="keyword">in</span> list1]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>list2</div><div class="line">[<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</div><div class="line"><span class="comment"># 我们可以用语法来创建集合和字典表，开开脑洞</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>some_list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">2</span>, <span class="number">5</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">8</span>]</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>even_set = { x <span class="keyword">for</span> x <span class="keyword">in</span> some_list <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span> }</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>even_set</div><div class="line">set([<span class="number">8</span>, <span class="number">2</span>, <span class="number">4</span>])</div><div class="line"><span class="comment"># 其实，我们有更简单的方式创建一个集合：</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>setlist = {<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>}</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>setlist</div><div class="line">set([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</div><div class="line"><span class="comment"># 创建字典表</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>d = { x: x % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>) }</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>d</div><div class="line">{<span class="number">1</span>: <span class="keyword">False</span>, <span class="number">2</span>: <span class="keyword">True</span>, <span class="number">3</span>: <span class="keyword">False</span>, <span class="number">4</span>: <span class="keyword">True</span>, <span class="number">5</span>: <span class="keyword">False</span>, <span class="number">6</span>: <span class="keyword">True</span>, <span class="number">7</span>: <span class="keyword">False</span>, <span class="number">8</span>: <span class="keyword">True</span>, <span class="number">9</span>: <span class="keyword">False</span>, <span class="number">10</span>: <span class="keyword">True</span>}</div><div class="line"><span class="comment"># 利用这个脑洞，你还可以用字典推导翻转字典</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>m = {<span class="string">'a'</span>: <span class="number">1</span>, <span class="string">'b'</span>: <span class="number">2</span>, <span class="string">'c'</span>: <span class="number">3</span>, <span class="string">'d'</span>: <span class="number">4</span>}</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>m</div><div class="line">{<span class="string">'d'</span>: <span class="number">4</span>, <span class="string">'a'</span>: <span class="number">1</span>, <span class="string">'b'</span>: <span class="number">2</span>, <span class="string">'c'</span>: <span class="number">3</span>}</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>{v: k <span class="keyword">for</span> k, v <span class="keyword">in</span> m.items()}</div><div class="line">{<span class="number">1</span>: <span class="string">'a'</span>, <span class="number">2</span>: <span class="string">'b'</span>, <span class="number">3</span>: <span class="string">'c'</span>, <span class="number">4</span>: <span class="string">'d'</span>}</div></pre></td></tr></table></figure>
+
+<p>另外，刚刚提到了，直接省略set 方式的创建集合，它还有一些在这基础之上更犀利的应用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="prompt">&gt;&gt;&gt; </span>A = {<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">3</span>}</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>A</div><div class="line">set([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>B = {<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>}</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>B</div><div class="line">set([<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>])</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>A | B</div><div class="line">set([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>])</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>A & B</div><div class="line">set([<span class="number">3</span>])</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>A - B</div><div class="line">set([<span class="number">1</span>, <span class="number">2</span>])</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>B - A</div><div class="line">set([<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>])</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>A ^ B</div><div class="line">set([<span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>])</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>(A ^ B) == ((A - B) | (B - A))</div><div class="line"><span class="keyword">True</span></div></pre></td></tr></table></figure>
+
+<h2 id="7-_Counter_计数器">7. Counter 计数器</h2>
+<p>对于我们来说，数一个东西，是非常常用的，然而这件事又不是程序员喜欢做的事情，我们用 counter 来完成这个操作。他在我们python 内置的库里。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="prompt">&gt;&gt;&gt; </span><span class="keyword">from</span> collections <span class="keyword">import</span> Counter</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>c = Counter(<span class="string">'hello world'</span>)</div><div class="line"></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>c</div><div class="line">Counter({<span class="string">'l'</span>: <span class="number">3</span>, <span class="string">'o'</span>: <span class="number">2</span>, <span class="string">' '</span>: <span class="number">1</span>, <span class="string">'e'</span>: <span class="number">1</span>, <span class="string">'d'</span>: <span class="number">1</span>, <span class="string">'h'</span>: <span class="number">1</span>, <span class="string">'r'</span>: <span class="number">1</span>, <span class="string">'w'</span>: <span class="number">1</span>})</div><div class="line"></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>c.most_common(<span class="number">2</span>)</div><div class="line">[(<span class="string">'l'</span>, <span class="number">3</span>), (<span class="string">'o'</span>, <span class="number">2</span>)]</div></pre></td></tr></table></figure>
+
+<h2 id="8-_双端队列">8. 双端队列</h2>
+<p>我们都知道，队列和栈实际上就是对在双端队列的基础上实现的，python可以直接操作双端队列。当然也在内置的库 collections 里。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="prompt">&gt;&gt;&gt; </span>Q = collections.deque()</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>Q.append(<span class="number">1</span>)</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>Q.appendleft(<span class="number">2</span>)</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>Q.extend([<span class="number">3</span>, <span class="number">4</span>])</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>Q.extendleft([<span class="number">5</span>, <span class="number">6</span>])</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>Q</div><div class="line">deque([<span class="number">6</span>, <span class="number">5</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">4</span>])</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>Q.pop()</div><div class="line"><span class="number">4</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>Q.popleft()</div><div class="line"><span class="number">6</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>Q</div><div class="line">deque([<span class="number">5</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>])</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>Q.rotate(<span class="number">3</span>)</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>Q</div><div class="line">deque([<span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>])</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>Q.rotate(-<span class="number">3</span>)</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>Q</div><div class="line">deque([<span class="number">5</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>])</div></pre></td></tr></table></figure>
+
+<p>同时，我们还可以在括号里添加 maxlen 来限制双端队列的最大长度。<code>last_three = collections.deque(maxlen=3)</code></p>
+<h2 id="9-_默认词典">9. 默认词典</h2>
+<p>一般情况下，空词典它就是空的，但是我们利用 collections 里的函数，可以实现默认的字典。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="prompt">&gt;&gt;&gt; </span>m = dict()</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>m[<span class="string">'a'</span>]</div><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"&lt;stdin&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</div><div class="line">KeyError: <span class="string">'a'</span></div><div class="line"><span class="comment"># 你可以在括号里添加各种条件</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>m = collections.defaultdict(int)</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>m[<span class="string">'a'</span>]</div><div class="line"><span class="number">0</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>m[<span class="string">'b'</span>]</div><div class="line"><span class="number">0</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>m = collections.defaultdict(str)</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>m[<span class="string">'a'</span>]</div><div class="line"><span class="string">''</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>m[<span class="string">'b'</span>] += <span class="string">'a'</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>m[<span class="string">'b'</span>]</div><div class="line"><span class="string">'a'</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>m = collections.defaultdict(<span class="keyword">lambda</span>: <span class="string">'[default value]'</span>)</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>m[<span class="string">'a'</span>]</div><div class="line"><span class="string">'[default value]'</span></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>m[<span class="string">'b'</span>]</div><div class="line"><span class="string">'[default value]'</span></div></pre></td></tr></table></figure>
+
+<h2 id="10-_利用json库打印出漂亮的JSON串">10. 利用json库打印出漂亮的JSON串</h2>
+<p>这个方法就是为了让让人面对眼花缭乱的JSON串，能够打印出一个漂亮的可读的格式，对于在控制台交互编程，或者是做日志是，还是非常有用的。另外，也可以注意一下pprint 这个模块。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> json</div><div class="line">data = {<span class="string">"status"</span>: <span class="string">"OK"</span>, <span class="string">"count"</span>: <span class="number">2</span>, <span class="string">"results"</span>: [{<span class="string">"age"</span>: <span class="number">27</span>, <span class="string">"name"</span>: <span class="string">"Oz"</span>, <span class="string">"lactose_intolerant"</span>: true}, {<span class="string">"age"</span>: <span class="number">29</span>, <span class="string">"name"</span>: <span class="string">"Joe"</span>, <span class="string">"lactose_intolerant"</span>: false}]}</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>print(json.dumps(data))  <span class="comment"># No indention</span></div><div class="line">{<span class="string">"status"</span>: <span class="string">"OK"</span>, <span class="string">"count"</span>: <span class="number">2</span>, <span class="string">"results"</span>: [{<span class="string">"age"</span>: <span class="number">27</span>, <span class="string">"name"</span>: <span class="string">"Oz"</span>, <span class="string">"lactose_intolerant"</span>: true}, {<span class="string">"age"</span>: <span class="number">29</span>, <span class="string">"name"</span>: <span class="string">"Joe"</span>, <span class="string">"lactose_intolerant"</span>: false}]}</div><div class="line"></div><div class="line"><span class="prompt">&gt;&gt;&gt; </span>print(json.dumps(data, indent=<span class="number">2</span>)) {</div><div class="line">  <span class="string">"status"</span>: <span class="string">"OK"</span>,</div><div class="line">  <span class="string">"count"</span>: <span class="number">2</span>,</div><div class="line">  <span class="string">"results"</span>: [</div><div class="line"></div><div class="line">    {</div><div class="line">      <span class="string">"age"</span>: <span class="number">27</span>,</div><div class="line">      <span class="string">"name"</span>: <span class="string">"Oz"</span>,</div><div class="line"></div><div class="line">      <span class="string">"lactose_intolerant"</span>: true</div><div class="line">    },</div><div class="line">    {</div><div class="line">      <span class="string">"age"</span>: <span class="number">29</span>,</div><div class="line"></div><div class="line">      <span class="string">"name"</span>: <span class="string">"Joe"</span>,</div><div class="line">      <span class="string">"lactose_intolerant"</span>: false</div><div class="line">    }</div><div class="line">  ]</div><div class="line"></div><div class="line">}</div></pre></td></tr></table></figure>
+
+<h2 id="11-_最大和最小的几个列表元素">11. 最大和最小的几个列表元素</h2>
+<p>这个经常用到啊，少年们。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> random, heapq</div><div class="line">a = [random.randint(<span class="number">0</span>, <span class="number">100</span>) <span class="keyword">for</span> __ <span class="keyword">in</span> xrange(<span class="number">100</span>)]</div><div class="line">b = heapq.nsmallest(<span class="number">5</span>, a)</div><div class="line">c = heapq.nlargest(<span class="number">5</span>, a)</div><div class="line"><span class="keyword">print</span> b,c</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>] [<span class="number">100</span>, <span class="number">100</span>, <span class="number">100</span>, <span class="number">99</span>, <span class="number">98</span>]</div></pre></td></tr></table></figure>
+
+<h2 id="12-_一些更贴近大脑的写法，和一些掉了下巴的代码段">12. 一些更贴近大脑的写法，和一些掉了下巴的代码段</h2>
+<p>有一些语句，写出来你就能读懂，就像读一篇文章一样。有时候，其他语言用了超长的代码写出来的程序，python只需要几行，甚至是，1行。</p>
+<ol>
+<li>数值比较</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">x = <span class="number">2</span></div><div class="line"><span class="keyword">if</span> <span class="number">3</span> &gt; x &gt; <span class="number">1</span>:</div><div class="line">   <span class="keyword">print</span> x</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span><span class="number">2</span></div><div class="line"><span class="keyword">if</span> <span class="number">1</span> &lt; x &gt; <span class="number">0</span>:</div><div class="line">   <span class="keyword">print</span> x</div><div class="line"><span class="prompt">&gt;&gt;&gt; </span><span class="number">2</span></div></pre></td></tr></table></figure>
+
+<ol>
+<li>有这么一个算法题，打印数字1到100，3的倍数打印“Fizz”来替换这个数，5的倍数打印“Buzz”，对于既是3的倍数又是5的倍数的数字打印“FizzBuzz”。对此，我们只使用一行代码，搞定它.</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">101</span>):<span class="keyword">print</span><span class="string">"fizz"</span>[x % <span class="number">3</span>*<span class="number">4</span>::]+<span class="string">"buzz"</span>[x % <span class="number">5</span>*<span class="number">4</span>::]<span class="keyword">or</span> x</div></pre></td></tr></table></figure>
+
+<h2 id="13-_一个超小型的Web服务">13. 一个超小型的Web服务</h2>
+<p>我们在两台机器或者服务器之间做一些简单的基础的RPC之类的交互，我们就可以用到python 这个神奇的模块。<br>服务器：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> SimpleXMLRPCServer <span class="keyword">import</span> SimpleXMLRPCServer</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">file_reader</span><span class="params">(file_name)</span>:</span></div><div class="line"></div><div class="line">    <span class="keyword">with</span> open(file_name, <span class="string">'r'</span>) <span class="keyword">as</span> f:</div><div class="line">        <span class="keyword">return</span> f.read()</div><div class="line"></div><div class="line">server = SimpleXMLRPCServer((<span class="string">'localhost'</span>, <span class="number">8000</span>))</div><div class="line">server.register_introspection_functions()</div><div class="line"></div><div class="line">server.register_function(file_reader)</div><div class="line"></div><div class="line">server.serve_forever()</div></pre></td></tr></table></figure>
+
+<p>客户端：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> xmlrpclib</div><div class="line">proxy = xmlrpclib.ServerProxy(<span class="string">'http://localhost:8000/'</span>)</div><div class="line"></div><div class="line">proxy.file_reader(<span class="string">'/tmp/secret.txt'</span>)</div></pre></td></tr></table></figure>
+
+<p>这样就得到了一个远程文件读取工具，超小型，没有外部依赖，当然没有任何安全可言，仅作家里使用，当然我现在还没用过这个。</p>
+<hr>
+<p>人生苦短，我用Python。</p>
+<p>ps. 似乎不说一句这个名言，就不像是在写Python一样。当然了，我还是要滚回去好好地学C++。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/10/11/阿里云上CentOS的图形访问/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">阿里云上CentOS的图形访问</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="Python高效编程小技巧" data-title="Python高效编程小技巧" data-url="http://yoursite.com/2015/10/28/Python高效编程小技巧/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"xuelinf"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2015 临风
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: true
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js" type="text/javascript"></script>
+
+<script src="/js/main.js" type="text/javascript"></script>
+
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
