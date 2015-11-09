@@ -116,7 +116,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/C-C/" style="font-size: 10.00px;">C/C++</a><a href="/tags/Diary/" style="font-size: 10.00px;">Diary</a><a href="/tags/Docker/" style="font-size: 10.00px;">Docker</a><a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a><a href="/tags/Linux/" style="font-size: 10.00px;">Linux</a><a href="/tags/PM/" style="font-size: 10.00px;">PM</a><a href="/tags/Python/" style="font-size: 10.00px;">Python</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 13.33px;">life</a><a href="/tags/web/" style="font-size: 10.00px;">web</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 10.00px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
+						<a href="/tags/C-C/" style="font-size: 10.00px;">C/C++</a><a href="/tags/Diary/" style="font-size: 10.00px;">Diary</a><a href="/tags/Docker/" style="font-size: 10.00px;">Docker</a><a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a><a href="/tags/Linux/" style="font-size: 10.00px;">Linux</a><a href="/tags/PM/" style="font-size: 10.00px;">PM</a><a href="/tags/Python/" style="font-size: 13.33px;">Python</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 13.33px;">life</a><a href="/tags/web/" style="font-size: 10.00px;">web</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 10.00px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
 					</div>
 				</section>
 				
@@ -187,6 +187,69 @@
 	</div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-用Python写一个虚拟解释器" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/11/09/用Python写一个虚拟解释器/" class="article-date">
+  	<time datetime="2015-11-09T13:18:08.000Z" itemprop="datePublished">11月 9 2015</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/11/09/用Python写一个虚拟解释器/">用Python写一个虚拟解释器</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="http://www.jianshu.com/p/28c029de8fb3" target="_blank" rel="external">刀背藏身|简书</a><br>先来看看这篇文章 <a href="http://www.yinwang.org/blog-cn/2012/08/01/interpreter/" target="_blank" rel="external">怎样写一个解释器</a></p>
+<p>所谓虚拟机器，就是一定意义上的堆栈机。<br>解释器能够执行其他计算机语言编写的程序的系统软件，他是一个翻译程序。它的执行方式是一边翻译一边执行，因此其执行效率一般比较低。解释器的实现比较简单，而且编写源程序的高级语言可以使用更加灵活和富于表现力的语法。<br>可参考<a href="https://csl.name/post/vm/" target="_blank" rel="external">本链接</a>，开源项目<a href="https://github.com/cslarsen/crianza" target="_blank" rel="external">Crianza</a>。<br>当然，解释器要从最基础的最简单的语言开始，然后逐步增加语言的复杂度，才能构造出正确的解释器。而最基础的一个解释器，其实就是一个高级的计算器，下面我们一起来创建一个解释器吧。<br>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/Study/">Study</a>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a  href="/2015/11/09/用Python写一个虚拟解释器/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
   
     <article id="post-Python高效编程小技巧" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -448,96 +511,9 @@
 
 
   
-    <article id="post-《增长黑客》读书笔记" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/10/05/《增长黑客》读书笔记/" class="article-date">
-  	<time datetime="2015-10-05T12:20:30.000Z" itemprop="datePublished">10月 5 2015</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/10/05/《增长黑客》读书笔记/">《增长黑客》读书笔记</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>通过简书阅读：<a href="http://www.jianshu.com/p/ced81ced4b0d" target="_blank" rel="external">《增长黑客》读书笔记</a></p>
-<p>国庆期间，利用两天里的空闲时间，把这本最近颇受好评的书读了一遍，感觉很有意思之余，又把把书里的干货整理了一遍。</p>
-<p>书里的干货很多，案例很多，纯理论的东西不多，如果想要成为一个牛逼的 Leader , 就应当把自己培养成为T型的人才，跨界知识能力超强，某方面技术超硬，这个某方面，更多的指技术能力超硬。</p>
-<p>同时，书中所提到的一些案例，某些地方是游走在规矩的边界上，还有一部分虽然很有效但是也增加了用户的恶感（如捆绑下载，插件广告等），当然这本书并不是要教你学坏。</p>
-<p>在写这个读书笔记之前，我也看了一些人做的思维导图，内容很全，但是思维导图的缺点在于看的人更容易整体的浏览，一瞬接接触巨大的信息量，而无法深入的思考每一个信息点，所以我直接以正常笔记的形式进行了整理。</p>
-<h2 id="第一章：概念">第一章：概念</h2>
-<h4 id="定义（P6）">定义（P6）</h4>
-<p>以数据驱动营销，以市场指导产品，通过技术化手段贯彻增长目标的人。</p>
-<h4 id="增长目标：（P7）">增长目标：（P7）</h4>
-<p><strong>『AARRR』转化漏斗模型：</strong></p>
-<ul>
-<li>Acquisition 获取用户</li>
-<li>Activation 激发活跃</li>
-<li>Retention 提高留存</li>
-<li>Revenue 增加收入</li>
-<li>Referral 传播推荐</li>
-</ul>
-<h4 id="能力特质：（P16）">能力特质：（P16）</h4>
-<ul>
-<li><strong>数据为王：</strong>具有数据思维，一切工作建立在数据分析之上</li>
-<li><strong>专注目标：</strong>时刻围绕增长目标展开，不断的测试、改进，学习、再测试</li>
-<li><strong>关注细节：</strong>对细小改动做出评估</li>
-<li><strong>富于创意：</strong>缜密分析+天马行空的增长方案</li>
-<li><strong>信息通透：</strong>深入理解产品用户的活跃渠道，关注新生渠道和业界趋势</li>
-</ul>
-<p>（Andy Johns的增长黑客生涯）：facebook小挂件，向潜在用户发邮件广告推广，Twitter的着陆页改进（关注注册登录），新用户注册推荐用户，开发内部群发邮件系统，Quora捉摸用户行为模式，归纳为标准流程，引导其他用户执行流程<br>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PM/">PM</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/读书笔记/">读书笔记</a>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a  href="/2015/10/05/《增长黑客》读书笔记/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
     </nav>
   
 </div>

@@ -4,7 +4,7 @@
   <subtitle><![CDATA[代码是一棱刀背，幸好，有此藏身。]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-10-28T13:37:31.898Z</updated>
+  <updated>2015-11-09T13:20:26.292Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,116 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[用Python写一个虚拟解释器]]></title>
+    <link href="http://yoursite.com/2015/11/09/%E7%94%A8Python%E5%86%99%E4%B8%80%E4%B8%AA%E8%99%9A%E6%8B%9F%E8%A7%A3%E9%87%8A%E5%99%A8/"/>
+    <id>http://yoursite.com/2015/11/09/用Python写一个虚拟解释器/</id>
+    <published>2015-11-09T13:18:08.000Z</published>
+    <updated>2015-11-09T13:20:14.000Z</updated>
+    <content type="html"><![CDATA[<p><a href="http://www.jianshu.com/p/28c029de8fb3" target="_blank" rel="external">刀背藏身|简书</a><br>先来看看这篇文章 <a href="http://www.yinwang.org/blog-cn/2012/08/01/interpreter/" target="_blank" rel="external">怎样写一个解释器</a></p>
+<p>所谓虚拟机器，就是一定意义上的堆栈机。<br>解释器能够执行其他计算机语言编写的程序的系统软件，他是一个翻译程序。它的执行方式是一边翻译一边执行，因此其执行效率一般比较低。解释器的实现比较简单，而且编写源程序的高级语言可以使用更加灵活和富于表现力的语法。<br>可参考<a href="https://csl.name/post/vm/" target="_blank" rel="external">本链接</a>，开源项目<a href="https://github.com/cslarsen/crianza" target="_blank" rel="external">Crianza</a>。<br>当然，解释器要从最基础的最简单的语言开始，然后逐步增加语言的复杂度，才能构造出正确的解释器。而最基础的一个解释器，其实就是一个高级的计算器，下面我们一起来创建一个解释器吧。<br><a id="more"></a></p>
+<h2 id="0-_解释器到底是什么">0. 解释器到底是什么</h2>
+<p>前边解释了一些，但解释的并不清楚，在<a href="http://www.yinwang.org/blog-cn/2012/08/01/interpreter/" target="_blank" rel="external">怎样写一个解释器</a>中，做一个比较不错的解释。</p>
+<blockquote>
+<p>首先我们来谈一下解释器是什么。说白了解释器跟计算器差不多。它们都接受一个“表达式”，输出一个 “结果”。比如，得到 ‘(+ 1 2) 之后就输出 3。不过解释器的表达式要比计算器的表达式复杂一些。解释器接受的表达式叫做“程序”，而不只是简单的算术表达式。从本质上讲，每个程序都是一台机器的“描述”，而解释器就是在“模拟”这台机器的运转，也就是在进行“计算”。所以从某种意义上讲，解释器就是计算的本质。当然，不同的解释器就会带来不同的计算。</p>
+<p>需要注意的是，我们的解释器接受的参数是一个表达式的“数据结构”，而不是一个字符串。这里我们用一种叫“S-expression”的数据结构来表示表达式。比如表达式 ‘(+ 1 2) 里面的内容是三个符号：’+, ‘1 和 ‘2，而不是字符串“(+ 1 2)”。从结构化的数据里面提取信息很方便，而从字符串里提取信息很麻烦，而且容易出错。</p>
+<p>从广义上讲，解释器是一个通用的概念。计算器实际上是解释器的一种形式，只不过它处理的语言比程序的解释器简单很多。也许你会发现，CPU 和人脑，从本质上来讲也是解释器，因为解释器的本质实际上是“任何用于处理语言的机器”。</p>
+</blockquote>
+<h2 id="1-_学习写一个解释器的另一个原因">1. 学习写一个解释器的另一个原因</h2>
+<p>在《编程珠玑》的第十章，提到代码空间技术，如何节省足够的空间，讲到了解释程序。他说，远古时代，有时候空间的瓶颈不在于数据，而在于程序本身的规模。比如一开始一个图形程序，有如下代码：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="matrix">[<span class="number">17</span>, <span class="number">43</span>]</span> set(<span class="built_in">i</span>, <span class="number">68</span>)</div><div class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="matrix">[<span class="number">18</span>, <span class="number">42</span>]</span> set(<span class="built_in">i</span>, <span class="number">69</span>)</div><div class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="matrix">[<span class="number">81</span>, <span class="number">91</span>]</span> set(<span class="number">30</span>, <span class="built_in">j</span>)</div><div class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="matrix">[<span class="number">82</span>, <span class="number">92</span>]</span> set(<span class="number">31</span>, <span class="built_in">j</span>)</div></pre></td></tr></table></figure>
+
+<p>其中，set(i,j)表示点亮屏幕（i, j）处的像素，也就是说这实际上是一个绘制直线的程序。而当我们使用了适当的函数，比如用于绘制水平线的hor函数和垂直线的ver函数，就可以替代上述代码：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="title">hor</span><span class="params">(<span class="number">17</span>, <span class="number">43</span>, <span class="number">68</span>)</span></span></div><div class="line"><span class="title">hor</span><span class="params">(<span class="number">18</span>, <span class="number">42</span>, <span class="number">69</span>)</span></div><div class="line"><span class="title">ver</span><span class="params">(<span class="number">81</span>, <span class="number">91</span>, <span class="number">30</span>)</span></div><div class="line"><span class="title">ver</span><span class="params">(<span class="number">82</span>, <span class="number">92</span>, <span class="number">31</span>)</span></div></pre></td></tr></table></figure>
+
+<p>而上述代码又可以利用一个解释器来替换，这个解释程序可以从下面的数组中读取命令。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="title">h</span> <span class="number">17</span>, <span class="number">43</span>, <span class="number">68</span></div><div class="line">h <span class="number">18</span>, <span class="number">42</span>, <span class="number">69</span></div><div class="line">v <span class="number">81</span>, <span class="number">91</span>, <span class="number">30</span></div><div class="line">v <span class="number">82</span>, <span class="number">92</span>, <span class="number">31</span></div></pre></td></tr></table></figure>
+
+<p>至此，我们已经将空间减小了很多了，但如果你还想减少，那么就可以为命令h 或 v分配两个位，为后边的三个数字，每个数字，分配10个位置，这样一个32位的数字，表示一行命令了。这就是代码空间技术的运用。</p>
+<p>当然，今天我们谈起节省空间，好像已经成了笑话，但是，当我们面对巨量数据，也就是我们今天所说的大数据的时候，空间，时间，效率的话题又一次被提起来。当我们面对着像混乱电流一样的数据时，尝试将自己的头脑想象成计算机，学会用更加底层的方式去思考，对对理解数据处理将有更深刻的认识。</p>
+<p>为什么我们时常提起像机器一样思考呢？那是因为机器远比我们人类严谨，也是所有检验逻辑最严格的关卡，他不容许一点点错误，一个毫不起眼的bug，都会让程序完全崩溃。而程序是写给计算机的语言，所以，程序的严谨性就应当像计算机一样严谨。所以我们时常劝告自己要像计算机一样思考。</p>
+<p>正如『正义的花生』在<a href="http://www.jianshu.com/p/f0863846b7e8" target="_blank" rel="external">数学与编程</a>中提到的一样：</p>
+<blockquote>
+<p>普通程序员使用的编程语言，就算是C++这样毛病众多的语言，其实也已经比数学家使用的语言好很多。用数学的语言可以写出含糊复杂的证明，在期刊或者学术会议上蒙混过关，用程序语言写出来的代码却无法混过计算机这道严格的关卡。因为计算机不是人，它不会迷迷糊糊的点点头让你混过去，或者因为你是大师就不懂装懂。代码是需要经过现实的检验的。如果你的代码有问题，它迟早会导致出问题。</p>
+</blockquote>
+<p>诚然，大牛作者在思想上有很多偏执的地方，但是往往他的观点我都有着不小的认同感。前边那篇『怎样写一个解释器』也是他的文章。</p>
+<p>所以，学习写一个解释器，可以带给我更多的思考，从效率，空间，机器等等方面进一步认识程序运行的本质，将这种认识正反馈到实际编程中，将潜移默化的带来影响。当然，这篇文章试着依葫芦画瓢的写完一个解释器，显然仅仅算是摸了摸门道，想要继续探索，还有更多的事情可以做。做更多的事情，可以参考上边提到的开源项目<a href="https://github.com/cslarsen/crianza" target="_blank" rel="external">Crianza</a>。</p>
+<h2 id="1-_构建堆栈机">1. 构建堆栈机</h2>
+<p>堆栈机的执行原理很简单，将需要处理的值放进堆栈中，然后执行。Python， Java这些高级语言将它作为自己的虚拟机。</p>
+<p>所以我们利用了堆栈的方式存放指令。首先，我们需要一个指令指针栈，它能够储存返回地址。这个返回地址就是当我们执行一个子程序（如函数）的时候，需要用它跳回到开始调用该函数的地方。</p>
+<p>我们将这个复杂的问题简洁化。比如有一个数学表达式：<code>（2+3）*4</code> ，这个表达式的意思就是依次推入<code>2 3 + 4 *</code>, 将2 和3 依次推入栈中，接下来要推入的指令是 <code>+</code>， 将两个数字弹出，令他们执行加法运算，然后将结果入栈。然后继续进行下去，直到计算出结果。</p>
+<p>依靠这个原理，我们开始建立一个栈，我们使用python 中的一个类 collections.deque。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span><span class="params">(deque)</span>:</span> <span class="comment"># 定义一个栈</span></div><div class="line">    push = deque.append  <span class="comment"># 添加元素</span></div><div class="line">    <span class="comment"># 返回最后一个元素</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">top</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">return</span> self[-<span class="number">1</span>]</div></pre></td></tr></table></figure>
+
+<p>deque 中自带pop 方法，所以我们就不用再定义 pop .</p>
+<p>接下来我们继续构建一个虚拟机的类 Machine。 我们需要两个栈和一段储存代码的内存空间。一个栈储存数据，一个栈储存地址。得益于Python 动态类型，因此我们可以往列表里面存储任何东西，但是我们不能区分列表里面的内置函数和字符串，正确的做法是将Python 内置函数单独存放在一个列表。这里我们使用字典方法，键值分别对应字符串和函数。另外，我们需要一个指令指针，用来指向代码中下一个需要被执行的模块。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Machine</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, code)</span>:</span> <span class="comment"># 预先定义一个初始化函数</span></div><div class="line">       self.data_stack = Stack()</div><div class="line">       self.return_addr_stack = Stack()</div><div class="line">       self.code = code</div><div class="line">       self.instruction_pointer = <span class="number">0</span> </div><div class="line">    <span class="comment"># 再创建一些栈结构中必备的函数</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pop</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">return</span> self.data_stack.pop()</div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span><span class="params">(self, value)</span>:</span></div><div class="line">        self.data_stack.push(value)</div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">top</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">return</span> self.data_stack.top()</div></pre></td></tr></table></figure>
+
+<p>为了执行操作码，而这个操作码并非实际意义上的操作码，它只是一种动态类型，所以我们建立一个dispatch 函数，在这之前，我们创建一个解释器的循环。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span>   <span class="comment"># 代码运行的条件</span></div><div class="line">    <span class="keyword">while</span> self.instruction_pointer &lt; len(self.code):</div><div class="line">         opcode = self.code[self.instruction_pointer]</div><div class="line">         self.instruction_pointer += <span class="number">1</span></div><div class="line">         self.dispatch(opcode)</div></pre></td></tr></table></figure>
+
+<p>它的原理很简单： 获取下一个指令，指令指针自增1 然后基于操作码执行dispatch 函数，下面就是dispatch函数的定义。而对解释器的扩展增强基本在这个函数中实现。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">dispatch</span><span class="params">(self, op)</span>:</span></div><div class="line">    dispatch_map = {</div><div class="line">        <span class="string">"%"</span>:        self.mod,</div><div class="line">        <span class="string">"*"</span>:        self.mul,</div><div class="line">        <span class="string">"+"</span>:        self.plus,</div><div class="line">        <span class="string">"-"</span>:        self.minus,</div><div class="line">        <span class="string">"/"</span>:        self.div,</div><div class="line">        <span class="string">"=="</span>:       self.eq,</div><div class="line">        <span class="string">"cast_int"</span>: self.cast_int,</div><div class="line">        <span class="string">"cast_str"</span>: self.cast_str,</div><div class="line">        <span class="string">"drop"</span>:     self.drop,</div><div class="line">        <span class="string">"dup"</span>:      self.dup,</div><div class="line">        <span class="string">"if"</span>:       self.if_stmt,</div><div class="line">        <span class="string">"jmp"</span>:      self.jmp,</div><div class="line">        <span class="string">"over"</span>:     self.over,</div><div class="line">        <span class="string">"print"</span>:    self.print_,</div><div class="line">        <span class="string">"println"</span>:  self.println,</div><div class="line">        <span class="string">"read"</span>:     self.read,</div><div class="line">        <span class="string">"stack"</span>:    self.dump_stack,</div><div class="line">        <span class="string">"swap"</span>:     self.swap,</div><div class="line">        }</div><div class="line">    <span class="keyword">if</span> op <span class="keyword">in</span> dispatch_map:</div><div class="line">        dispatch_map[op]()</div><div class="line">    <span class="keyword">elif</span> isinstance(op, int):  <span class="comment"># 如果指令是整形数据，就将数据存放到数据栈中</span></div><div class="line">        self.push(op)</div><div class="line">    <span class="keyword">elif</span> isinstance(op, str) <span class="keyword">and</span> op[<span class="number">0</span>]==op[-<span class="number">1</span>]==<span class="string">'"'</span>:</div><div class="line">        <span class="comment"># 如果是字符串类型，就将字符串内容存放到数据栈中</span></div><div class="line">        self.push(op[<span class="number">1</span>:-<span class="number">1</span>])</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        <span class="keyword">raise</span> RuntimeError( <span class="string">"Unknown opcode: '%s'"</span> % op)</div></pre></td></tr></table></figure>
+
+<p>上边的指令的意思是，当输入一段指令后，该函数就会根据这段指令在字典中找到对应的方法。比如符号<code>*</code>对应的是self.mul 。而这个self.mul 也是我们定义的函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">mul</span><span class="params">(self)</span>:</span></div><div class="line">    self.push(self.pop() * self.pop())</div></pre></td></tr></table></figure>
+
+<p>其他的函数定义也如此。</p>
+<p>搭建好环境之后，下面继续进行。一个语言解释器包括两个部分：</p>
+<ol>
+<li>解析：解析部分接受一个由字符序列表示的输入指令，然后将输入字符分解成一系列的词法单元</li>
+<li>执行： 程序内部的解释器根据语义规则进一步处理词法单元，进而执行原指令的实际运算。</li>
+</ol>
+<p>这是流程图：</p>
+<figure class="highlight flow"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">st=&gt;start: 指令</div><div class="line">op1=&gt;operation: 解析器</div><div class="line">op2=&gt;operation: 词法单元</div><div class="line">op3=&gt;operation: 执行运算</div><div class="line">e=&gt;end: 结果</div><div class="line"></div><div class="line">st<span class="variable">-&gt;op1</span><span class="variable">-&gt;op2</span><span class="variable">-&gt;op3</span><span class="variable">-&gt;e</span></div></pre></td></tr></table></figure>
+
+<h2 id="2-_下面我们创建一个简单的解析器">2. 下面我们创建一个简单的解析器</h2>
+<p>使用<a href="https://docs.python.org/3/library/tokenize.html" target="_blank" rel="external">tokenize</a>模块。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> tokenize</div><div class="line"><span class="keyword">from</span> StringIO <span class="keyword">import</span> StringIO</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(text)</span>:</span></div><div class="line">    <span class="comment"># 将text以StringIO的形式读入内存</span></div><div class="line">    <span class="comment"># 以字符串形式返回刀generate_tokens()函数中。</span></div><div class="line">    tokens = tokenize.generate_tokens(StringIO(text).readline)</div><div class="line">    <span class="comment"># generate_tokens 生成器生成一个5元组：标记类型、标记字符串、标记开始位置二元组、标记结束位置二元组以及标记所在的行号</span></div><div class="line">    <span class="comment"># 下面大写的单词都属于token模块的常量</span></div><div class="line">    <span class="keyword">for</span> toknum, tokval, _, _, _ <span class="keyword">in</span> tokens:</div><div class="line">        <span class="keyword">if</span> toknum == tokenize.NUMBER:</div><div class="line">            <span class="keyword">yield</span> int(tokval)</div><div class="line">        <span class="keyword">elif</span> toknum <span class="keyword">in</span> [tokenize.OP, tokenize.STRING, tokenize.NAME]:</div><div class="line">            <span class="keyword">yield</span> int(tokval)</div><div class="line">        <span class="keyword">elif</span> tokun == tokenize.ENDMARKER:</div><div class="line">            <span class="keyword">break</span></div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">raise</span> RuntimeError(<span class="string">"Unknown token %s: '%s'"</span> % (tokenize.tok_name[toknum], tokval))</div></pre></td></tr></table></figure>
+
+<p>关于token常量，查看<a href="https://docs.python.org/3/library/token.html#module-token" target="_blank" rel="external">官方文档</a>。</p>
+<p>其中还有一个关键字 <code>yield</code>，它是用来定义生成器(Generator)，具体功能是可以当return 使用，从函数理返回一个值，不同之处是用yield 返回之后，可以让函数从上回yield 返回的地点继续执行。也就是说，yield 返回函数，交给调用者一个返回值，然后再移动回去，让函数继续运行下去，知道下一个yield语句再返回一个新的值。举个简单的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; def test_yield():</div><div class="line">...     yield 1</div><div class="line">...     yield 2</div><div class="line">...     yield (1,2)</div><div class="line">...</div><div class="line">&gt;&gt;&gt; a = test_yield()</div><div class="line">&gt;&gt;&gt; a.next()</div><div class="line">1</div><div class="line">&gt;&gt;&gt; a.next()</div><div class="line">2</div><div class="line">&gt;&gt;&gt; a.next()</div><div class="line">(1, 2)</div><div class="line">&gt;&gt;&gt; a.next()</div><div class="line">Traceback (most recent call last):</div><div class="line">  File "&lt;stdin&gt;", line 1, in ?</div><div class="line">StopIteration</div></pre></td></tr></table></figure>
+
+<p>我们用生成器产生一个Fibonacci数列的函数就会更加直观：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">fab</span><span class="params">(max)</span>:</span></div><div class="line">    a,b = <span class="number">0</span>,<span class="number">1</span></div><div class="line">    <span class="keyword">while</span> a &lt; max:</div><div class="line">        <span class="keyword">yield</span> a</div><div class="line">        a, b = b, a+b</div><div class="line"> </div><div class="line"><span class="prompt">&gt;&gt;&gt; </span><span class="keyword">for</span> i <span class="keyword">in</span> fab(<span class="number">20</span>):</div><div class="line"><span class="prompt">... </span>    <span class="keyword">print</span> i,<span class="string">","</span>,</div><div class="line">...</div><div class="line"><span class="number">0</span> , <span class="number">1</span> , <span class="number">1</span> , <span class="number">2</span> , <span class="number">3</span> , <span class="number">5</span> , <span class="number">8</span> , <span class="number">13</span> ,</div></pre></td></tr></table></figure>
+
+<h2 id="3-_简单优化：_常量折叠">3. 简单优化： 常量折叠</h2>
+<blockquote>
+<p>常量折叠是其中一种被很多现代编译器使用的编译器最优化技术。常量折叠是在编译时间简单化常量表达的一个过程。简单来说就是将常量表达式计算求值，并用求得的值来替换表达式，放入常量表。可以算作一种编译优化。</p>
+</blockquote>
+<p>也就是我们最早举例子的时候说的，将2，3放入栈中，+ 进来的时候，2 3取出来进行运算，然后将运算结果放入栈中。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">constant_fold</span><span class="params">(code)</span>:</span></div><div class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">        <span class="comment"># 指令中找到两个连续的数字以及一个运算符</span></div><div class="line">        <span class="keyword">for</span> i, (a, b, op) <span class="keyword">in</span> enumerate(zip(code, code[<span class="number">1</span>:], code[<span class="number">2</span>:])):</div><div class="line">            <span class="keyword">if</span> isinstance(a, int) <span class="keyword">and</span> isinstance(b, int) <span class="keyword">and</span> op <span class="keyword">in</span> {<span class="string">"+"</span>, <span class="string">"-"</span>, <span class="string">"*"</span>, <span class="string">"/"</span>}:</div><div class="line">                m = Machine((a, b, op))</div><div class="line">                m.run()</div><div class="line">                code[i:i+<span class="number">3</span>] = [m.top()]</div><div class="line">                print(<span class="string">"Constant-folded %s%s%s to %s"</span> % (a, op, b, m.top()))</div><div class="line">                <span class="keyword">break</span></div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">break</span></div><div class="line">    <span class="keyword">return</span> code</div></pre></td></tr></table></figure>
+
+<h2 id="读取-求值-输出循环">读取-求值-输出循环</h2>
+<blockquote>
+<p>“读取-求值-输出”循环（英语：Read-Eval-Print Loop，简称REPL）是一个简单的，交互式的编程环境。这个词常常用于指代一个Lisp的交互式开发环境，但也能指代命令行的模式和例如APL、BASIC、Clojure、F#、Haskell、J、Julia、Perl、PHP、Prolog、Python、R、Ruby、Scala、Smalltalk、Standard ML、Tcl、Javascript这样的编程语言所拥有的类似的编程环境。这也被称做交互式顶层构件（interactive toplevel）。</p>
+</blockquote>
+<p><a href="https://zh.wikipedia.org/wiki/%E8%AF%BB%E5%8F%96%EF%B9%A3%E6%B1%82%E5%80%BC%EF%B9%A3%E8%BE%93%E5%87%BA%E5%BE%AA%E7%8E%AF" target="_blank" rel="external">read-eval-print loop</a><br>这个名字来自于以下几个Lisp用来实现这种机制的内置函数：</p>
+<ul>
+<li>读入函数接收一个来自于用户的表达式，将其解析成数据结构并存入内存。例如，用户可能会输入一个s-表达式　(+ 1 2 3)，这句话会被解析成一个包含四个元素的链表。</li>
+<li>求值函数　负责处理内部的数据结构并对其求值。在Lisp中，求一个以函数名开头的ｓ－表达式意味着对接下来的参数调用那个函数。所以函数”+”被在参数1 2 3上调用，产生结果6。</li>
+<li>输出函数接受求值结果，并呈现将其给用户。尽管当前的结果“6”并不具有复杂的格式，但如果是一个较为复杂的表达式，那么它将会被精心处理，以便于更方便地被理解。</li>
+</ul>
+<p>代码应当这样写：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">repl</span><span class="params">()</span>:</span></div><div class="line">    print(<span class="string">'Hit CTRL+D or type "exit" to quit.'</span>)</div><div class="line"></div><div class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">        <span class="keyword">try</span>:</div><div class="line">            source = raw_input(<span class="string">"&gt; "</span>)</div><div class="line">            code = list(parse(source))</div><div class="line">            code = constant_fold(code)</div><div class="line">            Machine(code).run()</div><div class="line">        <span class="keyword">except</span> (RuntimeError, IndexError) <span class="keyword">as</span> e:</div><div class="line">            print(<span class="string">"IndexError: %s"</span> % e)</div><div class="line">        <span class="keyword">except</span> KeyboardInterrupt:</div><div class="line">            print(<span class="string">"\nKeyboardInterrupt"</span>)</div></pre></td></tr></table></figure>
+
+<h2 id="再思考">再思考</h2>
+<p>这样，基本上的我们就完成了一个简单的解释器，实际上它的能力很弱小，但是作为一个锻炼思考的方式，是一个不错的实践。接下来，可以给这个解释器添加更多的功能。</p>
+<p>另外，推荐几个其他的文章：<br><a href="http://python.jobbole.com/82206/" target="_blank" rel="external">用 Python 从零开始写一个简单的解释器</a><br><a href="http://blog.jobbole.com/88152/" target="_blank" rel="external">一起来写个简单的解释器</a><br><a href="http://blog.jobbole.com/47659/" target="_blank" rel="external">如何使用Python编写一个Lisp解释器</a></p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p><a href="http://www.jianshu.com/p/28c029de8fb3" target="_blank" rel="external">刀背藏身|简书</a><br>先来看看这篇文章 <a href="http://www.yinwang.org/blog-cn/2012/08/01/interpreter/" target="_blank" rel="external">怎样写一个解释器</a></p>
+<p>所谓虚拟机器，就是一定意义上的堆栈机。<br>解释器能够执行其他计算机语言编写的程序的系统软件，他是一个翻译程序。它的执行方式是一边翻译一边执行，因此其执行效率一般比较低。解释器的实现比较简单，而且编写源程序的高级语言可以使用更加灵活和富于表现力的语法。<br>可参考<a href="https://csl.name/post/vm/" target="_blank" rel="external">本链接</a>，开源项目<a href="https://github.com/cslarsen/crianza" target="_blank" rel="external">Crianza</a>。<br>当然，解释器要从最基础的最简单的语言开始，然后逐步增加语言的复杂度，才能构造出正确的解释器。而最基础的一个解释器，其实就是一个高级的计算器，下面我们一起来创建一个解释器吧。<br>]]>
+    
+    </summary>
+    
+      <category term="Python" scheme="http://yoursite.com/tags/Python/"/>
+    
+      <category term="Study" scheme="http://yoursite.com/categories/Study/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Python高效编程小技巧]]></title>
@@ -1730,50 +1840,6 @@
       <category term="鸡汤" scheme="http://yoursite.com/tags/%E9%B8%A1%E6%B1%A4/"/>
     
       <category term="随笔" scheme="http://yoursite.com/categories/%E9%9A%8F%E7%AC%94/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[Keynote与APP原型设计]]></title>
-    <link href="http://yoursite.com/2014/12/12/Keynote%E4%B8%8EAPP%E5%8E%9F%E5%9E%8B%E8%AE%BE%E8%AE%A1/"/>
-    <id>http://yoursite.com/2014/12/12/Keynote与APP原型设计/</id>
-    <published>2014-12-12T14:27:51.000Z</published>
-    <updated>2014-12-12T14:29:56.000Z</updated>
-    <content type="html"><![CDATA[<h2 id="Keynote与原型设计">Keynote与原型设计</h2>
-<p>本来已经决定放弃对幻灯片演示这类软件的研究学习了，不过因为购买了徐岑的Keynote教程之后，在印证了自己的大部分想法之后，也收获了一些新的看法。</p>
-<h4 id="Keynote同样是一款演示工具">Keynote同样是一款演示工具</h4>
-<p><strong>首先</strong>，仍然坚持我在上个月日志里写的一段关于PPT的评论。</p>
-<blockquote>
-<p>曾经一段时间，我也很喜欢研究如何去做好一个炫酷的PPT演示文稿，网上也看了别人制作的惊人的效果，一度被带的花了很多时间去研究那些PPT技巧。后来我才意识到，其实<strong>PPT他只是一个演示用的工具</strong>，其本质目的是为了清晰生动的传达演讲者的思想和想要表达的内容，如果将大量的工作时间花在了如何使PPT更加炫酷上，反而是背道而驰。</p>
-<p>所以外国很多人并不喜欢用PPT做展示或者授课，反而更愿意使用PDF，因为它简单，直接，不影响思路。所以说，PPT是个良好的演示工具，但是要适可而止的使用，更加需要注意的是如何提高内容的清晰度，这涉及到排版，字体的选择方面，这也要感谢过去一段时间因为研究制作PPT，无形中提高了自己的审美水平，对排版字体的认识。</p>
-<p>我简单的看了一下Mac里的keynote，显然感觉更贴近我的想法，他给的一些默认模板，在审美上非常符合要求，同时也能快捷的制作演示文稿，同时清晰的表达思路，如果如有必要，我会倾向于使用keynote去制作一个精良的演示文稿，而如果真的需要一些炫酷或者是有特殊需求的PPT展示的话，我会选择去购买模板，而之前在演界抢购的一些限免和特价的PPT大约已经能满足我的要求。</p>
-</blockquote>
-<p>徐岑在自己的教程里也强调了，<strong>Keynote同样也是一个演示用的工具</strong>，其功能和使用，完全是以<strong>为使用者服务为本质目的</strong>，它的使用，要综合现场情况，观众，气氛，演讲者的性格，内容等诸多因素来制作，而非是简单为了炫技而制作出来的一件东西。同时徐岑批评了很多职业的PPT制作团队的PPT作品，这一点上，我也同意徐岑的看法，很多所谓专业的PPT制作，也因为过分的使用各种炫技型的动画交互效果，造成了很多地方脱离了演讲的本质，同时许多逻辑上动画的错误引入，其实反而在实际使用中，会大打折扣。</p>
-<h4 id="Keynote比PowerPoint要好用">Keynote比PowerPoint要好用</h4>
-<p>在使用了几次Keynote之后，表示在使用上是完胜PowerPoint的，这不仅表现在审美上，更有功能设置，交互上的强大。</p>
-<p>可以尝试在百度图片里搜索Keynote theme ，然后搜索 PPT theme，然后对比一下，可以明显的看出在审美上的差距。然后再对比一下PowerPoint的功能界面，和Keynote的功能界面，就可以明显的看出在设计上的差别。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/Keynote%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202014-12-12%20%E4%B8%8B%E5%8D%889.56.48.png" alt="主题界面"></p>
-<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/Keynote屏幕快照 2014-12-12 下午9.52.41.png" alt="主页面"><br>上面两个是Keynote的主题选择页面和主编辑页面，powerpoint相信大部分人都有，打开其主页面也会有看到类似的两个页面，比较一下，就可以明显的看出来，Keynote不仅在theme上优质很多，同时在主编辑页面上也充分简洁明了，使用起来简单快捷，十分符合一个演讲者的需求，而在功能上，两者的差别并不大，反而是这个看起来非常简洁的Keynote在功能上有很多人性化的功能在PowerPoint上反而没有，或者是刚刚在office 2013上刚刚支持，同时旧版本无法兼容。</p>
-<h4 id="Keynote与原型设计-1">Keynote与原型设计</h4>
-<p>这一部分是关键，本来一开始我以为Keynote只是一个演示工具，但其实<strong>Keynote也是一个非常棒的APP原型设计工具</strong>，不多说，先放一段视频：<a href="http://v.youku.com/v_show/id_XNzQ1MDk2ODI4.html" target="_blank" rel="external">material design by keynote </a></p>
-<p>为什么说用Keynote做原型交互是一个很好地选择呢？引述知乎上某回答：</p>
-<blockquote>
-<p>苹果就自己有个专门制作原型的团队，他们流窜在各个项目组之间包揽所有的原型制作工作，包括动画和交互。他们的主要工具就是Keynote。</p>
-</blockquote>
-<p>显然，<strong>苹果整个系统环境内部，无论是APP的交互，还是系统的交互上，都是互相贯通的，APP的动画交互，可以说在Keynote里也有相同的交互方式</strong>，所以使用Keynote去制作APP的交互，是一个很好的选择。而上边引入的那段视频，material design其实是谷歌刚刚公布出来的它新的APP交互，我们可以看到，使用Keynote同样也可以非常完美的完成所有的APP交互的动画，不知道在谷歌的material design设计的过程中，有没有借鉴苹果的交互模式。</p>
-<p>在许岑的视频中，也展示了一段锤子时钟的交互设计，用Keynote实现的，其实可以说，Keynote上的交互灵感，激发了锤子时钟的设计，使用过Smartisan OS时钟的人可以看出来，时钟的许多界面切换，都运用了Keynote中的magic move，也就是神奇移动功能。</p>
-<p>那么这个用Keynote做的APP原型设计，符合了简单快捷的要求，针对产品设计，产品经理，甚至是程序猿同志都有用处。</p>
-<p><a href="https://developer.apple.com/videos/wwdc/2014/" target="_blank" rel="external">WWDC 2014 Session Videos</a>里有个视频Prototyping: Fake It Till You Make It ，就是他们指导如何用Keynote做出逼真的交互原型的，后边如果有相关需求，可以做深入理解。</p>
-<p>参考内容：<br><a href="http://www.zhihu.com/question/24563983" target="_blank" rel="external">知乎：如何用Keynote做高保真的APP交互</a><br><a href="https://developer.apple.com/videos/wwdc/2014/" target="_blank" rel="external">WWDC2014 HELP</a><br><a href="http://www.zhihu.com/question/26127088" target="_blank" rel="external">知乎：为什么国外有人用Keynote做交互和动画</a></p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<h2 id="Keynote与原型设计">Keynote与原型设计</h2>
-<p>本来已经决定放弃对幻灯片演示这类软件的研究学习了，不过因为购买了徐岑的Keynote教程之后，在印证了自己的大部分想法之后，也收获了一些新的看法。</p>
-<h4 id="Keynote同样是一]]>
-    </summary>
-    
-      <category term="designer" scheme="http://yoursite.com/tags/designer/"/>
-    
-      <category term="Mac Study" scheme="http://yoursite.com/categories/Mac-Study/"/>
     
   </entry>
   
