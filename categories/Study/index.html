@@ -116,7 +116,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/C-C/" style="font-size: 10.00px;">C/C++</a><a href="/tags/Diary/" style="font-size: 10.00px;">Diary</a><a href="/tags/Docker/" style="font-size: 10.00px;">Docker</a><a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a><a href="/tags/Linux/" style="font-size: 10.00px;">Linux</a><a href="/tags/PM/" style="font-size: 10.00px;">PM</a><a href="/tags/Python/" style="font-size: 13.33px;">Python</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 13.33px;">life</a><a href="/tags/web/" style="font-size: 10.00px;">web</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 13.33px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
+						<a href="/tags/C-C/" style="font-size: 10.00px;">C/C++</a><a href="/tags/Diary/" style="font-size: 10.00px;">Diary</a><a href="/tags/Docker/" style="font-size: 10.00px;">Docker</a><a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a><a href="/tags/Linux/" style="font-size: 10.00px;">Linux</a><a href="/tags/PM/" style="font-size: 10.00px;">PM</a><a href="/tags/Python/" style="font-size: 13.33px;">Python</a><a href="/tags/TCP-IP/" style="font-size: 10.00px;">TCP/IP</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 13.33px;">life</a><a href="/tags/web/" style="font-size: 10.00px;">web</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 13.33px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
 					</div>
 				</section>
 				
@@ -187,6 +187,74 @@
 	</div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-TCP-IP-完全解读1" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/03/09/TCP-IP-完全解读1/" class="article-date">
+  	<time datetime="2016-03-09T09:29:23.000Z" itemprop="datePublished">3月 9 2016</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/03/09/TCP-IP-完全解读1/">TCP/IP 完全解读之传输层协议</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>BY 凯寓</p>
+<h1 id="传输层协议">传输层协议</h1>
+<p>[TOC]</p>
+<h2 id="1_传输层概述">1 传输层概述</h2>
+<p>传输层位于应用层和网络层之间，其关键功能是将网络层在<strong>两个端系统之间</strong>的交付拓展到运行在两个不同端系统上的<strong>应用层进程之间</strong>的交付服务。相比网络层协议为主机之间提供<code>逻辑通信</code>，传输层协议为运行在不同主机上的应用进程之间提供<code>逻辑通信</code>，传输层协议是在端系统中实现，而不是在路由器中实现，传输层传送的是<strong>报文段（segment）</strong>。</p>
+<p><strong>一方面</strong>，传输层协议提供的服务受制于网络层协议的服务模型：即如果网络层协议无法为主机之间发送的传输层报文段提供时延或带宽的保证，则传输层协议也就无法为进程之间发送的应用层报文提供时延或带宽保证。<strong>另一方面</strong>，传输层又可提供网络层协议无法提供的服务，如保密性，可靠性。</p>
+<p>传输层协议将主机间交付扩展到进程间交付的行为称为<strong>传输层多路复用（transport-layer multiplexing）</strong>与<strong>多路分解（demultiplexing）</strong>，最有名的传输层协议是TCP和UDP。他们的行为有着鲜明的`两极化``，<strong>在一个极端</strong>，UDP仅向通信进程提供多路复用/分解的服务，而不提供其他任何服务（因此它非常简单），<strong>在另一个极端</strong>，TCP向通信进程提供可靠交付、时延保证、带宽保证等一些列服务。具体而言，TCP通过使用流量控制、序号、确认和定时器确保数据正确、按序的从发送进程交付给接受进程，即提供<strong>可靠数据传输（reliable data transfer）</strong>，同时TCP还提供<strong>拥塞控制（congestion control）</strong>。<br>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/Study/">Study</a>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a  href="/2016/03/09/TCP-IP-完全解读1/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
   
     <article id="post-用Python写一个虚拟解释器" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -514,173 +582,10 @@
 
 
   
-    <article id="post-常用正则表达式（备查）" class="article article-type-post" itemscope itemprop="blogPost">
   
-    <div class="article-meta">
-      <a href="/2014/12/07/常用正则表达式（备查）/" class="article-date">
-  	<time datetime="2014-12-07T13:00:57.000Z" itemprop="datePublished">12月 7 2014</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/12/07/常用正则表达式（备查）/">常用正则表达式（备查）</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Regular Expression</strong>大陆翻译成正则表达式，不过我觉得描述成规则表达式，更贴切一些吧，不过这名字已经约定俗成了。<a href="http://zh.wikipedia.org/wiki/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F" target="_blank" rel="external">wikipedia：Regular Expression</a></p>
-<p>正则表达式使用单个字符串来描述、匹配一系列符合某个句法规则的字符串。许多程序设计语言都支持利用正则表达式进行字符串操作。</p>
-<p> 完整的表格可在wikipedia上查看，这东西的使用，还是靠熟练才能好用。主要是在使用的时候，需要考虑正则表达式的优先级。</p>
-<p><strong>正则表达式符号优先级：</strong></p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">优先权</th>
-<th style="text-align:right">符号</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">最高</td>
-<td style="text-align:right">\</td>
-</tr>
-<tr>
-<td style="text-align:left">高</td>
-<td style="text-align:right">( )、(?: )、(?= )、[ ]</td>
-</tr>
-<tr>
-<td style="text-align:left">中</td>
-<td style="text-align:right">*、+、?、{n}、{n,}、{m,n}</td>
-</tr>
-<tr>
-<td style="text-align:left">低</td>
-<td style="text-align:right">^、$、中介字符</td>
-</tr>
-<tr>
-<td style="text-align:left">最低</td>
-<td style="text-align:right">l</td>
-</tr>
-</tbody>
-</table>
-<p>以下主要是针对JavaScript使用，侧重在处理前端表单验证等一些事项，列举一些常用的正则表达式，以备使用：</p>
-<ul>
-<li><p>匹配中文字符的正则表达式： <code>[\u4e00-\u9fa5]</code></p>
-</li>
-<li><p>匹配双字节字符(包括汉字在内)：<code>[^\x00-\xff]</code></p>
-<blockquote>
-<p>可以用来计算字符串的长度（一个双字节字符长度计2，ASCII字符计1）</p>
-</blockquote>
-</li>
-<li><p>匹配空白行的正则表达式：<code>\n\s*\r</code></p>
-<blockquote>
-<p>可以用来删除空白行</p>
-</blockquote>
-</li>
-<li><p>匹配HTML标记的正则表达式：<code>&lt;(\S*?)[^&gt;]*&gt;.*?&lt;/\1&gt;|&lt;.*? /&gt;</code></p>
-<blockquote>
-<p>上面这个也仅仅能匹配部分，对于复杂的嵌套标记依旧无能为力</p>
-</blockquote>
-</li>
-<li><p>匹配首尾空白字符的正则表达式：<code>^\s*|\s*$</code></p>
-<blockquote>
-<p>可以用来删除行首行尾的空白字符(包括空格、制表符、换页符等等)，非常有用的表达式</p>
-</blockquote>
-</li>
-<li><p>匹配Email地址的正则表达式：<code>\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*</code></p>
-</li>
-</ul>
-<ul>
-<li>匹配网址URL的正则表达式：<code>[a-zA-z]+://[^\s]*</code></li>
-</ul>
-<ul>
-<li><p>匹配帐号是否合法(字母开头，5-16字节，允许字母数字下划线)：<code>^[a-zA-Z][a-zA-Z0-9_]{4,15}$</code></p>
-</li>
-<li><p>匹配国内电话号码：<code>\d{3}-\d{8}|\d{4}-\d{7}</code></p>
-<blockquote>
-<p>匹配形式如 0511-4405222 或 021-87888822</p>
-</blockquote>
-</li>
-<li><p>匹配腾讯QQ号：<code>[1-9][0-9]{4,}</code></p>
-<blockquote>
-<p>腾讯QQ号从10000开始</p>
-</blockquote>
-</li>
-<li><p>匹配中国邮政编码：<code>[1-9]\d{5}(?!\d)</code></p>
-<blockquote>
-<p>中国邮政编码为6位数字</p>
-</blockquote>
-</li>
-<li><p>匹配身份证：<code>\d{15}|\d{18}</code></p>
-<blockquote>
-<p>15位或18位</p>
-</blockquote>
-</li>
-<li><p>匹配ip地址：<code>\d+\.\d+\.\d+\.\d+</code></p>
-</li>
-</ul>
-<ul>
-<li>匹配特定数字：</li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">^[<span class="number">1</span>-<span class="number">9</span>]\d*$　 　 <span class="comment">//匹配正整数</span></div><div class="line">^-[<span class="number">1</span>-<span class="number">9</span>]\d*$ 　 <span class="comment">//匹配负整数</span></div><div class="line">^-?[<span class="number">1</span>-<span class="number">9</span>]\d*$　　 <span class="comment">//匹配整数</span></div><div class="line">^[<span class="number">1</span>-<span class="number">9</span>]\d*|<span class="number">0</span>$　 <span class="comment">//匹配非负整数（正整数 + 0）</span></div><div class="line">^-[<span class="number">1</span>-<span class="number">9</span>]\d*|<span class="number">0</span>$　　 <span class="comment">//匹配非正整数（负整数 + 0）</span></div><div class="line">^[<span class="number">1</span>-<span class="number">9</span>]\d*\.\d*|<span class="number">0</span>\.\d*[<span class="number">1</span>-<span class="number">9</span>]\d*$　　 <span class="comment">//匹配正浮点数</span></div><div class="line">^-([<span class="number">1</span>-<span class="number">9</span>]\d*\.\d*|<span class="number">0</span>\.\d*[<span class="number">1</span>-<span class="number">9</span>]\d*)$　 <span class="comment">//匹配负浮点数</span></div><div class="line">^-?([<span class="number">1</span>-<span class="number">9</span>]\d*\.\d*|<span class="number">0</span>\.\d*[<span class="number">1</span>-<span class="number">9</span>]\d*|<span class="number">0</span>?\<span class="number">.0</span>+|<span class="number">0</span>)$　 <span class="comment">//匹配浮点数</span></div><div class="line">^[<span class="number">1</span>-<span class="number">9</span>]\d*\.\d*|<span class="number">0</span>\.\d*[<span class="number">1</span>-<span class="number">9</span>]\d*|<span class="number">0</span>?\<span class="number">.0</span>+|<span class="number">0</span>$　　 <span class="comment">//匹配非负浮点数（正浮点数 + 0）</span></div><div class="line">^(-([<span class="number">1</span>-<span class="number">9</span>]\d*\.\d*|<span class="number">0</span>\.\d*[<span class="number">1</span>-<span class="number">9</span>]\d*))|<span class="number">0</span>?\<span class="number">.0</span>+|<span class="number">0</span>$　　<span class="comment">//匹配非正浮点数（负浮点数 + 0）</span></div></pre></td></tr></table></figure>
-
-<blockquote>
-<p>处理大量数据时有用，具体应用时注意修正</p>
-</blockquote>
-<ul>
-<li>匹配特定字符串：</li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">^[A-Za-z]+$　　<span class="comment">//匹配由26个英文字母组成的字符串</span></div><div class="line">^[A-Z]+$　　<span class="comment">//匹配由26个英文字母的大写组成的字符串</span></div><div class="line">^[a-z]+$　　<span class="comment">//匹配由26个英文字母的小写组成的字符串</span></div><div class="line">^[A-Za-z0-<span class="number">9</span>]+$　　<span class="comment">//匹配由数字和26个英文字母组成的字符串</span></div><div class="line">^\w+$　　<span class="comment">//匹配由数字、26个英文字母或者下划线组成的字符串</span></div></pre></td></tr></table></figure>
-
-<p>推荐阅读：</p>
-<ul>
-<li><a href="http://deerchao.net/tutorials/regex/regex.htm" target="_blank" rel="external">正则表达式30分钟入门</a></li>
-<li><a href="http://www.williamlong.info/archives/433.html" target="_blank" rel="external">常用正则表达式</a></li>
-<li><a href="http://zh.wikipedia.org/wiki/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F" target="_blank" rel="external">wikipedia 正则表达式</a></li>
-</ul>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/正则表达式/">正则表达式</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/Study/">Study</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/categories/Study/page/2/">2</a><a class="extend next" rel="next" href="/categories/Study/page/2/">Next &raquo;</a>
+    </nav>
   
 </div>
       <footer id="footer">
