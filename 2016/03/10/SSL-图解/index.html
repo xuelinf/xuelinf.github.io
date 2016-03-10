@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>SSL 图解 | 临风|刀背藏身</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="SSL 协议详解安全套接字（Secure Socket Layer，SSL）协议是Web浏览器与Web服务器之间安全交换信息的协议，提供两个基本的安全服务：鉴别与保密。
+SSL是Netscape于1994年开发的，后来成为了世界上最著名的web安全机制，所有主要的浏览器都支持SSL协议。　　目前有三个版本：2、3、3.1，最常用的是第3版，是1995年发布的。
+SSL协议的三个特性
+
+保密：在握手">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SSL 图解">
+<meta property="og:url" content="http://yoursite.com/2016/03/10/SSL-图解/">
+<meta property="og:site_name" content="临风|刀背藏身">
+<meta property="og:description" content="SSL 协议详解安全套接字（Secure Socket Layer，SSL）协议是Web浏览器与Web服务器之间安全交换信息的协议，提供两个基本的安全服务：鉴别与保密。
+SSL是Netscape于1994年开发的，后来成为了世界上最著名的web安全机制，所有主要的浏览器都支持SSL协议。　　目前有三个版本：2、3、3.1，最常用的是第3版，是1995年发布的。
+SSL协议的三个特性
+
+保密：在握手">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575301594684.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575307943892.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575744280354.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575746918586.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575782242346.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575791281572.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575791478878.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575792771159.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SSL 图解">
+<meta name="twitter:description" content="SSL 协议详解安全套接字（Secure Socket Layer，SSL）协议是Web浏览器与Web服务器之间安全交换信息的协议，提供两个基本的安全服务：鉴别与保密。
+SSL是Netscape于1994年开发的，后来成为了世界上最著名的web安全机制，所有主要的浏览器都支持SSL协议。　　目前有三个版本：2、3、3.1，最常用的是第3版，是1995年发布的。
+SSL协议的三个特性
+
+保密：在握手">
+
+  
+    <link rel="alternative" href="/atom.xml" title="临风|刀背藏身" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="http://7s1s1q.com1.z0.glb.clouddn.com/love.png" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">临风</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">代码是一棱刀背，幸好，有此藏身。</p>
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						<li>友情链接</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="/github.com/xuelinf" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/1221903300" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="/#" title="rss">rss</a>
+					        
+								<a class="zhihu" target="_blank" href="/zhihu.com/people/xuelinf" title="zhihu">zhihu</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/C-C/" style="font-size: 10.00px;">C/C++</a><a href="/tags/Diary/" style="font-size: 10.00px;">Diary</a><a href="/tags/Docker/" style="font-size: 10.00px;">Docker</a><a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a><a href="/tags/Linux/" style="font-size: 10.00px;">Linux</a><a href="/tags/PM/" style="font-size: 10.00px;">PM</a><a href="/tags/Python/" style="font-size: 13.33px;">Python</a><a href="/tags/TCP-IP/" style="font-size: 13.33px;">TCP/IP</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 13.33px;">life</a><a href="/tags/web/" style="font-size: 10.00px;">web</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 13.33px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">待添加</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">请赐予我意志力</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">临风</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img lazy-src="http://7s1s1q.com1.z0.glb.clouddn.com/love.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author">临风</h1>
+			</hgroup>
+			
+			<p class="header-subtitle">代码是一棱刀背，幸好，有此藏身。</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="/github.com/xuelinf" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/1221903300" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="/#" title="rss">rss</a>
+			        
+						<a class="zhihu" target="_blank" href="/zhihu.com/people/xuelinf" title="zhihu">zhihu</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <div class="body-wrap"><article id="post-SSL-图解" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/03/10/SSL-图解/" class="article-date">
+  	<time datetime="2016-03-10T03:22:20.000Z" itemprop="datePublished">3月 10 2016</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      SSL 图解
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li></ul>
+	</div>
+
+        
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/Study/">Study</a>
+	</div>
+
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>SSL 协议详解<br>安全套接字（Secure Socket Layer，SSL）协议是Web浏览器与Web服务器之间安全交换信息的协议，提供两个基本的安全服务：鉴别与保密。</p>
+<p>SSL是Netscape于1994年开发的，后来成为了世界上最著名的web安全机制，所有主要的浏览器都支持SSL协议。<br>　　<br>目前有三个版本：2、3、3.1，最常用的是第3版，是1995年发布的。</p>
+<p><strong>SSL协议的三个特性</strong></p>
+<ul>
+<li>保密：在握手协议中定义了会话密钥后，所有的消息都被加密。</li>
+<li>鉴别：可选的客户端认证，和强制的服务器端认证。</li>
+<li>完整性：传送的消息包括消息完整性检查（使用MAC）。<br><a id="more"></a><br>SSL介于应用层和TCP层之间。应用层数据不再直接传递给传输层，而是传递给SSL层，SSL层对从应用层收到的数据进行加密，并增加自己的SSL头。SSL 包括的工作原理有，<strong>握手协议，记录协议，报警协议。</strong></li>
+</ul>
+<h3 id="握手协议">握手协议</h3>
+<p>握手协议是客户机和服务器用SSL连接通信时使用的第一个子协议，握手协议包括客户机与服务器之间的一系列消息。SSL中最复杂的协议就是握手协议。该协议允许服务器和客户机相互验证，协商加密和MAC算法以及保密密钥，用来保护在SSL记录中发送的数据。握手协议是在应用程序的数据传输之前使用的。</p>
+<p>每个握手协议包含以下3个字段</p>
+<ul>
+<li>Type：表示10种消息类型之一</li>
+<li>Length：表示消息长度字节数</li>
+<li>Content：与消息相关的参数<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575301594684.jpg" alt=""></li>
+</ul>
+<p>比如我们在发送已加密的 HTTP 报文之前,客户端和服务器要进行一次 SSL 握手,在这个握手过程中,它们要完成以下工作:</p>
+<ul>
+<li>交换协议版本号;</li>
+<li>选择一个两端都了解的密码;</li>
+<li>对两端的身份进行认证;</li>
+<li>生成临时的会话密钥,以便加密信道。</li>
+</ul>
+<p>我这里引述阮一峰在博客中举得alice and Bob 的例子。</p>
+<ol>
+<li>第一步，爱丽丝给出协议版本号、一个客户端生成的随机数（Client random），以及客户端支持的加密方法。</li>
+<li>第二步，鲍勃确认双方使用的加密方法，并给出数字证书、以及一个服务器生成的随机数（Server random）。</li>
+<li>第三步，爱丽丝确认数字证书有效，然后生成一个新的随机数（Premaster secret），并使用数字证书中的公钥，加密这个随机数，发给鲍勃。</li>
+<li>第四步，鲍勃使用自己的私钥，获取爱丽丝发来的随机数（即Premaster secret）。</li>
+<li>第五步，爱丽丝和鲍勃根据约定的加密方法，使用前面的三个随机数，生成”对话密钥”（session key），用来加密接下来的整个对话过程。</li>
+</ol>
+<p>下面再进一步详解每一部分：</p>
+<p><strong>第一和第二步，建立安全能力</strong></p>
+<p>SSL握手的第一阶段启动逻辑连接，建立这个连接的安全能力。首先客户机向服务器发出client hello消息并等待服务器响应，随后服务器向客户机返回server hello消息，对client hello消息中的信息进行确认。<br>Client hello消息包括Version，Random，Session id，Cipher suite，Compression method等信息。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575307943892.jpg" alt=""></p>
+<p>ClientHello 客户发送CilentHello信息，包含如下内容：</p>
+<ul>
+<li>客户端可以支持的SSL最高版本号</li>
+<li>一个用于生成主秘密的32字节的随机数。</li>
+<li>一个确定会话的会话ID。</li>
+<li>一个客户端可以支持的密码套件列表。</li>
+<li>一个客户端可以支持的压缩算法列表。</li>
+</ul>
+<p>密码套件格式：每个套件都以“SSL”开头，紧跟着的是密钥交换算法。用“With”这个词把密钥交换算法、加密算法、散列算法分开，例如：SSL_DHE_RSA_WITH_DES_CBC_SHA, 表示把DHE_RSA(带有RSA数字签名的暂时Diffie-HellMan)定义为密钥交换算法；把DES_CBC定义为加密算法；把SHA定义为散列算法。</p>
+<p>而ServerHello服务器用ServerHello信息应答客户，包括下列内容</p>
+<ul>
+<li>一个SSL版本号。取客户端支持的最高版本号和服务端支持的最高版本号中的较低者。</li>
+<li>一个用于生成主秘密的32字节的随机数。（客户端一个、服务端一个）</li>
+<li>会话ID</li>
+<li>从客户端的密码套件列表中选择的一个密码套件</li>
+<li>从客户端的压缩方法的列表中选择的压缩方法</li>
+</ul>
+<p>这个阶段之后，客户端服务端知道了下列内容：</p>
+<ul>
+<li>SSL版本</li>
+<li>密钥交换、信息验证和加密算法</li>
+<li>压缩方法</li>
+<li>有关密钥生成的两个随机数。</li>
+</ul>
+<p><strong>第二阶段，服务器鉴别与密钥的交换</strong></p>
+<p>服务器启动SSL握手第2阶段，是本阶段所有消息的唯一发送方，客户机是所有消息的唯一接收方。该阶段分为4步：</p>
+<ul>
+<li>证书：服务器将数字证书和到根CA(Certification Authority)整个链发给客户端，使客户端能用服务器证书中的服务器公钥认证服务器。</li>
+<li>服务器密钥交换（可选）：这里视密钥交换算法而定</li>
+<li>证书请求：服务端可能会要求客户自身进行验证。</li>
+<li>服务器握手完成：第二阶段的结束，第三阶段开始的信号</li>
+</ul>
+<p>这一步在刚才的例子中被合并在第二步里。其重点在于服务端的验证和密钥的交换。在SSL 中密钥交换算法有6种：无效（没有密钥交换）、RSA、匿名Diffie-Hellman、暂时Diffie-Hellman、固定Diffie-Hellman、Fortezza。</p>
+<p>在阶段一那里，双方已经协商确定使用哪种算法。而且CA 证书里包含了公钥。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575744280354.jpg" alt=""></p>
+<p>比如我们协商使用了RSA 交换密钥，那么过程是这样的：<br>这个方法中，服务器在它的第一个信息中，发送了RSA加密/解密公钥证书。不过，因为预备主秘密是由客户端在下一个阶段生成并发送的，所以第二个信息是空的。注意，公钥证书会进行从服务器到客户端的验证。当服务器收到预备主秘密时，它使用私钥进行解密。服务端拥有私钥是一个证据，可以证明服务器是一个它在第一个信息发送的公钥证书中要求的实体。</p>
+<p><strong>第三阶段，客户机鉴别与密钥交换</strong></p>
+<p>在这一阶段，主要是我们的客户机启动，发送消息，服务器是唯一的接收方。分为三个阶段：</p>
+<ul>
+<li>证书（可选）：为了对服务器证明自身，客户要发送一个证书信息，这是可选的，在IIS中可以配置强制客户端证书认证。</li>
+<li>客户机密钥交换（Pre-master-secret）：这里客户端将预备主密钥发送给服务端，注意这里会使用服务端的公钥进行加密。</li>
+<li>证书验证（可选），对预备秘密和随机数进行签名，证明拥有（a）证书的公钥。</li>
+</ul>
+<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575746918586.jpg" alt=""></p>
+<p>这里的重点就是，我们的客户端把自己的公钥发给服务端，方便服务端用公钥加密，然后通过服务端之间发过来的证书里的公钥，加密自己的随机数和预备秘密，又保证了秘密的私密性，又证明了它拥有证书的公钥。</p>
+<p><strong>第四阶段</strong></p>
+<p>刚才服务端收到了用公钥加密的第三个随机数，这时服务端和客户端就可以使用三个随机数生成本次的会话密钥，双方通过计算得到本次使用的会话密钥。然后互相发送：</p>
+<ul>
+<li>编码改变通知，表示随后的信息都将用双方商定的加密方法和密钥发送。</li>
+<li>握手结束通知，表示握手阶段已经结束。这一项同时也是前面发送的所有内容的hash值，用来供互相校验。</li>
+</ul>
+<p>而这三个随机数要获得总共六个加密秘密：四个密钥（客户公钥私钥 和服务器公钥私钥），两个IV（initialization vector 初始向量，与区块加密模式有关）。加密过程如下图：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575782242346.jpg" alt=""></p>
+<p>首先利用之前发送的预备主秘密，双方发送的随机数等组合散列并获得MD5值，得到一个主秘密。再对主秘密进行处理，得到一串散列值，这个散列值可以拆分成四个密钥和两个IV。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575791281572.jpg" alt=""></p>
+<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575791478878.jpg" alt=""></p>
+<h3 id="记录协议">记录协议</h3>
+<p>刚才讲的只是在完成了握手协议，下面在握手成功后，双方如何互传信息呢。就需要使用记录协议。记录协议提供了两个服务：</p>
+<ul>
+<li>保密性，使用握手协议定义的秘密密钥实现</li>
+<li>完整性，握手协议定义了MAC， 用于保证信息完整性</li>
+</ul>
+<p>整个记录协议的过程如下：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575792771159.jpg" alt=""></p>
+<h3 id="警报协议">警报协议</h3>
+<p>当客户和服务器发现出现错误的时候，就需要处理这个错误。于是，就向对方发送一个警报信息。如果是致命错误，那么就会立即关闭SSL 连接，而且双方还会删除相关的会话号，秘密和密钥。这就是警报协议，每个警报的信息共有两个字节，第一个字节表示错误类型，如果是警报，置1，如果是致命错误，置2.第二个字节指定实际的错误类型。</p>
+<p>相关扩展：</p>
+<p><a href="https://zh.wikipedia.org/wiki/%E8%BF%AA%E8%8F%B2-%E8%B5%AB%E7%88%BE%E6%9B%BC%E5%AF%86%E9%91%B0%E4%BA%A4%E6%8F%9B" target="_blank" rel="external">DH加密方法</a></p>
+<p><a href="http://www.openssl.org/" target="_blank" rel="external">OpenSSL</a> </p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/03/09/TCP-IP-完全解读1/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">TCP/IP 完全解读之传输层协议</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="SSL-图解" data-title="SSL 图解" data-url="http://yoursite.com/2016/03/10/SSL-图解/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"xuelinf"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 临风
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: true
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js" type="text/javascript"></script>
+
+<script src="/js/main.js" type="text/javascript"></script>
+
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
