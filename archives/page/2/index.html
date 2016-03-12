@@ -188,228 +188,6 @@
 </nav>
       <div class="body-wrap">
   
-    <article id="post-TCP-IP-完全解读1" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/03/09/TCP-IP-完全解读1/" class="article-date">
-  	<time datetime="2016-03-09T09:29:23.000Z" itemprop="datePublished">3月 9 2016</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/03/09/TCP-IP-完全解读1/">TCP/IP 完全解读之传输层协议</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>BY 凯寓</p>
-<h1 id="传输层协议">传输层协议</h1>
-<p>[TOC]</p>
-<h2 id="1_传输层概述">1 传输层概述</h2>
-<p>传输层位于应用层和网络层之间，其关键功能是将网络层在<strong>两个端系统之间</strong>的交付拓展到运行在两个不同端系统上的<strong>应用层进程之间</strong>的交付服务。相比网络层协议为主机之间提供<code>逻辑通信</code>，传输层协议为运行在不同主机上的应用进程之间提供<code>逻辑通信</code>，传输层协议是在端系统中实现，而不是在路由器中实现，传输层传送的是<strong>报文段（segment）</strong>。</p>
-<p><strong>一方面</strong>，传输层协议提供的服务受制于网络层协议的服务模型：即如果网络层协议无法为主机之间发送的传输层报文段提供时延或带宽的保证，则传输层协议也就无法为进程之间发送的应用层报文提供时延或带宽保证。<strong>另一方面</strong>，传输层又可提供网络层协议无法提供的服务，如保密性，可靠性。</p>
-<p>传输层协议将主机间交付扩展到进程间交付的行为称为<strong>传输层多路复用（transport-layer multiplexing）</strong>与<strong>多路分解（demultiplexing）</strong>，最有名的传输层协议是TCP和UDP。他们的行为有着鲜明的`两极化``，<strong>在一个极端</strong>，UDP仅向通信进程提供多路复用/分解的服务，而不提供其他任何服务（因此它非常简单），<strong>在另一个极端</strong>，TCP向通信进程提供可靠交付、时延保证、带宽保证等一些列服务。具体而言，TCP通过使用流量控制、序号、确认和定时器确保数据正确、按序的从发送进程交付给接受进程，即提供<strong>可靠数据传输（reliable data transfer）</strong>，同时TCP还提供<strong>拥塞控制（congestion control）</strong>。<br>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/Study/">Study</a>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a  href="/2016/03/09/TCP-IP-完全解读1/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
-    <article id="post-薛定谔的2016" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/01/11/薛定谔的2016/" class="article-date">
-  	<time datetime="2016-01-11T12:37:27.000Z" itemprop="datePublished">1月 11 2016</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/01/11/薛定谔的2016/">薛定谔的2016</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>镇定一下，我要开始总结了。</p>
-<p>2014年的末尾，我没有为自己预想未来的一年我会有怎样的生活，因为每一个转折点，都会扩散出许多种可能，这些可能的叠加，最终会超出我所有预想的结果。</p>
-<p>在2014年年中，有一个大转折点，我将它称之为1.0生活到2.0生活的转变，因为我认识到自己性格里的不成熟和缺陷，认识到大约二十年的无知以及自以为是。这算是一份特别的工作带给我的最大收获。</p>
-<hr>
-<p>回头将自己2015年的日记回看了一遍，就像又走了一遍2015年，看着自己一点一点的变化。看自己从迷茫到坚定，到焦虑，到淡定，到迟疑，到沉默…</p>
-<p>年初的时候，我给自己定下了许多规划，试图去重建自己的生活习惯，比如坚持写日记，硬规定阅读量，坚持为记录时间，完善GTD。我试着去打破过去二十年懒惰的自己，重构出一个不一样的自己，这个过程，艰难，但显得自然而然。</p>
-<p>而到了八月份，回到这个久违的荒岛（当然，现在已经商业开发的不再是荒岛了），度过最初的适应之后，那种期盼中的生活慢慢的展开，时间就真变成了离弦的箭，因为所有想要做的事情都展开了，在这个过程中，过去半年所规划的生活也被我重新调整。当然，在这个过程里，各种好的坏的习惯被改变，有很多过去无法完成的事情成了自然而然的一件小事。</p>
-<p>在这接下来的半年里，从纠结的选择到淡定，从焦虑到从容。每天沉浸在实验室，感觉时间的每个节点，都被放大成了一个波澜不惊的平面，在这些平面上，我可以做许多事情。而且，我更珍惜每一个时间的断面，想要做更多的事情。</p>
-<p>回到15年年初给自己定下的规划：</p>
-<ul>
-<li>关于阅读：一百本书的量基本完成，后半段大量的技术文档和文章可以填补本来的规划。</li>
-<li>关于日记：止步于开学后不久，因为将精力投入到做事中，无暇记录。</li>
-<li>关于知识结构：基本满意。</li>
-<li>关于自控力：提高明显。</li>
-<li>关于时间管理：不满意，使用了数种GTD 方法，均弃。</li>
-<li>关于性格：有进步，但缺点明显，仍未改变。</li>
-<li>关于健身：基本满意，身体素质提高，需坚持。</li>
-<li>关于未来：有了更多的期许。</li>
-</ul>
-<p>所以，实际上，我的2015年看似是我变动最大的一年，也是环境变化最剧烈的一年，但似乎又是理所当然和波澜不惊的，我预想了一整年的状态，也预料到了这些波澜不惊。</p>
-<p>实际上，2015年带给我的最大最大的收获，是我认识到，未来，哪怕是短短的一年两年，都应当是不可预测的。而如果未来是可测的，那人生一定是可悲的，因为那是一条毫无意义的路，你看不到不一样的风景，看不到未知，看不到未知里所藏匿着的壮美。去年，我一篇日志里写，追赶时间最佳的方式只有阅读，因为每本书实际上都是一段时间线的扩展，它可以将二维的时间提升到三维，四维…在更高的维度下，理解世界的方式在变化，认识人生轨迹的方式也在变化。</p>
-<p>对于2016年，我所要面对的生活，将会有更大的变化，我甚至无法预测在未来的某个时间节点，我会在哪里出现，我在做什么。所以，我把我的二零一六称为薛定谔的二零一六，因为所有的可能都存在，在我没有打开盒子的时候，我不会知道我将为自己创造一个怎样的2016。所以，关于规划，我只写期望。</p>
-<ul>
-<li>关于阅读： 因为阅读量代表的是时间的量，我希望时间越长越好，所以仍然会给自己留下一百本的要求，按照2015年经验，平均每月8+本阅读，每本10w+字数，一个月的阅读量100w+ 难度不高。但鉴于书籍的选择我会尽量筛去口水化严重的书，那就需要花费更多的时间反思和内化，所以最后的实际期望在80~100本之间。2015的后半程没有坚持把每一本书都记录和总结出来，在2016年，一定要坚持将每一本书记录下来。</li>
-<li>关于日记：我希望整合进时间管理中去，2015年有一大部分日记是用来思考和反省的，花费了较多时间。而2016年我希望，日记能作为一种行为习惯，与时间规划一起，用来整理人生。所以，选择一个优秀的APP或者自己开发一个应用，回顾事件和时间。日记的另一部分，用极简的话，记录收获。</li>
-<li>关于自控力：自控力就像肌肉，只有锻炼，才能保持，否则只会越来越差。只要记住这句就好了。</li>
-<li>关于时间管理：是2015年的最大遗憾，也是因为糟糕的时间管理能力，让一整年很多事情做起来毫无头绪，并行多线程互抢资源的情况经常发生。所以，新的一年，结合日记和一个合适的GTD方法，管理自己的时间，将是重点关注的事情。</li>
-<li>关于健身：两天一次。</li>
-<li>关于性格：藏拙，克己，平心，助人。</li>
-<li>关于知识结构：结合时间管理，有计划的补充知识点。就技术而言，两向发展，技术内核学习一个方向，实践coding另一个方向。就知识面而言，依兴趣点规划，比如心理学方面把荣格的作品看完。</li>
-<li>关于写作：2015年，其实总结了不少文章，但是因为懒惰，也因为感觉没有时间去整理，就没有挂在博客上。2016年，我还是应当学会用清晰的文字表达自己的学习内容，研究问题，学会表达。</li>
-</ul>
-<p>整个2015年，我认识到的另一件重要事，也是非常浅显的道理：所有的预想和规划，都无法代替真正的经历和体会，只有实践才能给出答案。所有对2016年的规划，都不过是一种期许，在新的一年，也许自己会面对新的挑战，不期而遇的变化，所有的计划都追赶不上变化，而我唯一要做的，就是努力将时光铺陈在所有美好的事物上。</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/年终总结/">年终总结</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/个人总结/">个人总结</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
-    <article id="post-用Python写一个虚拟解释器" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/11/09/用Python写一个虚拟解释器/" class="article-date">
-  	<time datetime="2015-11-09T13:18:08.000Z" itemprop="datePublished">11月 9 2015</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/11/09/用Python写一个虚拟解释器/">用Python写一个虚拟解释器</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="http://www.jianshu.com/p/28c029de8fb3" target="_blank" rel="external">刀背藏身|简书</a><br>先来看看这篇文章 <a href="http://www.yinwang.org/blog-cn/2012/08/01/interpreter/" target="_blank" rel="external">怎样写一个解释器</a></p>
-<p>所谓虚拟机器，就是一定意义上的堆栈机。<br>解释器能够执行其他计算机语言编写的程序的系统软件，他是一个翻译程序。它的执行方式是一边翻译一边执行，因此其执行效率一般比较低。解释器的实现比较简单，而且编写源程序的高级语言可以使用更加灵活和富于表现力的语法。<br>可参考<a href="https://csl.name/post/vm/" target="_blank" rel="external">本链接</a>，开源项目<a href="https://github.com/cslarsen/crianza" target="_blank" rel="external">Crianza</a>。<br>当然，解释器要从最基础的最简单的语言开始，然后逐步增加语言的复杂度，才能构造出正确的解释器。而最基础的一个解释器，其实就是一个高级的计算器，下面我们一起来创建一个解释器吧。<br>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/Study/">Study</a>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a  href="/2015/11/09/用Python写一个虚拟解释器/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
     <article id="post-Python高效编程小技巧" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -535,9 +313,501 @@
 
 
   
+    <article id="post-《C陷阱与缺陷》笔记" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/10/08/《C陷阱与缺陷》笔记/" class="article-date">
+  	<time datetime="2015-10-08T14:27:37.000Z" itemprop="datePublished">10月 8 2015</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/10/08/《C陷阱与缺陷》笔记/">《C陷阱与缺陷》笔记</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这本书超薄，但含金量很高，里边一些常见的陷阱也是面试的时留的坑，适合没事翻一翻，指不定什么时候还有意外惊喜。<br>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C-C/">C/C++</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/读书笔记/">读书笔记</a>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a  href="/2015/10/08/《C陷阱与缺陷》笔记/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+    <article id="post-Web开发规范" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/10/06/Web开发规范/" class="article-date">
+  	<time datetime="2015-10-06T12:12:43.000Z" itemprop="datePublished">10月 6 2015</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/10/06/Web开发规范/">Web开发规范</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>from: <a href="">Github</a></p>
+<h2 id="通用规范">通用规范</h2>
+<ul>
+<li>使用空格代替TAB，windows和Linux的Tab占位不同。</li>
+<li>CSS样式属性和 JavaScript代码后边添加分号<code>;</code> ，方便断句，利于压缩。</li>
+<li>文件内容编码均统一为UTF-8。</li>
+<li>CSS、JAVASCRIPT中的非注释类中文字符须转换成unicode编码使用，以避免编码错误时乱码显示。</li>
+</ul>
+<h2 id="文件规范">文件规范</h2>
+<ul>
+<li>文件名用英文单词，多个单词用驼峰命名法。</li>
+<li>一些浏览器会将含有这些词的作为广告拦截，文件命名、ID、CLASS等所有命名避免以上词汇。<code>ad`、`ads`、`adv`、`banner`、`sponsor`、`gg`、`guangg`、`guanggao</code><br>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web/">web</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/前端/">前端</a>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a  href="/2015/10/06/Web开发规范/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+    <article id="post-《增长黑客》读书笔记" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/10/05/《增长黑客》读书笔记/" class="article-date">
+  	<time datetime="2015-10-05T12:20:30.000Z" itemprop="datePublished">10月 5 2015</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/10/05/《增长黑客》读书笔记/">《增长黑客》读书笔记</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>通过简书阅读：<a href="http://www.jianshu.com/p/ced81ced4b0d" target="_blank" rel="external">《增长黑客》读书笔记</a></p>
+<p>国庆期间，利用两天里的空闲时间，把这本最近颇受好评的书读了一遍，感觉很有意思之余，又把把书里的干货整理了一遍。</p>
+<p>书里的干货很多，案例很多，纯理论的东西不多，如果想要成为一个牛逼的 Leader , 就应当把自己培养成为T型的人才，跨界知识能力超强，某方面技术超硬，这个某方面，更多的指技术能力超硬。</p>
+<p>同时，书中所提到的一些案例，某些地方是游走在规矩的边界上，还有一部分虽然很有效但是也增加了用户的恶感（如捆绑下载，插件广告等），当然这本书并不是要教你学坏。</p>
+<p>在写这个读书笔记之前，我也看了一些人做的思维导图，内容很全，但是思维导图的缺点在于看的人更容易整体的浏览，一瞬接接触巨大的信息量，而无法深入的思考每一个信息点，所以我直接以正常笔记的形式进行了整理。</p>
+<h2 id="第一章：概念">第一章：概念</h2>
+<h4 id="定义（P6）">定义（P6）</h4>
+<p>以数据驱动营销，以市场指导产品，通过技术化手段贯彻增长目标的人。</p>
+<h4 id="增长目标：（P7）">增长目标：（P7）</h4>
+<p><strong>『AARRR』转化漏斗模型：</strong></p>
+<ul>
+<li>Acquisition 获取用户</li>
+<li>Activation 激发活跃</li>
+<li>Retention 提高留存</li>
+<li>Revenue 增加收入</li>
+<li>Referral 传播推荐</li>
+</ul>
+<h4 id="能力特质：（P16）">能力特质：（P16）</h4>
+<ul>
+<li><strong>数据为王：</strong>具有数据思维，一切工作建立在数据分析之上</li>
+<li><strong>专注目标：</strong>时刻围绕增长目标展开，不断的测试、改进，学习、再测试</li>
+<li><strong>关注细节：</strong>对细小改动做出评估</li>
+<li><strong>富于创意：</strong>缜密分析+天马行空的增长方案</li>
+<li><strong>信息通透：</strong>深入理解产品用户的活跃渠道，关注新生渠道和业界趋势</li>
+</ul>
+<p>（Andy Johns的增长黑客生涯）：facebook小挂件，向潜在用户发邮件广告推广，Twitter的着陆页改进（关注注册登录），新用户注册推荐用户，开发内部群发邮件系统，Quora捉摸用户行为模式，归纳为标准流程，引导其他用户执行流程<br>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PM/">PM</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/读书笔记/">读书笔记</a>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a  href="/2015/10/05/《增长黑客》读书笔记/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+    <article id="post-平淡日子里的刺" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/09/27/平淡日子里的刺/" class="article-date">
+  	<time datetime="2015-09-27T13:54:20.000Z" itemprop="datePublished">9月 27 2015</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/09/27/平淡日子里的刺/">平淡日子里的刺</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>很多人二十五岁已经死了，七十五岁才埋葬。    ——叔本华</strong></p>
+<hr>
+<p>八月十五，中秋，一个人。</p>
+<p>之前的两年时间，都在期待着新生活，而转眼间也在这里过去了一个月，生活平淡，美好。终于开始思考眼前的生活，思考无论有意义还是无意义都不会烦躁的问题。</p>
+<p>一句不恰当的比喻，自己就像从一段漫长的噩梦里苏醒，发现阳光亘古未变的打在脸上，痒痒的，真实的感觉。叔本华说，很多人二十五岁已经死了，七十五岁才埋葬，而我感觉自己好像刚刚复活，扑一扑身上的尘土，重新走入生活。课堂，健身，实验室，聚餐，电影，当下，以及梦想。</p>
+<p>生活以痛吻我，后又赐我以希望。所以，面对那些浮动的喧嚣，又有一种新的心境去审视和面对。前后的时光重叠在眼前的生活里，但对我来说，一切都是新的，都是从头来过。简桢常说的一句话，不为浮华所惑，在认定的道路上努力追求单纯的梦想，随之而来的将是丰厚的人生。所以，这些年生活带给我的痛和希望，都是于我的恩赐，给了我更多的自省和淡定。</p>
+<p>好了，回到正题。中秋结束，九月份基本宣告结束，2015年也就完成了三分之二，审视自己在年初定下的目标，有些惭愧，因为发现有很多习惯仍然没有养成。关于读书，没有做详细的统计，在三月份时候做的统计是二十本，而后到七月份的时候大约有五十本，稍慢于节奏。而后入学一个月的时间里，阅读量下降，主要精力放在了课程，刷题，和填坑。</p>
+<p>虽说我可以通过填充一些小篇幅的书籍来补回阅读量，但是这样无意义的阅读反而是有害的，有一些编写的并不好的书读起来的价值反而不如重看几遍经典书籍，所以今年的百本计划可能完不成了，不过因为开学之后又给自己设定了其他新的目标，所以通过完成几个目标，也算是可以填补这个目标的遗憾吧。</p>
+<p>这个博客的上一篇日志发于三月份，而后的六个月是长长的空白，这说明在一个孤独的、而且操作不便的环境里学习，很快就会遇到瓶颈，天花板让我满怀斗志的原地踏步，毫无寸进。日志依然保持持续更新（从八月份到现在，因为入学相关事宜，日记时断时续），文章依然在写，却感觉没有太多新的思考可供我写，大多数的阅读又都与我过去的思考重复，许多阅读收获我放在里简书的账号里。</p>
+<p>现在入学一个月有余，度过了适应阶段，我又有新的东西可以思考了，也有了新的目标可以期待，所以，这个博客我可以继续下去了，年初的时候我写文章说，自己在两年里完成了一次从 1.0 到 2.0 的成长，那么，现在就是刺激自己从 2.0 向 3.0 成长的过程吧。</p>
+<p>宋冬野有首歌叫《平淡日子里的刺》，韩寒写的词，其实是讲平淡生活里那些猝不及防的无奈，随时会刺痛你，会瞬间刺破幻境，所以他说，生活是这样子，不如诗。</p>
+<p>可是，我需要一把刺，我觉得更像一把锥，时刻让我认真感知生活，努力追逐。我需要这根刺，让我时刻保持清醒。张爱玲说，对于三十岁的人来说，十年八年不过是指缝间的事。她说的是爱情，但在我看来，生活也是如此，如果没有一把刺，三五年转瞬老去，大约要真的像叔本华所说的那样，我们都已死去，却等到七十五岁才埋葬。</p>
+<p>最后，再用《倾城之恋》里的一段话刺痛一下自己（为什么我总把爱情的思考看成人生的思索，我好想忽然明白了什么人生道理）。</p>
+<p><strong>你年轻么？不要紧，过两年就老了。</strong></p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Diary/">Diary</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/随笔/">随笔</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+    <article id="post-Docker学习笔记-一" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/09/25/Docker学习笔记-一/" class="article-date">
+  	<time datetime="2015-09-25T07:27:44.000Z" itemprop="datePublished">9月 25 2015</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/09/25/Docker学习笔记-一/">Docker学习笔记(一)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>来自：<a href="https://www.gitbook.com/book/yeasy/docker_practice/details" target="_blank" rel="external">Docker 从入门到实战 Gitbook</a></p>
+<h2 id="什么是Docker">什么是Docker</h2>
+<hr>
+<p>Docker 是一个开源的项目，于2013年诞生，基于Go语言实现，代码在<a href="https://github.com/docker/docker" target="_blank" rel="external">Github</a>上维护。</p>
+<p><strong>Docker 项目的目标是实现轻量级的操作系统虚拟化解决方案</strong>，Docker 的基础是Linux 容器等技术。</p>
+<p>在 LXC 的基础上 Docker 进行了进一步的封装，让用户不需要去关心容器的管理，使得操作更为简便。用户操作 Docker 的容器就像操作一个快速轻量级的虚拟机一样简单。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/30117-b2fb8aee9f40c436.png?imageMogr2/auto-orient/strip%7CimageView2/2" alt="Alt text"></p>
+<p>与传统虚拟机相比，Docker 容器是在操作系统层面实现了虚拟化，直接复用本地主机的操作系统，传统的方式仅在硬件层面上实现。</p>
+<h2 id="Docker优点">Docker优点</h2>
+<hr>
+<p>秒级实现，资源利用率高，除运行应用外，基本不消耗额外系统资源，使应用性能很高，开销更小。</p>
+<h3 id="更快的交付和部署">更快的交付和部署</h3>
+<p>开发者使用标准镜像构建一套开发容器，完成后，运维可以直接使用容器来部署代码。Docker可以快速创建，快速迭代，全程可见。</p>
+<h3 id="更高效的虚拟化">更高效的虚拟化</h3>
+<p>内核级的虚拟化，不需要额外的hypervisor支持。</p>
+<h3 id="更轻松的迁移和扩展">更轻松的迁移和扩展</h3>
+<p>可在任意平台运行，更好的实现迁移。</p>
+<h3 id="更简单的管理">更简单的管理</h3>
+<p>简单修改，以增量的方式分发和更新，实现自动化和高效管理。</p>
+<h2 id="基本概念">基本概念</h2>
+<hr>
+<h3 id="镜像（Image）">镜像（Image）</h3>
+<p>Docker镜像就是一个只读模板。<strong>例如：一个镜像可以包含一个完整的 ubuntu 操作系统环境，里面仅安装了 Apache 或用户需要的其它应用程序。</strong></p>
+<p>用户通过简单的机制创建或者更新现有的镜像。</p>
+<h3 id="容器（Container）">容器（Container）</h3>
+<p>Docker利用容器运行应用。容器是从镜像创建的运行实例。它可以被启动、开始、停止、删除。<strong>每个容器都是相互隔离的、保证安全的平台</strong>。</p>
+<h3 id="仓库（Repository）">仓库（Repository）</h3>
+<p>仓库是集中存放镜像文件的场所。概念与Git相似，注册服务器可以理解为Github这样的托管服务。所以Docker也有仓库和仓库注册服务器的概念。</p>
+<p>仓库分为公开仓库（Public）和私有仓库（Private）两种形式。最大的公开仓库是 <a href="https://hub.docker.com/" target="_blank" rel="external">Docker Hub</a>，存放了数量庞大的镜像供用户下载。 国内的公开仓库包括 <a href="http://dockerpool.com/" target="_blank" rel="external">Docker Pool</a> 等，可以提供大陆用户更稳定快速的访问。</p>
+<p>用户也可以自己创建一个私有仓库，通过<code>push</code>命令上传，通过<code>pull</code>命令下载。</p>
+<h2 id="安装">安装</h2>
+<hr>
+<p>官方网站上有各种环境下的 <a href="https://docs.docker.com/installation/#installation" target="_blank" rel="external">安装指南</a> ， 不再赘述。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/Docker/">Docker</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+    <article id="post-阶段读书总结" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/03/15/阶段读书总结/" class="article-date">
+  	<time datetime="2015-03-15T15:19:30.000Z" itemprop="datePublished">3月 15 2015</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/03/15/阶段读书总结/">阶段读书总结</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>很长时间没有更新这个博客了，其实常常责备自己难道又要三分钟热度的放弃了这个博客了么。</p>
+<p>不过虽然博客没有更新文章，但是文章一直在写，每天千字，如今已经积累了一百多篇，不过一直觉得自己思考的东西，没必要总是更新在博客里。博客里更新的应该是比较成熟的而且更加思想密集的文章，所以就一直搁置下来，包括阅读笔记也没有更新。</p>
+<p>大概在今年年中的时候，环境发生变化后，我可能会改变很多学习方式，这个博客就会继续更新，并且确保自己处在高效思考的状态。</p>
+<p>下面是2015年截至现在的阶段读书统计，算是一个归档。</p>
+<p>———<br>已读书目（包含部分阅读过半，觉得没算太好但会抽时间看完的书）：</p>
+<blockquote>
+<p>由于之前没有看完记录的习惯，于是归档的书籍没办法统计时间及先后顺序，而且对一月一号这个分界线前后阅读的书区分有些忘记，所以只能按照自己模糊记忆中的整理。</p>
+</blockquote>
+<ul>
+<li>《参与感》小米公司的营销方法书，黎万强写的，写的还不错，记住了那句，台风口上，猪都会飞起来。</li>
+<li>《意志力》 如书名，讲解了意志力这东西，意志力的特点和如何锻炼意志力。书不错，意志力就像肌肉，过度使用就会疲劳，长期锻炼就会增强。</li>
+<li>《演讲之禅》 介绍演讲的前前后后和真谛，看的有点早，很多内容现在接触不到，有一定意见性，对以后如果做演讲会有好处。</li>
+<li>《风起陇西》 马伯庸的小说，三国背景的谍战题材，脑洞大开，文笔顶棒，马亲王一生粉。</li>
+<li>《习惯的力量》 讲述习惯存在的意义和具有的能量，以及如何养成良好的习惯。不过事例太多，口水太多，读一半准备弃掉，再看一部分，看还有希望没。</li>
+<li>《激荡三十年》上  可以归在在读的行列，不过打算按照速读的方式进行，因为有很多内容可能对我来说意义不大，讲述七八年改革之后国家经济的起起落落，本意是想要了解一下这三十年来经济资产的发展之路。</li>
+<li>《超级时间整理术》 个人时间管理方面的知识，有一定用处，不过和之前一些看过的东西，以及自己的认知重合，算是强化认识吧。</li>
+<li>《来到地球的第一天》 大象公会的第一本书，算是热知识冷知识的合集，挺有意思，适合我这种好奇心比较浓厚的人。</li>
+<li>《暗时间》 刘未鹏的博客合集，前半部分对我触动比较大原因是发现自己思考的东西，原来别人也已经思考过，而且也总结的很棒了。更加激励我坚定的走下去。</li>
+<li>《把时间当做朋友》 李笑来的书，是知道了刘未鹏之后知道了李笑来，也是一个个人时间管理方面的书，比较有实战意义，不过很多事情还是因人而异，只有懂了原理和真谛，具体的方法还是要看自己了。</li>
+<li>《阮一峰博客文集：如何变得有思想》 比较失望的一本书，本来以为是比较有深度思考的书，结果发现其实就是一些特别简单的阅读笔记和思考总结，难不成我的日记整理整理也能出本书？虽然阮一峰比我牛逼太多，不过还是觉得书没那么好。</li>
+<li>《野蛮生长》 一开始喜欢这书名买来看的，发现冯仑这人确实非常有才华，看待事物非常清楚，分析的很透彻，书没看完，是因为觉得虽然分析的很好，可是总觉得和自己关系不大，有些伤感。</li>
+<li>《古董局中局3》 马亲王的书，不解释，第三部，依然好。</li>
+<li>《新经济，新规则》 KK的书，考虑到写这十大未来特点的年代，KK果然是牛人。</li>
+<li>《苗疆蛊事》 近年来唯一看完的一本快餐小说，马亲王以前推荐的，有点意思</li>
+<li>《故事：材质，结构，风格和银幕创作的原理》  应该是编剧的宝书，买来看看纯属求知欲，指不定什么时候想写个剧本什么的。</li>
+<li>《罗辑思维》  是罗辑节目的一个合集，罗辑也是思维挺独特一个人，而且见识挺广，所以读来也有意思，这样看合集的方式要好过一集一集的看节目。</li>
+<li>《穿布鞋的马云》  看这本书也是源于当时马云成为首富，我对这个人的风云故事比较感兴趣，觉得这个人看起来很闷，但内在一定很丰富，所以拿来看看。</li>
+<li>《三十六大》 冯唐的书，冯唐的文字风格有北京人那种痞气，读起来酣畅淋漓但是总觉得有点过了，可能是他这个人确实才华出众所以才睥睨万物吧，我想起了和菜头。</li>
+<li>《亵渎》 网文，开头烂得读不下去，但是总是很多人推荐，正好那段时间心情不好，压着读了前边，后边写的好了一些，不过其实感觉也好不到哪去，不知道自己有没有闲工夫把它看完。</li>
+</ul>
+<hr>
+<p>共计20本，考虑到一年阅读一百本书的计划，平均每月需要阅读八本，到今天刚好符合进度。</p>
+<p>特点：</p>
+<ul>
+<li>阅读难度不高，整体没有什么难度的书要啃，没有什么专业类书籍，一方面是因为环境的原因，专业类的书籍有看，但是进度很缓慢，缺少大块的消化时间。</li>
+<li>归档整理不及时，一来没有登记，二来没有整理读书笔记。</li>
+<li>没有计划，选择看的书，基本没有什么计划，就是看完一本，挑选挑选就开始看下一本。</li>
+<li>阅读心得没有继续下去，去年说的要写阅读笔记来着，结果没有坚持下去，可能环境原因占一部分。</li>
+</ul>
+<hr>
+<p>在读：</p>
+<ul>
+<li>《算法心得》</li>
+<li>《编程珠玑》 &amp; 《编程珠玑续》  三本算法类的书，装逼利器，可是看起来挺折磨的，第一天看了几页，花费了半个上午的时间，需要慢慢消化。</li>
+<li>《IOS开发指南》，虽然还没有彻底开始打算做IOS的开发，但先作为入门知识了解一下也是好的，毕竟自己这么多语言都想好好学学，不得都先入个门。</li>
+<li>《梁文道：我读1》，属于是不想细看的书可以在这了解，想看的书可以在这看下介绍，看过的书在这看看他怎么看。</li>
+<li>《上帝掷筛子么？量子史话》 很早以前其实就看了一部分，貌似当时是因为看的盗版的epub，不完整，影响阅读体验，就搁置了，在多看买回来之后，想着把它补完。</li>
+<li>《结网》 PM的书，目前离这个职位比较远，直接想当PM的人，其实很大部分都自以为能力足够了，看了本《人人都是产品经理》等几本书，觉得就可以胜任了。想要往这发展，预计自己还有大约五十本相关类的书要看完并有相应五十篇以上的思考。</li>
+</ul>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/阶段总结/">阶段总结</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/个人总结/">个人总结</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/">&laquo; Prev</a><a class="page-number" href="/archives/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/page/3/">3</a><a class="page-number" href="/archives/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/archives/page/8/">8</a><a class="extend next" rel="next" href="/archives/page/3/">Next &raquo;</a>
+      <a class="extend prev" rel="prev" href="/archives/">&laquo; Prev</a><a class="page-number" href="/archives/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/page/3/">3</a><a class="page-number" href="/archives/page/4/">4</a><a class="page-number" href="/archives/page/5/">5</a><a class="extend next" rel="next" href="/archives/page/3/">Next &raquo;</a>
     </nav>
   
 </div>
