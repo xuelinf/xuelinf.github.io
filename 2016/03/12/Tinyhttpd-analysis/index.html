@@ -3,33 +3,23 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Docker学习笔记(一) | 临风|刀背藏身</title>
+  <title>Tinyhttpd analysis | 临风|刀背藏身</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="来自：Docker 从入门到实战 Gitbook
-什么是Docker
-
-Docker 是一个开源的项目，于2013年诞生，基于Go语言实现，代码在Github上维护。
-Docker 项目的目标是实现轻量级的操作系统虚拟化解决方案，Docker 的基础是Linux 容器等技术。
-在 LXC 的基础上 Docker 进行了进一步的封装，让用户不需要去关心容器的管理，使得操作更为简便。用户操作 Dock">
+  <meta name="description" content="这是个不错的源码，用C 语言写的一个超轻量的HttpServer, 开发应该是用不上了，但是对于学习Unix 网络编程，套接字，进程等等来说相当够用。源代码大约500行，属于一个比较容易理解的代码量。
+阅读C 源码的好处在于你不必去考虑类和对象，不用花时间去看类里有哪些成员变量和成员函数，不用费力去构建类图。只需要按照过程阅读就好了。
+在源码上我进行了注释，在这里我对其中涉及到的Unix知识进行一">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Docker学习笔记(一)">
-<meta property="og:url" content="http://yoursite.com/2015/09/25/Docker学习笔记-一/">
+<meta property="og:title" content="Tinyhttpd analysis">
+<meta property="og:url" content="http://yoursite.com/2016/03/12/Tinyhttpd-analysis/">
 <meta property="og:site_name" content="临风|刀背藏身">
-<meta property="og:description" content="来自：Docker 从入门到实战 Gitbook
-什么是Docker
-
-Docker 是一个开源的项目，于2013年诞生，基于Go语言实现，代码在Github上维护。
-Docker 项目的目标是实现轻量级的操作系统虚拟化解决方案，Docker 的基础是Linux 容器等技术。
-在 LXC 的基础上 Docker 进行了进一步的封装，让用户不需要去关心容器的管理，使得操作更为简便。用户操作 Dock">
-<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/30117-b2fb8aee9f40c436.png?imageMogr2/auto-orient/strip%7CimageView2/2">
+<meta property="og:description" content="这是个不错的源码，用C 语言写的一个超轻量的HttpServer, 开发应该是用不上了，但是对于学习Unix 网络编程，套接字，进程等等来说相当够用。源代码大约500行，属于一个比较容易理解的代码量。
+阅读C 源码的好处在于你不必去考虑类和对象，不用花时间去看类里有哪些成员变量和成员函数，不用费力去构建类图。只需要按照过程阅读就好了。
+在源码上我进行了注释，在这里我对其中涉及到的Unix知识进行一">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Docker学习笔记(一)">
-<meta name="twitter:description" content="来自：Docker 从入门到实战 Gitbook
-什么是Docker
-
-Docker 是一个开源的项目，于2013年诞生，基于Go语言实现，代码在Github上维护。
-Docker 项目的目标是实现轻量级的操作系统虚拟化解决方案，Docker 的基础是Linux 容器等技术。
-在 LXC 的基础上 Docker 进行了进一步的封装，让用户不需要去关心容器的管理，使得操作更为简便。用户操作 Dock">
+<meta name="twitter:title" content="Tinyhttpd analysis">
+<meta name="twitter:description" content="这是个不错的源码，用C 语言写的一个超轻量的HttpServer, 开发应该是用不上了，但是对于学习Unix 网络编程，套接字，进程等等来说相当够用。源代码大约500行，属于一个比较容易理解的代码量。
+阅读C 源码的好处在于你不必去考虑类和对象，不用花时间去看类里有哪些成员变量和成员函数，不用费力去构建类图。只需要按照过程阅读就好了。
+在源码上我进行了注释，在这里我对其中涉及到的Unix知识进行一">
 
   
     <link rel="alternative" href="/atom.xml" title="临风|刀背藏身" type="application/atom+xml">
@@ -202,11 +192,11 @@ Docker 项目的目标是实现轻量级的操作系统虚拟化解决方案，D
 		</header>				
 	</div>
 </nav>
-      <div class="body-wrap"><article id="post-Docker学习笔记-一" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-Tinyhttpd-analysis" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2015/09/25/Docker学习笔记-一/" class="article-date">
-  	<time datetime="2015-09-25T07:27:44.000Z" itemprop="datePublished">9月 25 2015</time>
+      <a href="/2016/03/12/Tinyhttpd-analysis/" class="article-date">
+  	<time datetime="2016-03-12T13:28:57.000Z" itemprop="datePublished">3月 12 2016</time>
 </a>
     </div>
   
@@ -219,7 +209,7 @@ Docker 项目的目标是实现轻量级的操作系统虚拟化解决方案，D
         
   
     <h1 class="article-title" itemprop="name">
-      Docker学习笔记(一)
+      Tinyhttpd analysis
     </h1>
   
 
@@ -228,12 +218,12 @@ Docker 项目的目标是实现轻量级的操作系统虚拟化解决方案，D
       <div class="article-info article-info-post">
         
 	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unix/">Unix</a></li></ul>
 	</div>
 
         
 	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/Docker/">Docker</a>
+	<a class="article-category-link" href="/categories/Study/">Study</a>
 	</div>
 
 
@@ -243,39 +233,46 @@ Docker 项目的目标是实现轻量级的操作系统虚拟化解决方案，D
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>来自：<a href="https://www.gitbook.com/book/yeasy/docker_practice/details" target="_blank" rel="external">Docker 从入门到实战 Gitbook</a></p>
-<h2 id="什么是Docker">什么是Docker</h2>
-<hr>
-<p>Docker 是一个开源的项目，于2013年诞生，基于Go语言实现，代码在<a href="https://github.com/docker/docker" target="_blank" rel="external">Github</a>上维护。</p>
-<p><strong>Docker 项目的目标是实现轻量级的操作系统虚拟化解决方案</strong>，Docker 的基础是Linux 容器等技术。</p>
-<p>在 LXC 的基础上 Docker 进行了进一步的封装，让用户不需要去关心容器的管理，使得操作更为简便。用户操作 Docker 的容器就像操作一个快速轻量级的虚拟机一样简单。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/30117-b2fb8aee9f40c436.png?imageMogr2/auto-orient/strip%7CimageView2/2" alt="Alt text"></p>
-<p>与传统虚拟机相比，Docker 容器是在操作系统层面实现了虚拟化，直接复用本地主机的操作系统，传统的方式仅在硬件层面上实现。</p>
-<h2 id="Docker优点">Docker优点</h2>
-<hr>
-<p>秒级实现，资源利用率高，除运行应用外，基本不消耗额外系统资源，使应用性能很高，开销更小。</p>
-<h3 id="更快的交付和部署">更快的交付和部署</h3>
-<p>开发者使用标准镜像构建一套开发容器，完成后，运维可以直接使用容器来部署代码。Docker可以快速创建，快速迭代，全程可见。</p>
-<h3 id="更高效的虚拟化">更高效的虚拟化</h3>
-<p>内核级的虚拟化，不需要额外的hypervisor支持。</p>
-<h3 id="更轻松的迁移和扩展">更轻松的迁移和扩展</h3>
-<p>可在任意平台运行，更好的实现迁移。</p>
-<h3 id="更简单的管理">更简单的管理</h3>
-<p>简单修改，以增量的方式分发和更新，实现自动化和高效管理。</p>
-<h2 id="基本概念">基本概念</h2>
-<hr>
-<h3 id="镜像（Image）">镜像（Image）</h3>
-<p>Docker镜像就是一个只读模板。<strong>例如：一个镜像可以包含一个完整的 ubuntu 操作系统环境，里面仅安装了 Apache 或用户需要的其它应用程序。</strong></p>
-<p>用户通过简单的机制创建或者更新现有的镜像。</p>
-<h3 id="容器（Container）">容器（Container）</h3>
-<p>Docker利用容器运行应用。容器是从镜像创建的运行实例。它可以被启动、开始、停止、删除。<strong>每个容器都是相互隔离的、保证安全的平台</strong>。</p>
-<h3 id="仓库（Repository）">仓库（Repository）</h3>
-<p>仓库是集中存放镜像文件的场所。概念与Git相似，注册服务器可以理解为Github这样的托管服务。所以Docker也有仓库和仓库注册服务器的概念。</p>
-<p>仓库分为公开仓库（Public）和私有仓库（Private）两种形式。最大的公开仓库是 <a href="https://hub.docker.com/" target="_blank" rel="external">Docker Hub</a>，存放了数量庞大的镜像供用户下载。 国内的公开仓库包括 <a href="http://dockerpool.com/" target="_blank" rel="external">Docker Pool</a> 等，可以提供大陆用户更稳定快速的访问。</p>
-<p>用户也可以自己创建一个私有仓库，通过<code>push</code>命令上传，通过<code>pull</code>命令下载。</p>
-<h2 id="安装">安装</h2>
-<hr>
-<p>官方网站上有各种环境下的 <a href="https://docs.docker.com/installation/#installation" target="_blank" rel="external">安装指南</a> ， 不再赘述。</p>
+        <p>这是个不错的源码，用C 语言写的一个超轻量的HttpServer, 开发应该是用不上了，但是对于学习Unix 网络编程，套接字，进程等等来说相当够用。源代码大约500行，属于一个比较容易理解的代码量。</p>
+<p>阅读C 源码的好处在于你不必去考虑类和对象，不用花时间去看类里有哪些成员变量和成员函数，不用费力去构建类图。只需要按照过程阅读就好了。</p>
+<p>在源码上我进行了注释，在这里我对其中涉及到的Unix知识进行一点解释，也算是给啃UNP做一个预热。</p>
+<p>打开httpd.c，这一长串函数，最重要的就是 <strong>startup</strong>, <strong>accept_request</strong>, 和 <strong>execute_cgi</strong>，以及<strong>get_line</strong>。 下面是每个函数的功能。<br><strong>accept_request</strong>:  处理从套接字上监听到的一个 HTTP 请求，在这里可以很大一部分地体现服务器处理请求流程。<br><a id="more"></a></p>
+<ul>
+<li><strong>bad_request</strong>: 返回给客户端这是个错误请求，HTTP 状态吗 400 BAD REQUEST.</li>
+<li><strong>cat</strong>: 读取服务器上某个文件写到 socket 套接字。</li>
+<li><strong>cannot_execute</strong>: 主要处理发生在执行 cgi 程序时出现的错误。</li>
+<li><strong>error_die</strong>: 把错误信息写到 perror 并退出。</li>
+<li><strong>execute_cgi</strong>: 运行 cgi 程序的处理，也是个主要函数。</li>
+<li><strong>get_line</strong>: 读取套接字的一行，把回车换行等情况都统一为换行符结束。</li>
+<li><strong>headers</strong>: 把 HTTP 响应的头部写到套接字。</li>
+<li><strong>not_found</strong>: 主要处理找不到请求的文件时的情况。</li>
+<li><strong>sever_file</strong>: 调用 cat 把服务器文件返回给浏览器。</li>
+<li><strong>startup</strong>: 初始化 httpd 服务，包括建立套接字，绑定端口，进行监听等。</li>
+<li><strong>unimplemented</strong>: 返回给浏览器表明收到的 HTTP 请求所用的 method 不被支持。</li>
+</ul>
+<p>下面找到main函数，开始往下读。因为没有学习过Unix网络编程，所以中间一大把时间都花在了wiki的扩展。</p>
+<p>首先将流程讲一下。</p>
+<ol>
+<li><strong>startup</strong>（）启动服务器，在指定的端口绑定httpd服务。</li>
+<li>因为打开了listen, 当accept 到HTTP 请求时，那么久派生出一个进程去运行<strong>accept_request()</strong></li>
+<li>在<strong>accept_request</strong>（） 中，取出HTTP 请求，获取它的method(可能是GET 或 POST)和url 。对于GET来说，若这个GET 请求带有参数，那么久会存在于url 中的「？」之后，将它保存在<strong>query_string</strong>中。</li>
+<li>然后格式化url，将它保存到path数组中，也就是浏览器请求的服务器文件路径，如果url以<strong>/</strong>结尾，那就在路径结尾默认加上index.html，用来表示访问主页。</li>
+<li>检验这个路径，如果不合法则返回错误。如果合法，再如果是一个没有参数的GET 请求，那我们直接输出服务器中的文件到浏览器就可以了，也就是用HTTP 格式写到套接字上，然后就可以直接结束了。对于其他情况（有参数的GET， POST， url是可执行文件），那么久继续调用 excute_cgi 来执行cgi.</li>
+<li>进入excute_cgi(),读取HTTP请求，然后丢弃，如果他是一个POST 请求，那么有一个Content-Length, 找出来，然后把HTTP 200 状态码写到套接字。</li>
+<li>用pipe建立两个管道,<strong>cgi_input</strong>,<strong>cgi_output</strong>，等下fork一个进程。管道是用来父进程和子进程通信的。</li>
+<li>子进程中，STDOUT 也就是 1， 重定向到<strong>cgi_output</strong>的写入端，也就是<strong>cgi_output</strong>[1], STDIN 也就是 0， 重定向到<strong>cgi_input</strong>的读取端，也就是<strong>cgi_input</strong>[0]。子进程中关闭<strong>cgi_input</strong>的写入端，<strong>cgi_output</strong>的读取端。</li>
+<li>仍然是在子进程中，设置<strong>request_method</strong>的环境变量，如果是GET 的话设置<strong>query_string</strong> 的环境变量，POST的话设置<strong>content_length</strong> 的环境变量，这个变量的作用是让cgi调用，在管道里进行通信，然后execl运行cgi，进行通信。</li>
+<li>在父进程中，关闭<strong>cgi_input</strong>的读取端，<strong>cgi_output</strong>的写入端，如果请求是POST 的话，就把POST 写入<strong>cgi_input</strong>,在子进程中，他被重定向到了STDIN，读取<strong>cgi_output</strong>的管道输出到客户端，这个管道的输入被重定向到了STDOUT。然后关闭所有管道，等待子进程结束。</li>
+<li>最后结束，关闭连接，完成了一次HTTP请求与回应。</li>
+</ol>
+<p>关于CGI 技术，现在并不需要详细的学习CGI，只需要了解一下四点：</p>
+<ol>
+<li>web-server将POST数据重定向到CGI的标准输入，读用户POST的数据可以直接读stdin</li>
+<li>web-server将Http头设置成CGI的环境变量，所有读Http头信息可以通过getenv函数</li>
+<li>web-server将GET数据设置成CGI的环境变量，可以通过getenv(“QUERY_STRING”)得到</li>
+<li>web-server将CGI的标准输出重定向到浏览器，所以CGI输入内容直接向stdout输出就可以了。</li>
+</ol>
+<p>未完待续</p>
 
       
     </div>
@@ -285,18 +282,9 @@ Docker 项目的目标是实现轻量级的操作系统虚拟化解决方案，D
     
 <nav id="article-nav">
   
-    <a href="/2015/09/27/平淡日子里的刺/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          平淡日子里的刺
-        
-      </div>
-    </a>
   
-  
-    <a href="/2015/03/15/阶段读书总结/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">阶段读书总结</div>
+    <a href="/2016/03/10/The-different-means-of-Stack/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">The different means of Stack</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -325,7 +313,7 @@ Docker 项目的目标是实现轻量级的操作系统虚拟化解决方案，D
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="Docker学习笔记-一" data-title="Docker学习笔记(一)" data-url="http://yoursite.com/2015/09/25/Docker学习笔记-一/"></div>
+	<div class="ds-thread" data-thread-key="Tinyhttpd-analysis" data-title="Tinyhttpd analysis" data-url="http://yoursite.com/2016/03/12/Tinyhttpd-analysis/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
