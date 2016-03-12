@@ -116,7 +116,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/C-C/" style="font-size: 13.33px;">C/C++</a><a href="/tags/Diary/" style="font-size: 10.00px;">Diary</a><a href="/tags/Docker/" style="font-size: 10.00px;">Docker</a><a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a><a href="/tags/Linux/" style="font-size: 10.00px;">Linux</a><a href="/tags/PM/" style="font-size: 10.00px;">PM</a><a href="/tags/Python/" style="font-size: 13.33px;">Python</a><a href="/tags/TCP-IP/" style="font-size: 13.33px;">TCP/IP</a><a href="/tags/Unix/" style="font-size: 10.00px;">Unix</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 13.33px;">life</a><a href="/tags/web/" style="font-size: 10.00px;">web</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 13.33px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
+						<a href="/tags/C-C/" style="font-size: 13.33px;">C/C++</a><a href="/tags/Diary/" style="font-size: 10.00px;">Diary</a><a href="/tags/Docker/" style="font-size: 10.00px;">Docker</a><a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a><a href="/tags/Linux/" style="font-size: 10.00px;">Linux</a><a href="/tags/PM/" style="font-size: 10.00px;">PM</a><a href="/tags/Python/" style="font-size: 13.33px;">Python</a><a href="/tags/TCP-IP/" style="font-size: 13.33px;">TCP/IP</a><a href="/tags/Unix/" style="font-size: 10.00px;">Unix</a><a href="/tags/design-pattern/" style="font-size: 13.33px;">design pattern</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 13.33px;">life</a><a href="/tags/web/" style="font-size: 10.00px;">web</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 13.33px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
 					</div>
 				</section>
 				
@@ -187,6 +187,133 @@
 	</div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-设计模式探索之路（下）" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/03/12/设计模式探索之路（下）/" class="article-date">
+  	<time datetime="2016-03-12T13:50:01.000Z" itemprop="datePublished">3月 12 2016</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/03/12/设计模式探索之路（下）/">设计模式探索之路（下）</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="组合模式(Composite_Pattern)">组合模式(Composite Pattern)</h2>
+<p>我们PC用到的文件系统，其实就是我们数据结构里的树形结构，我们处理树中的每个节点时，其实不用考虑他是叶子节点还是根节点，因为他们的成员函数都是一样的，这个就是组合模式的精髓。他模糊了简单元素和复杂元素的概念，客户程序可以向处理简单元素一样来处理复杂元素,从而使得客户程序与复杂元素的内部结构解耦。</p>
+<p><strong>组合模式</strong>： 允许你将对象组合成树形结构来表现『整体/部分』的层次结构。组合能让客户以一致的方式处理个别对象以及对象组合。<br>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/design-pattern/">design pattern</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/Study/">Study</a>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a  href="/2016/03/12/设计模式探索之路（下）/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+    <article id="post-设计模式探索之路（上）" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/03/12/设计模式探索之路（上）/" class="article-date">
+  	<time datetime="2016-03-12T13:44:48.000Z" itemprop="datePublished">3月 12 2016</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/03/12/设计模式探索之路（上）/">设计模式探索之路（上）</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这篇学习加总结的文章写了很久了，但是因为之前是使用马克飞象来写的，其中的图片保存在本地，再上传到博客上非常麻烦，于是就一直趴在电脑里。后来使用了MWeb之后，Mweb推出了图床的功能，懒癌的我找到了最爱，终于可以开心的将一些文章扔博客里去了。鉴于这篇文章太长，大约有两万五千多字，拆分成两篇，作为设计模式的学习理解。设计模式这个东西，说他厉害他确实在工程里占有很高的地位，但是不应当过分的信仰这种东西，他其实只是解决工程问题的有效途径，但并不一定是最佳的途径。</p>
+<p>当然试图去寻找到最佳的途径，显示是要先对这些人们已经充分认同的设计模式有所理解。<br>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/design-pattern/">design pattern</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/Study/">Study</a>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a  href="/2016/03/12/设计模式探索之路（上）/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
   
     <article id="post-Tinyhttpd-analysis" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -390,140 +517,9 @@
 
 
   
-    <article id="post-TCP-IP-完全解读1" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/03/09/TCP-IP-完全解读1/" class="article-date">
-  	<time datetime="2016-03-09T09:29:23.000Z" itemprop="datePublished">3月 9 2016</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/03/09/TCP-IP-完全解读1/">TCP/IP 完全解读之传输层协议</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>BY 凯寓</p>
-<h1 id="传输层协议">传输层协议</h1>
-<p>[TOC]</p>
-<h2 id="1_传输层概述">1 传输层概述</h2>
-<p>传输层位于应用层和网络层之间，其关键功能是将网络层在<strong>两个端系统之间</strong>的交付拓展到运行在两个不同端系统上的<strong>应用层进程之间</strong>的交付服务。相比网络层协议为主机之间提供<code>逻辑通信</code>，传输层协议为运行在不同主机上的应用进程之间提供<code>逻辑通信</code>，传输层协议是在端系统中实现，而不是在路由器中实现，传输层传送的是<strong>报文段（segment）</strong>。</p>
-<p><strong>一方面</strong>，传输层协议提供的服务受制于网络层协议的服务模型：即如果网络层协议无法为主机之间发送的传输层报文段提供时延或带宽的保证，则传输层协议也就无法为进程之间发送的应用层报文提供时延或带宽保证。<strong>另一方面</strong>，传输层又可提供网络层协议无法提供的服务，如保密性，可靠性。</p>
-<p>传输层协议将主机间交付扩展到进程间交付的行为称为<strong>传输层多路复用（transport-layer multiplexing）</strong>与<strong>多路分解（demultiplexing）</strong>，最有名的传输层协议是TCP和UDP。他们的行为有着鲜明的`两极化``，<strong>在一个极端</strong>，UDP仅向通信进程提供多路复用/分解的服务，而不提供其他任何服务（因此它非常简单），<strong>在另一个极端</strong>，TCP向通信进程提供可靠交付、时延保证、带宽保证等一些列服务。具体而言，TCP通过使用流量控制、序号、确认和定时器确保数据正确、按序的从发送进程交付给接受进程，即提供<strong>可靠数据传输（reliable data transfer）</strong>，同时TCP还提供<strong>拥塞控制（congestion control）</strong>。<br>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/Study/">Study</a>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a  href="/2016/03/09/TCP-IP-完全解读1/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
-    <article id="post-用Python写一个虚拟解释器" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/11/09/用Python写一个虚拟解释器/" class="article-date">
-  	<time datetime="2015-11-09T13:18:08.000Z" itemprop="datePublished">11月 9 2015</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/11/09/用Python写一个虚拟解释器/">用Python写一个虚拟解释器</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="http://www.jianshu.com/p/28c029de8fb3" target="_blank" rel="external">刀背藏身|简书</a><br>先来看看这篇文章 <a href="http://www.yinwang.org/blog-cn/2012/08/01/interpreter/" target="_blank" rel="external">怎样写一个解释器</a></p>
-<p>所谓虚拟机器，就是一定意义上的堆栈机。<br>解释器能够执行其他计算机语言编写的程序的系统软件，他是一个翻译程序。它的执行方式是一边翻译一边执行，因此其执行效率一般比较低。解释器的实现比较简单，而且编写源程序的高级语言可以使用更加灵活和富于表现力的语法。<br>可参考<a href="https://csl.name/post/vm/" target="_blank" rel="external">本链接</a>，开源项目<a href="https://github.com/cslarsen/crianza" target="_blank" rel="external">Crianza</a>。<br>当然，解释器要从最基础的最简单的语言开始，然后逐步增加语言的复杂度，才能构造出正确的解释器。而最基础的一个解释器，其实就是一个高级的计算器，下面我们一起来创建一个解释器吧。<br>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/Study/">Study</a>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a  href="/2015/11/09/用Python写一个虚拟解释器/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/categories/Study/page/2/">2</a><a class="extend next" rel="next" href="/categories/Study/page/2/">Next &raquo;</a>
+      <span class="page-number current">1</span><a class="page-number" href="/categories/Study/page/2/">2</a><a class="page-number" href="/categories/Study/page/3/">3</a><a class="extend next" rel="next" href="/categories/Study/page/2/">Next &raquo;</a>
     </nav>
   
 </div>

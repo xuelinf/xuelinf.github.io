@@ -116,7 +116,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/C-C/" style="font-size: 13.33px;">C/C++</a><a href="/tags/Diary/" style="font-size: 10.00px;">Diary</a><a href="/tags/Docker/" style="font-size: 10.00px;">Docker</a><a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a><a href="/tags/Linux/" style="font-size: 10.00px;">Linux</a><a href="/tags/PM/" style="font-size: 10.00px;">PM</a><a href="/tags/Python/" style="font-size: 13.33px;">Python</a><a href="/tags/TCP-IP/" style="font-size: 13.33px;">TCP/IP</a><a href="/tags/Unix/" style="font-size: 10.00px;">Unix</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 13.33px;">life</a><a href="/tags/web/" style="font-size: 10.00px;">web</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 13.33px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
+						<a href="/tags/C-C/" style="font-size: 13.33px;">C/C++</a><a href="/tags/Diary/" style="font-size: 10.00px;">Diary</a><a href="/tags/Docker/" style="font-size: 10.00px;">Docker</a><a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a><a href="/tags/Linux/" style="font-size: 10.00px;">Linux</a><a href="/tags/PM/" style="font-size: 10.00px;">PM</a><a href="/tags/Python/" style="font-size: 13.33px;">Python</a><a href="/tags/TCP-IP/" style="font-size: 13.33px;">TCP/IP</a><a href="/tags/Unix/" style="font-size: 10.00px;">Unix</a><a href="/tags/design-pattern/" style="font-size: 13.33px;">design pattern</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 13.33px;">life</a><a href="/tags/web/" style="font-size: 10.00px;">web</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 13.33px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
 					</div>
 				</section>
 				
@@ -187,6 +187,197 @@
 	</div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-Django学习笔记（一）" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2014/12/18/Django学习笔记（一）/" class="article-date">
+  	<time datetime="2014-12-18T15:34:08.000Z" itemprop="datePublished">12月 18 2014</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/12/18/Django学习笔记（一）/">Django学习笔记（一）</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Django笔记（1）">Django笔记（1）</h1>
+<p>Django是一个可以让WEB开发愉悦并且高效的Web开发框架。可以以较小的代价构建和维护高质量的Web应用。<br>如我正在看的一本书里讲的：</p>
+<blockquote>
+<p>At its best, Web development is an exciting, creative act; at its worst, it can be a repetitive, frustrating nuisance. Django lets you focus on the fun stuff – the crux of your Web application – while easing the pain of the repetitive bits. In doing so, it provides high-level abstractions of common Web development patterns, shortcuts for frequent programming tasks, and clear conventions for how to solve problems. At the same time, Django tries to stay out of your way, letting you work outside the scope of the framework as needed.</p>
+</blockquote>
+<p>正如书中所说的，Django高度抽象了Web开发模式，可以避免频繁的编程工作，同时也提供了许多可行的方法给用户开发。</p>
+<h2 id="MVC模型">MVC模型</h2>
+<p>Django采用的是比较流行的MVC开发模型，虽然是菜鸟，也不需要再重复解释了。其优势<strong>松耦合</strong>，各个开发部分可以独立更改，而不影响到其他的部分，比如我去做HTML页面，只要一心关注HTML页面即可，做数据库就专心数据库，这也就是时下流行的MVC模型。</p>
+<h2 id="Django的安装">Django的安装</h2>
+<p>这里也不再赘述，可看官方文档，去django的<a href="http://www.djangoproject.org" target="_blank" rel="external">网站</a>去看他的文档引导安装。在这里推荐<code>virtualenv</code> 和 <code>virtualenvwrapper</code>构造独立的开发环境，这样不会让自己的电脑里边因为搞开发环境乱的一锅粥。</p>
+<ul>
+<li>隔离项目之间的第三方包依赖</li>
+<li>为部署应用提供方便，把开发环境的虚拟环境打包到生产环境即可</li>
+</ul>
+<p>安装方式不难，这里只以Mac为例，安装了pip就行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ pip install virtualenv</div><div class="line">$ pip install  virtualenvwrapper</div></pre></td></tr></table></figure>
+
+<p>之后在shell的配置文件中加入配置，比如用的是bash的话（这个是Mac的默认shell，有很多推荐zsh），在bash里配置如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">export</span> WORKON_HOME=<span class="variable">$HOME</span>/.virtualenvs</div><div class="line"><span class="built_in">source</span> /usr/local/bin/virtualenvwrapper.sh</div></pre></td></tr></table></figure>
+
+<p>然后这个玩意就算是安装完成了，使用方式如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">mkvirtualenv venv        <span class="comment"># 创建虚拟环境</span></div><div class="line">workon venv              <span class="comment"># 激活虚拟环境</span></div><div class="line">deactivate               <span class="comment"># 关闭虚拟环境</span></div><div class="line">rmvirtualenv venv        <span class="comment"># 删除虚拟环境</span></div><div class="line">lsvirtualenv             <span class="comment"># 列出所有虚拟环境</span></div></pre></td></tr></table></figure>
+
+<p>建立完虚拟环境之后，就可以在虚拟环境中安装django等等一些东西，随后不再使用的时候，可以删除这个虚拟环境。</p>
+<h2 id="Start">Start</h2>
+<p>一切就绪之后，就可以使用短短的一句，开始你的项目：</p>
+<figure class="highlight pyhton"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">django-<span class="literal">admin</span>.py startproject mysite</div></pre></td></tr></table></figure>
+
+<p>忘记从django哪一个版本开始，默认的项目中的文件有了改变，在django book里还是1.4时代的django，构建起得项目文件夹默认是这样的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">mysite/</div><div class="line">    __init__.py</div><div class="line">    manage.py</div><div class="line">    settings.py</div><div class="line">    urls.py</div></pre></td></tr></table></figure>
+
+<p>而最新的1.7，默认是这样的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysite/</div><div class="line">    manage.py</div><div class="line">    mysite/</div><div class="line">        __init__.py</div><div class="line">        settings.py</div><div class="line">        urls.py</div><div class="line">        wsgi.py</div></pre></td></tr></table></figure>
+
+<p>既然是新开发，那么就尽量按照新的django开始开发，那么就看看这些都是什么。之前也都说了，MVC模式就是将项目的各个部分分开了，独立更改。<br>这里直接引用原文：</p>
+<blockquote>
+<ul>
+<li>The outer mysite/ root directory is just a container for your project. Its name doesn’t matter to Django; you can rename it to anything you like.</li>
+<li>manage.py: A command-line utility that lets you interact with this Django project in various ways. You can read all the details about manage.py in django-admin.py and manage.py.</li>
+<li>The inner mysite/ directory is the actual Python package for your project. Its name is the Python package name you’ll need to use to import anything inside it (e.g. mysite.urls).</li>
+<li>mysite/<strong>init</strong>.py: An empty file that tells Python that this directory should be considered a Python package. (Read more about packages in the official Python docs if you’re a Python beginner.)</li>
+<li>mysite/settings.py: Settings/configuration for this Django project. Django settings will tell you all about how settings work.</li>
+<li>mysite/urls.py: The URL declarations for this Django project; a “table of contents” of your Django-powered site. You can read more about URLs in URL dispatcher.</li>
+<li>mysite/wsgi.py: An entry-point for WSGI-compatible web servers to serve your project. See How to deploy with WSGI for more details.</li>
+</ul>
+</blockquote>
+<p>其中有几个解释一下</p>
+<ul>
+<li>最后一个，WSGI，意思是Web服务器网关接口（Python Web Server Gateway Interface，缩写为WSGI）是为Python语言定义的Web服务器和Web应用程序或框架之间的一种简单而通用的接口。自从WSGI被开发出来以后，许多其它语言中也出现了类似接口。知晓了这个意思也就是明白了他的作用，以及为什么新的django为什么要加入它了。</li>
+<li>为什么在mysite的主文件夹下改成了新增一个文件夹了呢？因为django一个大项目可以包含多个django app呀，以前那样的视图显然会显得混乱啊，这样之后显然更清晰了~（我是这么认为的,不知道还有没有别的原因）。</li>
+</ul>
+<p>其他的都一样了，下一次，我将会将一些主要的一些东西和心得记录下来，而且尽量不去按照自己做django的步骤去记录笔记，因为简单的项目只会让我了解很小的地方。我会选择一些常用的，或者是有意义的部分做以研究，希望自己在学习过程中有所收获。<br>作为一只典型菜鸟，我希望，自己在这样不断的记录和学习中，让自己迅速茁壮的成长起来~~加油！</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/django/">django</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/Django笔记/">Django笔记</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+    <article id="post-你所经历的都是人生" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2014/12/15/你所经历的都是人生/" class="article-date">
+  	<time datetime="2014-12-14T16:16:17.000Z" itemprop="datePublished">12月 15 2014</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/12/15/你所经历的都是人生/">你所经历的都是人生</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="对不起，我只过1%的生活">对不起，我只过1%的生活</h3>
+<p>总是习惯给别人灌鸡汤的人，今天一清早倒是被鸡汤感动了一把。</p>
+<p>微博博主@伟大的安妮，更了一篇漫画，名字叫《对不起，我只过1%的人生》，目前的转发量已经破四十万，不知道全世界在看这个短短的漫画时有多少人忍不住掉了眼泪。</p>
+<p>陈安妮，广东人，家庭普通，长相普通，大学在广州外语外贸大学，就在我的母校旁边，未毕业独闯北京开始自己的创业之旅。可以说，大多数的北漂们，都像是在黑暗中独自前行的人，都渴望抓住那黑暗里的一束光，追寻那1%的生活，所以这漫画，注定是这社会上一大波正在努力奋斗着的青年们的一碗浓浓的鸡汤。</p>
+<p>忽然想起了马薇薇师姐的话。</p>
+<blockquote>
+<p>一将功成万骨枯，一个分子，无数个分母，成功这件事，其实成功率极低。趋利避害本来应该是动物的本能，但是人们追求这种近乎渺茫的成功，正是人区别与动物的原因。</p>
+</blockquote>
+<p>你几乎注定是失败的，但是你期待成功的每一天，充满着一种叫做忐忑的幸福，当你追求成功而失败依旧来临时，当你将时间浪费在理想时，当你又一次站起来行走在黑暗里时，时间它从不曾被浪费。所以，你所经历的，别人经历过的，都是人生。泰戈尔说，飞鸟从天空飞过，但没有留下痕迹。而你所经历的人生，都证明了你在这片天空飞翔过。</p>
+<h3 id="少年时代">少年时代</h3>
+<p>今天上午三个小时时间看完了<em>childhood</em>，也就是《少年时代》。自己最近对时间太看重，完全不舍得花上那么长的空闲时间去观赏一部电影，所以这次的三个小时可算是牙缝里抠出来的金子了。</p>
+<p>《少年时代》真的很棒，导演花了真正的十二年，去拍了这部讲述十二年的故事，一个稚嫩的小男孩，长成了大男人，胡须爬上了下巴，白发染上了母亲的鬓旁，老车换成了SUV，家换了几次，朋友换了几波，生命里有人来了，又走了，一切没有花哨，没有戏剧，快乐还是那么稀缺，痛苦仍然很多，十二年里，每个人都在经历人生。</p>
+<p>这让我想起了之前看的一个纪录片，《浮生一日》镜头记录了全世界每个角落的一天，白种人，黄种人，黑种人，亚洲，欧洲，非洲，整个这片大地上，每个文化各异语言各异性格各异的人，都经历着属于自己的人生，有流浪汉，有孩子，有大学生，有家庭主妇，有老年人，他们在这个地球上书写着六十亿个故事，六十亿个人生。</p>
+<p>《少年时代》的后边，孩子们都成年了，男孩要去上大学，女孩要搬出去自己住，在收拾家用品的时候，母亲忽然痛哭，但是导演没有刻意让这成为煽情的一段剧情，然后母亲对着孩子吼叫出了自己的难过：这是我最糟糕的一天，那时候，我还在教你怎么骑车，转眼间，结婚，生子，离婚，考取硕士学位，送Samathna上大学，送你上大学，我感觉我的人生就完蛋了，知道接下来是什么么？God damn bury…(凭回忆写的)。</p>
+<p>十二年尺度观察下，人生就像快进一般，经历了一切欢喜和痛苦，少年匆匆成长，母亲匆匆变老，时间马不停蹄而去。</p>
+<h3 id="你所经历的都是人生">你所经历的都是人生</h3>
+<p>跟朋友聊天，讲自己在一年多前，居然还幼稚的认为BD是一个好出路，前途，功名利禄，生活追求都有了。而现在回想起来，完全想不通自己为什么会有这样奇怪的想法。</p>
+<p>但我想我终究会感谢这里的生活，因为在这样的时间里，居然完成了对自己的重塑，因为身在樊篱，压抑和寂寞让我彻彻底底的看见了自己，让我从过去浮躁的二十年中剥离出来，重新思考我所谓梦想和追求。如果没有这里的一年时光，也许我仍然过着像过去一样不急不缓的生活，追求的不轻不重的目标，书写着不咸不淡的人生。</p>
+<p>所以，也许这里的生活，注定是我整个人生阶段的一篇引言，是不可缺少的一部分。从大约一年前我写下的那句话“<strong>庆幸这后悔来的尚早，所幸还有更长的未来</strong>”开始，我所经历的，都是我的人生。</p>
+<p>《少年时代》的结尾，男孩新女朋友说了这么一句话：We always say that we seize the moment , but in fact moment seize us.（我们总想把握时光的每个瞬间，但其实是每个瞬间在寻找我们（我自己意译的）） 这句话送给所有在黑暗里努力前行的人，它不鸡汤，但是告诉我们，不要沮丧，不要灰心，你所经历的都是人生。</p>
+<h3 id="写在后边">写在后边</h3>
+<p>本来这篇文章是在《少年时代》看完之后，立即在马克飞象上建了新文章，并定义了影评的标签，不过时间推到晚上之后，还是决定不写影评，随便写些想要抒发的情绪和想法吧，毕竟二零一四即将结束，现在也算是做一个心理上的预备，同时做好展望二零一五年的准备。</p>
+<p>结果赤裸裸地，又变成了一篇鸡汤文，借此勉励一下自己。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/鸡汤/">鸡汤</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/随笔/">随笔</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
   
     <article id="post-Keynote与APP原型设计" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -505,218 +696,6 @@
 </blockquote>
 <p>前两天刚看了一本书叫《饥饿的信仰》，正是讲的当代中国信仰缺失的状态。而回溯西方哲学史，哲学家们其实也是一直陷入这种痛苦的思考中，一度为了破除所谓荒谬的信仰，却造成了信仰的崩溃最后会引发全人类的信仰危机，尼采说的：“上帝死了！”正是对所谓信仰崩塌的描述。对于普罗大众来说，信仰往往是形成人类生存的软基础，从上古人类依靠信仰建立部落，发展国家，形成社会，信仰人类赖以生存的精神食粮。</p>
 <p>但是这信仰在聪明人看来毫无意义，荒诞不经。于是哲学家们试图去告诉世人这信仰的荒谬性，正如叔本华的悲观主义所说的，人类的存在毫无意义。像勒庞所说的，由于这种社会幻想和信仰的破坏，随之枯竭的是人类希望和顺从的源泉，变得更加盲目和沉默，这对人类来说，是灾难性的。虽然在随后哲学家们试图去重塑所谓意义，都收效不大，比如尼采希望通过酒神，或者是超人意志，去试图给生命以意义，结局可想而知。</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/weekly-note/">weekly note</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/读书笔记/">读书笔记</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
-    <article id="post-JavaScript复习笔记（3）" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2014/12/03/JavaScript复习笔记（3）/" class="article-date">
-  	<time datetime="2014-12-03T14:18:20.000Z" itemprop="datePublished">12月 3 2014</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/12/03/JavaScript复习笔记（3）/">JavaScript复习笔记(3）</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>ps.笔记2已更新</p>
-<h4 id="引用类型">引用类型</h4>
-<ul>
-<li>Object类<br>方括号的使用，优点是可以通过变量来访问属性。</li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> propertyName = <span class="string">"name"</span>;</div><div class="line">aler (person[propertyName]);</div></pre></td></tr></table></figure>
-
-<ul>
-<li><p>Array类<br>Array是javascript用的非常广泛的一个类。JS中数组的每一项，可以保存任何数据类型。而且可以各不相同。</p>
-</li>
-<li><p>数组的length不是只读的，它可以被设置改变</p>
-</li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> color = [<span class="string">"red"</span>,<span class="string">"blue"</span>,<span class="string">"green"</span>];</div><div class="line">color.length = <span class="number">2</span>;</div><div class="line">alert(color[<span class="number">2</span>]);        <span class="comment">//undefined 第三项被删掉</span></div><div class="line">color.length = <span class="number">4</span>;</div><div class="line">alert(color[<span class="number">3</span>]);        <span class="comment">//undefined 第四项还没有制定数据</span></div><div class="line">color[color.length] = <span class="string">"black"</span>;      <span class="comment">//此方法可以在末尾方便的添加数据</span></div></pre></td></tr></table></figure>
-
-<ul>
-<li>Array各种可调用的函数： <blockquote>
-<ul>
-<li>由于多框架可能会干扰到<code>instanceof</code>,所以改用<code>.isArray(value)</code></li>
-<li>栈方法： <code>pop</code>,<code>push</code></li>
-<li>队列方法：<code>push</code>,<code>shift</code></li>
-<li>排序：<code>sort</code>,<code>reverse</code></li>
-<li><code>concat</code>：基于当前数组新建数组；<code>slice</code>，创建一个基于当前数组去掉某项；<code>splice</code>：可以有多应用。<code>splice(第一项，项数，替换值)</code>因此可实现删除，插入，替换的功能</li>
-<li>位置方法：<code>indexOf()</code>,<code>lastIndexOf()</code></li>
-</ul>
-</blockquote>
-</li>
-</ul>
-<p>但是值得注意的事<code>sort()</code>方法调用了<code>toString()</code>，所以在比较的时候，会出现<code>10</code>在<code>5</code>前边，所以解决方法是自己编写<code>compare</code></p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> values = {<span class="number">0</span>,<span class="number">1</span>,<span class="number">5</span>,<span class="number">10</span>,<span class="number">15</span>};</div><div class="line"><span class="comment">//values.sort();</span></div><div class="line"><span class="comment">//alert(values):      结果：0,1,10,15,5</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">compare</span><span class="params">(value1,value2)</span></span>{</div><div class="line">    <span class="keyword">if</span>(value1 &lt; value2){</div><div class="line">        <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">    }<span class="keyword">else</span> <span class="keyword">if</span> (value1&gt;value2){</div><div class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">    }<span class="keyword">else</span>{</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    }</div><div class="line">}</div><div class="line">values.sort(compare);</div><div class="line">alert(values);      <span class="comment">//15,10,5,1,0</span></div><div class="line">&lt;!--同时其实可以简化方法--&gt;</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">compare</span><span class="params">(value1,value2)</span></span>{</div><div class="line">    <span class="keyword">return</span> value2 - value1;</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<ul>
-<li><p>五个迭代方法:</p>
-<blockquote>
-<ul>
-<li><code>every</code>:对每一项迭代，全部为true,才返回true</li>
-<li><code>filter</code>：过滤，返回那些true的</li>
-<li><code>forEach</code>:对每一项给定函数，没有返回值</li>
-<li><code>map</code>：对每一项给定函数，全部返回值</li>
-<li><code>some</code>:每一项给定参数，只要有一个true，则返回true</li>
-</ul>
-</blockquote>
-</li>
-<li><p>归并方法<code>reduce</code>，四个参数，前一个值，当前值，项的索引，数组对象</p>
-</li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> values = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>];</div><div class="line"><span class="keyword">var</span> sum = values.reduce(<span class="function"><span class="keyword">function</span><span class="params">(prev, cur, index, array)</span></span>{</div><div class="line">    <span class="keyword">return</span> prev + cur;</div><div class="line">});</div><div class="line">alert(sum);     <span class="comment">//15</span></div></pre></td></tr></table></figure>
-
-<ul>
-<li><strong>Date类型</strong></li>
-<li><p><code>Date.now()</code>取得当前时间，用于简化代码工作，也可以使用一元加操作，<code>+new Date()</code></p>
-</li>
-<li><p><strong>RegExp类型</strong></p>
-</li>
-<li><p>结合正则表达式学习理解这部分<br>pattern:<code>g</code>,全局；<code>i</code>：不区分大小写；<code>m</code>：多行模式；</p>
-</li>
-<li><p><strong>Function类型</strong></p>
-</li>
-<li><p>没有重载，后边的函数覆盖前边的函数</p>
-</li>
-</ul>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/JavaScript复习笔记/">JavaScript复习笔记</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
-    <article id="post-杂读乱记（2014第一周2）" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2014/12/02/杂读乱记（2014第一周2）/" class="article-date">
-  	<time datetime="2014-12-02T15:03:01.000Z" itemprop="datePublished">12月 2 2014</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/12/02/杂读乱记（2014第一周2）/">杂读乱记（2014第一周2）</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>本来想着精练的写一写，但是话唠的特质让我一下子又放开了话匣子，每一条都想要单开一文做以阐述。不过我还是希望自己能够尽量试着用更精炼的语言表达思路，这也能提高工作效率。</p>
-<h2 id="from_《开放的智力》_by_釆铜">from 《开放的智力》 by 釆铜</h2>
-<hr>
-<h3 id="1">1</h3>
-<blockquote>
-<p>伟大的哲学家、数学家和教育思想家怀特海（Alfred North Whitehead）在《教育的目的》一书中就直言道：「空泛无益的知识是微不足道的，实际上是有害的。知识的重要意义在于它的应用，在于人们对它的积极的掌握，即存在于智慧之中。人们习惯上认为，知识本身——而不是和智慧一起——会使知识的拥有者享有一种特殊的尊贵。我对这种知识却缺乏敬意。知识的价值完全取决于谁掌握知识以及他用知识做什么。」</p>
-</blockquote>
-<p>有句话记得很清，“知识不等于智慧”。一个人掌握了多少知识，不能决定这个人就能够处理好自己的生活，不能决定一个人是否有更高的辨别力。看看新闻里常常出现的上当受骗的人，其中不乏大学教授，明星，领导。并不能说他们所掌握的知识是空乏无益的，而是说，很多人对知识的过度崇拜造成了思想上和头脑上的退化，更愿意让自己的头脑成为他人思想的跑马场，更愿意将自己埋进故纸堆里，并认为这样的自己就显得更加高人一等。最后被小学文化的骗子欺骗也是再正常不过了。知识的价值，从本质上讲，只有在应用到自己的人生经历中，才可能获得所说的智慧。</p>
-<h3 id="2">2</h3>
-<blockquote>
-<p>这些话的背后，都是同一种思维模式，即「单因素模型」。所谓单因素模型，顾名思义，就是把一个复杂的事物或者现象归结到一个影响因素中，认为只要抓住这个因素，就能达至想要的成果。虽然可能很多人并不承认自己会这么简单地去思考问题，但是这种思维模式更多的时候，是以以上这些流行句子的方式深入到你的潜意识中，潜移默化地影响你的思维、决策和行动的。</p>
-</blockquote>
-<p>其实在所谓成功学的教育中，甚至是普罗大众的惯性思想中，受单因素模型影响是非常广泛的。正如我们看到某个人成功，常常会简单的给别人下一个定论。比如认为他就是因为出身好，他就是智商高，他就是太有钱，他就是长得帅。而其实一件结果，往往需要许多复杂的因共同作用，所以成功学上简单的复制成功的秘诀，其体系是脆弱的。<br>每个人，都是一个独立的个体，拥有着各不相同的特点，家庭，性格，朋友，社会，机遇，健康等等因素，都能影响着一个人的发展前景，所以不要简单地去模仿所谓成功人士，或者简单的相信，“我只要做了XXX，我就能XXX。”在成长的路上，你只能是一个人战斗，你必须有足够的<strong>自省力</strong>，认识自己，才能寻找出一条适合自己的道路，沿着这路一直走下去，你不一定能成功，但你一定是在成长。在触摸真实自我的过程中，你会时刻充满着遇见自己的欣喜，你会因为内在世界的强大而无惧任何风暴，这也是成长的回报。</p>
-<h3 id="3">3</h3>
-<blockquote>
-<p>心理学家早就发现，当你从任务 A 切换到任务 B 后，执行任务 B 的绩效要明显比非任务切换条件下执行 B 的绩效差，这个差异称为「切换代价（switching cost）」。切换代价的形成原因主要有两种，一是任务 A 留下的认知惯性，也就是我之前已经习惯了任务 A 的认知情境、反应方式，这个惯性会对完成任务 B 造成干扰，二是做 B 的时候需要对 B 进行认知重构，重新回忆起 B 的相关背景和信息，这个重构也需要时间，而且可能不完整。</p>
-</blockquote>
-<p>切换代价，在我现在的环境里，实在太常见，所以我才觉得看似每天事情不多，但是让我真正获得的有效学习时间，太稀少了。太多的打断次数，让核心学习时间缩减了许多。现在火热的番茄工作法，其本质也是为了防止工作被经常打断，提高核心时间。它专门设置了打断次数，完成蕃茄的数量，来考量每日的工作效果，激励人能够更专心的完成每一个工作阶段。所以依据这个基础，我希望能够在有限的条件下，能更好地合理配置自己的时间，提高更大的时间利用率。</p>
-<h3 id="4">4</h3>
-<blockquote>
-<p>在今天的互联网时代里，人们每天都在接触着过剩的信息，就像浸在一个大浴缸里洗「信息泡泡浴」。</p>
-</blockquote>
-<p>互联网所代表的信息爆炸时代下，每个人在信息的洪流里都显得渺小和脆弱，这也是为什么很多年龄大一些的人，拒绝网络，甚至执拗的进一步拒绝电脑，并将拒绝电脑写作或者是电脑办公，当做是一种更为自我的标签，甚至有些人以此为傲。对这样的事，我向来嗤之以鼻。读KK的《失控》之后，我也有了一些更多的看法。如果说，人类社会如今的发展，一定程度上和蜂群聚集有着相似之处，而通过聚集，整个生物层级有了一个明显的提高。那么如果人类属于生物层级的顶端，那么人类聚集而成的社会，就应该算是一个全新的层级。</p>
-<p>而这个层级，其显著特点就是拥有着<strong>巨量信息交换</strong>，而互联网，就像是这个巨量信息交换的显式平台，在这个平台之上，每个人都拥有着放眼全局的能力，也可以说是拥有着窥探这个更高层级生物的能力。如果你每天被这种巨量的信息洪流所淹没，这只能说，你不具备使用这个能力的能力（话说的有点绕）。互联网所带给个体的便利，可以说是前所未有的，它赋予了每一个个体延伸的能力。如果你能有有效的获取，过滤，筛选，吸收来自于互联网的信息，必然会对你有着无法比拟的正作用。</p>
-<p>当然，大多数人，面对互联网时，都是手足无措的。包括我自己，也常常深陷其中，比如在检索信息时候，往往视线的焦点会一再的被互联网带偏，比如在准备建立博客的时候，我的视线焦点从博客转移到theme,从theme转移到CSS，于是我又开始检索CSS的几个预编译器,CSS转移到字体设计，于是我开始研究字体设计的原理和发展趋势，字体设计转移到当代艺术，于是我开始研究波普艺术和复古艺术，从当代艺术转移到UI设计，于是又开始研究UI设计原则……转移来转移去，最后发现我花费了更多与核心目的无关的时间。不能说这样是错误的，但至少能说明，个人在面对巨量信息前，行为往往会变得不由自主，这就需要有足够的<strong>自控力</strong>，去合理使用手里的能力。</p>
-<h3 id="5">5</h3>
-<blockquote>
-<p>演讲的成功体现在观众们情感上的共鸣和理念上的认同，演讲不需要严谨性，不需要给出观点的证明过程。有些人可能有切身体会，他们在演讲结束一段日子之后，再回忆演讲的内容，通常只能清楚地记起演讲的第一句和最后一句。</p>
-</blockquote>
-<p>这在心理学上叫“选择性注意”，例子可参见罗永浩的演讲，往往人们听演讲到最后，说了多少东西忘记的差不多，但都记住了罗永浩那偏执和认真的性格，以及他最后的一句话：“我不是为了输赢，我就是认真。”明白了这个道理，我希望能在自己以后可能会遇到的演讲，甚至是讲话中，能够聪明的利用这个原理，学会讲话的艺术。你的语言，不一定有足够的严谨性，但是讲话必须要有足够的深入人心的感受，或是让听者能够有切身体会，也就是人们所说的<strong>感染力</strong>。这需要我能够多加练习，注意摒弃不需要的，强化核心，会有助于提高自己讲话的艺术。</p>
-<h3 id="6">6</h3>
-<blockquote>
-<p>人生本就是，由一串奇遇组成。一个人的成功，是许许多多因素的共振。这些因素或明或显，或可缜密筹划或是全然因缘际会，它们缠绕在一起，在他者围观的水面上，只浮出冰山一角。</p>
-</blockquote>
-<p>这句和前边所讲的批判成功学里提到的“单因素模型”之谬。再引一次，希望能提醒自己，少谈他人成功的经验，多省自身的行为。我所经历的路，是少有人所经历的路，成功与失败，不能用简单的二元对立思维去评判，只要在这条路上走下去，能让我不停地寻找新的兴奋点，刺激我不断去挖掘自己的能力，去追求给自己设定的未来，这也许已经是成功的了。</p>
 
       
     </div>

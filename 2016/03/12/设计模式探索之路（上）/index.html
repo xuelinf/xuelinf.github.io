@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>设计模式探索之路（上） | 临风|刀背藏身</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="这篇学习加总结的文章写了很久了，但是因为之前是使用马克飞象来写的，其中的图片保存在本地，再上传到博客上非常麻烦，于是就一直趴在电脑里。后来使用了MWeb之后，Mweb推出了图床的功能，懒癌的我找到了最爱，终于可以开心的将一些文章扔博客里去了。鉴于这篇文章太长，大约有两万五千多字，拆分成两篇，作为设计模式的学习理解。设计模式这个东西，说他厉害他确实在工程里占有很高的地位，但是不应当过分的信仰这种东西">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式探索之路（上）">
+<meta property="og:url" content="http://yoursite.com/2016/03/12/设计模式探索之路（上）/">
+<meta property="og:site_name" content="临风|刀背藏身">
+<meta property="og:description" content="这篇学习加总结的文章写了很久了，但是因为之前是使用马克飞象来写的，其中的图片保存在本地，再上传到博客上非常麻烦，于是就一直趴在电脑里。后来使用了MWeb之后，Mweb推出了图床的功能，懒癌的我找到了最爱，终于可以开心的将一些文章扔博客里去了。鉴于这篇文章太长，大约有两万五千多字，拆分成两篇，作为设计模式的学习理解。设计模式这个东西，说他厉害他确实在工程里占有很高的地位，但是不应当过分的信仰这种东西">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577898209517.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577899539183.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577899646754.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577899825102.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577900057893.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577900183155.jpg">
+<meta property="og:image" content="./1444916335159.png">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577900365661.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577900527574.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577900649733.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577900837995.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577900977664.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="设计模式探索之路（上）">
+<meta name="twitter:description" content="这篇学习加总结的文章写了很久了，但是因为之前是使用马克飞象来写的，其中的图片保存在本地，再上传到博客上非常麻烦，于是就一直趴在电脑里。后来使用了MWeb之后，Mweb推出了图床的功能，懒癌的我找到了最爱，终于可以开心的将一些文章扔博客里去了。鉴于这篇文章太长，大约有两万五千多字，拆分成两篇，作为设计模式的学习理解。设计模式这个东西，说他厉害他确实在工程里占有很高的地位，但是不应当过分的信仰这种东西">
+
+  
+    <link rel="alternative" href="/atom.xml" title="临风|刀背藏身" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="http://7s1s1q.com1.z0.glb.clouddn.com/love.png" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">临风</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">代码是一棱刀背，幸好，有此藏身。</p>
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						<li>友情链接</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="/github.com/xuelinf" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/1221903300" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="/#" title="rss">rss</a>
+					        
+								<a class="zhihu" target="_blank" href="/zhihu.com/people/xuelinf" title="zhihu">zhihu</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/C-C/" style="font-size: 13.33px;">C/C++</a><a href="/tags/Diary/" style="font-size: 10.00px;">Diary</a><a href="/tags/Docker/" style="font-size: 10.00px;">Docker</a><a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a><a href="/tags/Linux/" style="font-size: 10.00px;">Linux</a><a href="/tags/PM/" style="font-size: 10.00px;">PM</a><a href="/tags/Python/" style="font-size: 13.33px;">Python</a><a href="/tags/TCP-IP/" style="font-size: 13.33px;">TCP/IP</a><a href="/tags/Unix/" style="font-size: 10.00px;">Unix</a><a href="/tags/design-pattern/" style="font-size: 13.33px;">design pattern</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 13.33px;">life</a><a href="/tags/web/" style="font-size: 10.00px;">web</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 13.33px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">待添加</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">请赐予我意志力</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">临风</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img lazy-src="http://7s1s1q.com1.z0.glb.clouddn.com/love.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author">临风</h1>
+			</hgroup>
+			
+			<p class="header-subtitle">代码是一棱刀背，幸好，有此藏身。</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="/github.com/xuelinf" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/1221903300" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="/#" title="rss">rss</a>
+			        
+						<a class="zhihu" target="_blank" href="/zhihu.com/people/xuelinf" title="zhihu">zhihu</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <div class="body-wrap"><article id="post-设计模式探索之路（上）" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/03/12/设计模式探索之路（上）/" class="article-date">
+  	<time datetime="2016-03-12T13:44:48.000Z" itemprop="datePublished">3月 12 2016</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      设计模式探索之路（上）
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/design-pattern/">design pattern</a></li></ul>
+	</div>
+
+        
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/Study/">Study</a>
+	</div>
+
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这篇学习加总结的文章写了很久了，但是因为之前是使用马克飞象来写的，其中的图片保存在本地，再上传到博客上非常麻烦，于是就一直趴在电脑里。后来使用了MWeb之后，Mweb推出了图床的功能，懒癌的我找到了最爱，终于可以开心的将一些文章扔博客里去了。鉴于这篇文章太长，大约有两万五千多字，拆分成两篇，作为设计模式的学习理解。设计模式这个东西，说他厉害他确实在工程里占有很高的地位，但是不应当过分的信仰这种东西，他其实只是解决工程问题的有效途径，但并不一定是最佳的途径。</p>
+<p>当然试图去寻找到最佳的途径，显示是要先对这些人们已经充分认同的设计模式有所理解。<br><a id="more"></a></p>
+<h2 id="策略模式（引子）">策略模式（引子）</h2>
+<p>重新设计类结构，创造更多接口，而不是简单地增加进程。比如我们建立一个鸭子的超类，超类中拥有呱呱叫和飞的两个函数。因为我们认为鸭子普遍是可以飞和叫的。当我们在分别建立绿头鸭红头鸭子类的时候，可以直接继承了两种方法。但是此时如果要建立橡皮鸭呢?建立木头鸭呢？这个时候，我们就面临着这个超类的可复用的弹性问题了。所以，我们采用的方法是，把呱呱叫和飞行封装，形成借口，封装的行为里，定义一组行为，有可以飞不可以飞，呱呱叫吱吱叫或者是完全不叫，这一组行为，可以叫一个『算法族』。这样就大大提高了系统的弹性。</p>
+<p>简单来讲，定义算法族，分别封装起来，让它们之间可以互相替换，此模式让算法的变化独立于使用算法的客户。<br><strong>设计的原则：</strong></p>
+<ol>
+<li>找出应用中可能需要变化之处，把他们独立出来，不要和那些不需要变化的代码混在一起。</li>
+<li>针对接口编程，而不是针对实现编程。</li>
+<li>多用组合，少用继承。（使用组合建立系统具有更大弹性）</li>
+</ol>
+<h2 id="观察者模式">观察者模式</h2>
+<p>观察者模式定义了对象之间的一对多依赖，这样一来，当一个对象改变状态时，他的所有依赖者都会收到通知并自动更新。观察者模式提供了一种对象设计，让主题和观察者之间松耦合。当两个对象<strong>松耦合</strong>，他们依然可以交互，但是不清楚彼此的细节。</p>
+<p>有多个观察者的时候，不可以依赖特定的通知次序。</p>
+<p>Java API 内置了观察者模式，java.util 包内包含了最基本的 Observer 接口和 Observalbe 类。不过 java.util.Observable 是一个类而不是接口，所以在实现上，他还有一些问题，限制了它的使用和福永，所以在使用中应当注意。（OBservable 是一个类，必须设计一个类继承它，如果某个类想要同时具有Observable 类和另外一个超类的行为，就会陷入两难，因为 Java 不支持多重继承。）</p>
+<p>JDK 中 Swing 大量使用了观察者模式，很多GUI 框架也是如此。</p>
+<p>我们常听说的MVC 其实就是观察者模式中的代表人物。 </p>
+<p><strong>设计的原则（增）：</strong></p>
+<ol>
+<li>（找出变化，独立出来）在观察者模式中，会改变的是主题的状态，以及观察者的数目和类型。用这个模式，你可以改变依赖于主题状态的对象，却不必改变主题。这叫前提规则。</li>
+<li>（针对接口编程，而非针对实现）主题与观察者都是用接口：观察者利用主题的接口向主题注册，而主题利用观察者接口通知观察者。这样可以让两者之间运作正常，又同时具有松耦合的优点。</li>
+<li>（多用组合，少用继承）观察者利用『组合』将许多观察者组合进主题中，对象之间的这种关系不是通过继承产生的，而是在运行时利用组合的方式而产生的。</li>
+<li>为了交互对象之间的松耦合设计而努力。松耦合的设计之所以能让我们建立有弹性的OO系统，能够应对变化，是因为对象之间的互相依赖降到了最低。</li>
+</ol>
+<h2 id="装饰者模式">装饰者模式</h2>
+<p>首先了解一个开放-关闭原则，是装饰者模式的一个重要设计原则，我们的目标是允许类更容易扩展，在不修改现有代码的情况下，就可以搭配新的行为。如能实现这样的目标，这样的设计就具有弹性可以应对改变，可以接受新的功能来应对改变的需求。</p>
+<p><strong>装饰者模式动态的将责任附加到对象上，若要扩展功能，装饰者提供了比继承更有弹性的替代方案。</strong></p>
+<p><strong>以咖啡馆为例</strong>：咖啡馆提供各种饮料，现在要设计一个订单系统，来优化他们的饮料供应要求。如果我们用最基本的类设计，让一个超类具有提供通用的方法，子类继承并实现cost() 等方法，这样我们就看到一个爆炸式的类继承图。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577898209517.jpg" alt=""></p>
+<p>所以，这个时候我们考虑装饰者模式，如果一个顾客需要摩卡和奶泡深焙咖啡，那么我们就先拿一个深焙咖啡对象，然后用摩卡对象装饰它（包起来），以奶泡对象装饰它，最后调用 cost（）方法，一来委托将调料的价钱加上去。如图：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577899539183.jpg" alt=""></p>
+<ul>
+<li>装饰着和被装饰者对象有相同的超类型。</li>
+<li>你可以用一个或多个装饰者包装一个对象。既然装饰者和被装饰对象有相同的超类型，所以在任何需要原始对象的场合，可以用装饰过的对象来代替他。</li>
+<li><strong>装饰者可以在所委托被装饰者的行为之前或之后，加上自己的行为，以达到特定的目的。</strong></li>
+<li>对象可以在任何时候被装饰，所以可以在运行时动态的不限量的把你喜欢的装饰者来装饰对象。<br>这是修改成装饰者模式的框架：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577899646754.jpg" alt=""></li>
+</ul>
+<p>在 Java 中， java.io 包就是一个使用装饰者模式最好的例子。</p>
+<p><strong>缺点</strong>：</p>
+<ol>
+<li>因为在设计中加入了大量的小类，所以导致不容易理解这种设计方式。</li>
+<li>类型问题。人们在客户代码中依赖某种特殊类型，然后忽然导入装饰者，就会出现各种状况。</li>
+<li>采用装饰者在实例化组件时，将增加代码的复杂度。</li>
+</ol>
+<p><strong>设计原则：</strong></p>
+<ol>
+<li>类应该对扩展开放，对修改关闭。</li>
+</ol>
+<h2 id="工厂模式">工厂模式</h2>
+<p>人们普遍认为工厂模式分三类，简单工厂模式，工厂方法模式，和抽象工厂模式，不过要澄清一下，其实简单工厂模式只是在概念上符合了工厂模式，而其实还存在有缺陷。简单工厂就是最简单的创造了一个工厂，在实例化对象的时候，由工厂来决定实例化哪一种对象。</p>
+<p>以下面代码为例：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">enum</span> CTYPE {COREA, COREB};     </div><div class="line">class SingleCore    </div><div class="line">{    </div><div class="line"><span class="keyword">public</span>:    </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">Show</span>() = <span class="number">0</span>;  </div><div class="line">};    </div><div class="line"><span class="comment">//单核A    </span></div><div class="line">class SingleCoreA: <span class="keyword">public</span> SingleCore    </div><div class="line">{    </div><div class="line"><span class="keyword">public</span>:    </div><div class="line">    <span class="keyword">void</span> <span class="title">Show</span>() { cout&lt;&lt;<span class="string">"SingleCore A"</span>&lt;&lt;endl; }    </div><div class="line">};    </div><div class="line"><span class="comment">//单核B    </span></div><div class="line">class SingleCoreB: <span class="keyword">public</span> SingleCore    </div><div class="line">{    </div><div class="line"><span class="keyword">public</span>:    </div><div class="line">    <span class="keyword">void</span> <span class="title">Show</span>() { cout&lt;&lt;<span class="string">"SingleCore B"</span>&lt;&lt;endl; }    </div><div class="line">};    </div><div class="line"><span class="comment">//唯一的工厂，可以生产两种型号的处理器核，在内部判断    </span></div><div class="line">class Factory    </div><div class="line">{    </div><div class="line"><span class="keyword">public</span>:     </div><div class="line">    SingleCore* <span class="title">CreateSingleCore</span>(<span class="keyword">enum</span> CTYPE ctype)    </div><div class="line">    {    </div><div class="line">        <span class="keyword">if</span>(ctype == COREA) <span class="comment">//工厂内部判断    </span></div><div class="line">            <span class="keyword">return</span> <span class="keyword">new</span> SingleCoreA(); <span class="comment">//生产核A    </span></div><div class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(ctype == COREB)    </div><div class="line">            <span class="keyword">return</span> <span class="keyword">new</span> SingleCoreB(); <span class="comment">//生产核B    </span></div><div class="line">        <span class="keyword">else</span>    </div><div class="line">            <span class="keyword">return</span> NULL;    </div><div class="line">    }    </div><div class="line">};</div></pre></td></tr></table></figure>
+
+<p>这个设计的缺点在于，如果我们要增加新的类型，就需要进入工厂类中去修改，这就违反了我们上次提到的原则：<strong>类应当向扩展开放，向修改封闭</strong>。</p>
+<p>所以，此时我们的工厂方法模式就出现了，工厂方法模式的定义是：<strong>工厂模式的特点就是我们定义一个创建对象的接口，但是由子类来决定实例化的类是哪一个。工厂方法就是让类把实例化推迟到了子类。</strong> 工厂方法用来处理对象的创建，然后将这个行为封装到子类中去，本身并不进行实例化，这样的话，客户程序中关于超类的代码，就和子类对象创建的代码解耦了。</p>
+<p>结合实例讲解就是，这家生产处理器核为自己设立了一个总厂，总厂并不做生产的活动，而是再开设一个工厂专门用来生产B型号的单核，和另一个工厂专门用来生产A型号的单核。这时，客户要做的是找好工厂，比如要A型号的核，就找A工厂要；否则找B工厂要，不再需要告诉工厂具体要什么型号的处理器核了。下面这个是代码：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">class SingleCore    </div><div class="line">{    </div><div class="line"><span class="keyword">public</span>:    </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">Show</span>() = <span class="number">0</span>;  </div><div class="line">};    </div><div class="line"><span class="comment">//单核A    </span></div><div class="line">class SingleCoreA: <span class="keyword">public</span> SingleCore    </div><div class="line">{    </div><div class="line"><span class="keyword">public</span>:    </div><div class="line">    <span class="keyword">void</span> <span class="title">Show</span>() { cout&lt;&lt;<span class="string">"SingleCore A"</span>&lt;&lt;endl; }    </div><div class="line">};    </div><div class="line"><span class="comment">//单核B    </span></div><div class="line">class SingleCoreB: <span class="keyword">public</span> SingleCore    </div><div class="line">{    </div><div class="line"><span class="keyword">public</span>:    </div><div class="line">    <span class="keyword">void</span> <span class="title">Show</span>() { cout&lt;&lt;<span class="string">"SingleCore B"</span>&lt;&lt;endl; }    </div><div class="line">};    </div><div class="line">class Factory    </div><div class="line">{    </div><div class="line"><span class="keyword">public</span>:    </div><div class="line">    <span class="keyword">virtual</span> SingleCore* <span class="title">CreateSingleCore</span>() = <span class="number">0</span>;  </div><div class="line">};    </div><div class="line"><span class="comment">//生产A核的工厂    </span></div><div class="line">class FactoryA: <span class="keyword">public</span> Factory    </div><div class="line">{    </div><div class="line"><span class="keyword">public</span>:    </div><div class="line">    SingleCoreA* <span class="title">CreateSingleCore</span>() { <span class="keyword">return</span> <span class="keyword">new</span> SingleCoreA; }    </div><div class="line">};    </div><div class="line"><span class="comment">//生产B核的工厂    </span></div><div class="line">class FactoryB: <span class="keyword">public</span> Factory    </div><div class="line">{    </div><div class="line"><span class="keyword">public</span>:    </div><div class="line">    SingleCoreB* <span class="title">CreateSingleCore</span>() { <span class="keyword">return</span> <span class="keyword">new</span> SingleCoreB; }    </div><div class="line">};</div></pre></td></tr></table></figure>
+
+<p>在《HeadFirst设计模式》书中，利用另外一个例子讲述了这个问题，有一家披萨店，在纽约和芝加哥开了披萨的分店，而每个分店为了满足当地人的口味，有着当地口味的各种披萨。于是我们就看到了这个UML图：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577899825102.jpg" alt=""></p>
+<p>这里边工厂方法是创造一个框架，让子类去决定如何实现。在工厂方法中，<code>orderPizza()</code> 方法提供了一般框架，以便创建披萨，<code>orderPizza()</code>方法依赖工厂方法创建具体类，然后制造出具体的披萨出来。而简单工厂的做法是可以将对象的创建封装起来，但是不具备工厂方法的弹性。这种方法，相比于简单工厂的模式，拥有了更多的弹性。</p>
+<p>下面我们再引入一个原则：<br><strong>设计原则：</strong></p>
+<ol>
+<li>要依赖抽象，不要依赖具体类。（依赖倒置原则 Dependency Inversion Principle）无论是高层组件，和低层组件，都应当依赖于抽象，而非具体的类。</li>
+</ol>
+<p>下面几个指导方针，可以避免在设计中违反依赖倒置原则：</p>
+<ul>
+<li>变量不可以持有具体类的引用。（如果使用一个new，就会持有具体类的引用，可以改用工厂方法来避开这种做法）</li>
+<li>不要让类派生自具体类。（如果派生自具体类，你就会依赖具体类）</li>
+<li>不要覆盖基类中已经实现的方法。（如果覆盖了基类中已经实现的方法，那么你的基类就不是一个真正适合被继承的抽象。基类中已经实现的方法，应该由所有的子类共享）</li>
+</ul>
+<p>那么，下面我们就能引入抽象工厂模式，<strong> 抽象工厂模式，提供了一个接口，用于创建相关或依赖对象的家族，而不需要明确指定具体类。</strong>。下面这张图将有助于理解其中的关系。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577900057893.jpg" alt=""></p>
+<p>我们看到，抽象工厂定义了一个接口，所有的具体工厂都必须实现此接口，这个接口包括了一组方法用来生产产品。下面回到那个披萨店的问题，下面这张图就更加复杂，而其中抽象出来的披萨原料工厂接口，正是整个抽象工厂概念的精髓。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577900183155.jpg" alt=""><br><img src="./1444916335159.png" alt="Alt text"></p>
+<p>具体的披萨工厂负责生产披萨原料，每个工厂都知道如何产生符合自己区域的正确对象，而披萨店有两个具体事例，纽约披萨店和芝加哥披萨店，他们就是抽象工厂的客户。</p>
+<p><strong>工厂方法模式和抽象工厂模式的区别</strong>：<br><strong>工厂方法在创建对象的方法是利用继承，而抽象工厂是通过对象的组合。</strong>这意味着，利用工厂方法创建对象，需要扩展一个类，并覆盖它的工厂方法，这个工厂方法用来创建对象，而整个工厂方法模式，不过就是通过子类来创建对象，用户在使用时候，只需要知道他们所使用的抽象类型就可以了。而抽象工厂提供了一个用来创建一个产品家族的抽象类型，这个类型的子类定义了产品被生产的方法。要想使用这个工厂，必须先实例化它，然后将它传入一些针对抽象类型所写的代码中去。</p>
+<p>所以，当你需要创建一个产品将组，想让制造的相关产品集合起来的时候，可以使用抽象工厂模式。而当你目前还不知道到底需要实例化哪些具体类，可以使用工厂方法模式，因为扩展和修改很快。</p>
+<h2 id="单件模式（Singleton_Pattern）">单件模式（Singleton Pattern）</h2>
+<p>看完了一个相当复杂的工厂模式，下面转入一个比较简单的模式，单件模式。定义如下：</p>
+<p><strong>单件模式确保一个类只有一个实例，并提供一个全局访问点。</strong></p>
+<p>有一些对象其实我们只需要一个，比方说：<strong>线程池（threadpool）、缓存（cache）、对话框、处理偏好设置、注册表（registry）的对象、日志对象、打印机显卡等设备的对象。</strong>  由于普通的全局变量，必须在程序已开始就创建好对象，那么如果这个对象非常的消耗资源，而在程序的运行过程中一直没有用到它，不就形成了浪费了么。所以使用单件模式，就可以在需要的时候去创建这个对象。</p>
+<p><strong>适用性</strong>：</p>
+<ol>
+<li>对于一个类，如果他比较大，而且这些资源可以被全局共享，就可以设计成单件模式。</li>
+<li>对于一个类，需要对实例进行计数。可以在 Instance 中进行，并可以对实例的个数进行限制。</li>
+<li>对于一个类，需要对其实例的具体行为进行控制。例如，期望返回的实例实际上是自己子类的实例。这样可以通过单件模式，对客户端代码保持透明。</li>
+</ol>
+<p>单件模式，没有公开的构造器，是私有的。当为了取得实例，必须请求得到一个实例，而不是自行实例化得到一个一个实例。类中有一个静态方法 ，叫做GetInstance() ，调用这个方法，就可以让这个唯一的实例现身，这个实例也许是第一次创建，也许是已经创建了。下面是一个单件模式的通用写法。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/* </span></div><div class="line">作用：保证一个class只有一个实体（instance），并为它提供一个全局唯一的访问点 </div><div class="line">*/  </div><div class="line">class singleton  </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    ~<span class="title">singleton</span>()  </div><div class="line">    {<span class="comment">//析构时使用  </span></div><div class="line">    }  </div><div class="line">    <span class="keyword">static</span> singleton* getInstance()  </div><div class="line">    {  </div><div class="line">        <span class="keyword">if</span>(_instance == NULL)  </div><div class="line">        {  </div><div class="line">            _instance = <span class="keyword">new</span> singleton();  </div><div class="line">        }  </div><div class="line">        <span class="keyword">return</span> _instance;  </div><div class="line">    }  </div><div class="line">  </div><div class="line"><span class="keyword">private</span>:  </div><div class="line">    <span class="keyword">static</span> singleton *_instance;  </div><div class="line">  </div><div class="line"><span class="keyword">private</span>:  </div><div class="line">//最好将所有此类的实例化的进口全部堵死  </div><div class="line">    <span class="title">singleton</span>()  </div><div class="line">    {  </div><div class="line">  </div><div class="line">    }  </div><div class="line">    singleton(<span class="keyword">const</span> singleton&)  </div><div class="line">    {  </div><div class="line">  </div><div class="line">    }  </div><div class="line">    singleton& operator=(<span class="keyword">const</span> singleton &)  </div><div class="line">    {  </div><div class="line">  </div><div class="line">    }  </div><div class="line">};  </div><div class="line">singleton *singleton::_instance = NULL;</div></pre></td></tr></table></figure>
+
+<p>看起来很美好，不过这个代码仍然存在问题。</p>
+<ol>
+<li>释放的问题，上述例子中的<code>_instance</code>，不会自动释放，而需要手动去释放，尤其是做借口时候，需要告知使用方调用 <code>delete singleton::getInstance()</code>语句。</li>
+<li>多线程使用的环境下，极有可能会出现同时创造了前后不一致的对象，失去了单件模式的本意，这个问题就严重了。</li>
+</ol>
+<p><strong>解决方法：</strong><br>针对释放问题的解决方法：</p>
+<ol>
+<li>调用 <code>delete singleton::getInstance()</code>语句。</li>
+<li>注册一个<code>atexit()</code>函数，将释放内存的方法放进去，此方法可以将多个单件放在一起调用。</li>
+</ol>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">void <span class="function">releasefun</span>()  </div><div class="line">{  </div><div class="line">    delete singleton<span class="value">::<span class="function">getInstance</span>();</span>  </div><div class="line">}  </div><div class="line"><span class="comment">//在使用完成后调用  </span></div><div class="line"><span class="function">atexit</span>(releasefun);</div></pre></td></tr></table></figure>
+
+<ol>
+<li>使用智能指针，C++ STL中的<code>auto_ptr</code>就是一个。<code>static auto_ptr&lt;singleton&gt; _instance;</code> </li>
+<li>利用c++ 内嵌类和一个静态成员自动释放机制，将这个类嵌入到单件模式的类中去。然后在<code>getInstance（）</code> 中声明一个静态的实例对象。</li>
+</ol>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">class clearer  </div><div class="line">    {  </div><div class="line">    public<span class="value">:  </span></div><div class="line">        <span class="function">clearer</span>(){}  </div><div class="line">        ~<span class="function">clearer</span>()  </div><div class="line">        {  </div><div class="line">            <span class="function">if</span>(singleton::<span class="function">getInstance</span>())  </div><div class="line">            {  </div><div class="line">                delete singleton::<span class="function">getInstance</span>();  </div><div class="line">            } }  };</div></pre></td></tr></table></figure>
+
+<p><strong>针对多线程的问题：</strong><br>在这里引入一个著名的双检测锁机制，看到代码，一定会觉得非常的有想法。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">static</span> singleton* getInstance()  </div><div class="line">{  </div><div class="line">    <span class="keyword">if</span>(_instance == <span class="keyword">NULL</span>)  </div><div class="line">    {  </div><div class="line">        <span class="comment">//加入临界区  </span></div><div class="line">        <span class="keyword">if</span>(<span class="keyword">NULL</span> == _instance)  </div><div class="line">        {  </div><div class="line">            _instance = <span class="keyword">new</span> singleton();  </div><div class="line">        }  </div><div class="line">        <span class="comment">//释放临界区  </span></div><div class="line">    }  </div><div class="line">    <span class="keyword">return</span> _instance;  </div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>这里边这个临界区的思路，正好解决了多线程的问题。</p>
+<p>同时，如果有多个类加载器存在的时候，很有可能创建各自不同的单件实例，这个时候，就要小心，应该自行指定类加载器，并指定同一个类加载器。</p>
+<h2 id="命令模式（Command_Pattern）">命令模式（Command Pattern）</h2>
+<p><strong>命令模式将『请求』封装成对象，以便使用不同的请求，队列或者日志来参数化其他对象。命令模式也支持可撤销的操作。</strong></p>
+<p>一个简单的生活中的例子就是，我们去餐厅吃饭，通过服务员来点餐，具体谁来做这些菜还什么时候完成这些菜我们并不知道。而服务员则只是将我们下的订单，传递给厨师，具体的做菜过程是由厨师完成的。所以，『菜单请求者』和『菜单实现者—厨师』之间是解耦的。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577900365661.jpg" alt=""></p>
+<p>图中的几个角色有：</p>
+<ul>
+<li><strong>客户（Client）角色：</strong>创建了一个具体命令(ConcreteCommand)对象并确定其接收者。</li>
+<li><strong>请求者（Invoker）角色：</strong>负责调用命令对象执行请求，相关的方法叫做行动方法。</li>
+<li><strong>命令（Command）角色：</strong>声明了一个给所有具体命令类的抽象接口。这是一个抽象角色。</li>
+<li><strong>具体命令（ConcreteCommand）角色：</strong>定义一个接受者和行为之间的弱耦合；实现Execute()方法，负责调用接收考的相应操作。Execute()方法通常叫做执行方法。调用者只需要调用<code>excute()</code>就可以发出请求。</li>
+<li><strong>接收者（Receiver）角色：</strong>负责具体实施和执行一个请求。任何一个类都可以成为接收者，实施和执行请求的方法叫做行动方法。</li>
+</ul>
+<p>在刚才那个餐厅的例子，我们建立一一的对应关系，这样理解起来就更加容易了。</p>
+<ul>
+<li>女招待 &lt;—&gt; <code>invoker</code></li>
+<li>快餐厨师 &lt;—&gt; <code>Receiver</code></li>
+<li><code>orderUp()</code> &lt;—&gt; <code>execute()</code></li>
+<li>订单 &lt;—&gt; <code>command</code></li>
+<li>顾客 &lt;—&gt; <code>Client</code></li>
+<li><code>takeOrder()</code> &lt;—&gt; <code>setCommand()</code></li>
+</ul>
+<p>下面我们看一个实例：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor">#<span class="keyword">include</span> &lt;iostream&gt;  </span></div><div class="line"><span class="preprocessor">#<span class="keyword">include</span> &lt;vector&gt;  </span></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;  </div><div class="line"><span class="comment">// 烤肉师傅  </span></div><div class="line"><span class="keyword">class</span> RoastCook  </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    <span class="keyword">void</span> MakeMutton() { <span class="built_in">cout</span> &lt;&lt; <span class="string">"烤羊肉"</span> &lt;&lt; endl; }  </div><div class="line">    <span class="keyword">void</span> MakeChickenWing() { <span class="built_in">cout</span> &lt;&lt; <span class="string">"烤鸡翅膀"</span> &lt;&lt; endl; }  </div><div class="line">};  </div><div class="line">  </div><div class="line">  </div><div class="line"><span class="comment">// 抽象命令类  </span></div><div class="line"><span class="keyword">class</span> Command  </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    Command(RoastCook* temp) { receiver = temp; }  </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> ExecuteCmd() = <span class="number">0</span>;  </div><div class="line">  </div><div class="line"><span class="keyword">protected</span>:  </div><div class="line">    RoastCook* receiver;  </div><div class="line">};  </div><div class="line">  </div><div class="line"><span class="comment">// 烤羊肉命令  </span></div><div class="line"><span class="keyword">class</span> MakeMuttonCmd : <span class="keyword">public</span> Command  </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    MakeMuttonCmd(RoastCook* temp) : Command(temp) {}  </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> ExecuteCmd() { receiver-&gt;MakeMutton(); }  </div><div class="line">};  </div><div class="line">  </div><div class="line"><span class="comment">// 烤鸡翅膀命令  </span></div><div class="line">  </div><div class="line"><span class="keyword">class</span> MakeChickenWingCmd : <span class="keyword">public</span> Command  </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    MakeChickenWingCmd(RoastCook* temp) : Command(temp) {}  </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> ExecuteCmd() { receiver-&gt;MakeChickenWing(); }  </div><div class="line">};  </div><div class="line">  </div><div class="line"><span class="comment">// 服务员类  </span></div><div class="line"><span class="keyword">class</span> Waiter  </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    <span class="keyword">void</span> SetCmd(Command* temp);  </div><div class="line">  </div><div class="line">    <span class="comment">// 通知执行  </span></div><div class="line">    <span class="keyword">void</span> Notify();  </div><div class="line"><span class="keyword">protected</span>:  </div><div class="line">    <span class="stl_container"><span class="built_in">vector</span>&lt;Command*&gt;</span> m_commandList;  </div><div class="line">};  </div><div class="line">  </div><div class="line"><span class="keyword">void</span> Waiter::SetCmd(Command* temp)  </div><div class="line">{  </div><div class="line">    m_commandList.push_back(temp);  </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"增加订单"</span> &lt;&lt; endl;  </div><div class="line">}  </div><div class="line">  </div><div class="line"><span class="keyword">void</span> Waiter::Notify()  </div><div class="line">{  </div><div class="line">    <span class="stl_container"><span class="built_in">vector</span>&lt;Command*&gt;</span>::iterator it;  </div><div class="line">    <span class="keyword">for</span> (it=m_commandList.begin(); it!=m_commandList.end(); ++it)  </div><div class="line">    {  </div><div class="line">        (*it)-&gt;ExecuteCmd();  </div><div class="line">    }  </div><div class="line">}  </div><div class="line">  </div><div class="line"><span class="keyword">int</span> main()  </div><div class="line">{  </div><div class="line">    <span class="comment">// 店里添加烤肉师傅、菜单、服务员等顾客  </span></div><div class="line">    RoastCook* cook = <span class="keyword">new</span> RoastCook();  </div><div class="line">    Command* cmd1 = <span class="keyword">new</span> MakeMuttonCmd(cook);  </div><div class="line">    Command* cmd2 = <span class="keyword">new</span> MakeChickenWingCmd(cook);  </div><div class="line">    Waiter* girl = <span class="keyword">new</span> Waiter();  </div><div class="line">  </div><div class="line">    <span class="comment">// 点菜  </span></div><div class="line">    girl-&gt;SetCmd(cmd1);  </div><div class="line">    girl-&gt;SetCmd(cmd2);  </div><div class="line">    <span class="comment">// 服务员通知  </span></div><div class="line">    girl-&gt;Notify();  </div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;  </div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>命令模式有几个常见的可适用功能：</p>
+<ul>
+<li>当系统需要支持撤销的命令（undo）。类中加入一个新的实例变量，命令对象使用它追踪那个最后被调用的命令，不管何时撤销按钮被按下，我们都可以调出这个命令然后实现undo。</li>
+<li><strong>宏命令</strong>，我们可以制造一个新的命令，用来执行其他一堆命令，形成一个命令的集合。</li>
+<li><strong>队列请求</strong>，一个命令对象和原先的请求发送者可以有不同的生命期。换言之，原先的请求发送者可能已经不存在了，而命令对象本身仍然在活动中。这时，命令的接受者可以是在本地，也可以是网络的另外一个地址。命令对象可以在串行化之后传送到另一台机器上。</li>
+<li><strong>日志请求</strong>，如果一个系统想要将系统中的所有数据更新到日志中，以便在系统崩溃的时候，可以根据日志回读所有的数据来更新命令，从新调用<strong>*excute()</strong>方法一条一条的执行这些命令，从而恢复系统在崩溃之前所有的数据更新。</li>
+</ul>
+<h2 id="适配器模式和外观模式（the_Adapter_and_Facade_Patterns）">适配器模式和外观模式（the Adapter and Facade Patterns）</h2>
+<p>比如我们中国的电压是220v，而美国的电压是110v，为了一个中国的电脑，能在美国使用，就必须需要一个变压器转换电压之后才可以使用，这就是真实世界里的适配器。而我们OO世界里的适配器和它是一个道理，就是<strong>将一个接口转换成另一个接口，以符合客户的期望。适配器让原本接口不兼容的类可以合作。</strong></p>
+<p>客户使用适配器的过程：</p>
+<ol>
+<li>客户通过目标接口调用适配器的方法对适配器发出请求。</li>
+<li>适配器使用被适配者接口把请求转换成被适配者的一个或多个调用接口。</li>
+<li>客户接受到调用的结果，并未察觉到这一切是适配器在起转换作用。</li>
+</ol>
+<p>下面是它的类图：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577900527574.jpg" alt=""></p>
+<p>Adaptee类没有Request方法，而客户期待这个方法。为了使客户能够使用Adaptee类，提供一个中间环节，即类Adapter类，Adapter类实现了Target接口，并继承自Adaptee，Adapter类的Request方法重新封装了Adaptee的SpecificRequest方法，实现了适配的目的。</p>
+<p>以下是一个简单的c++ 实例：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor">#<span class="keyword">include</span>&lt;iostream&gt;  </span></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;  </div><div class="line"><span class="comment">// "ITarget"  </span></div><div class="line"><span class="keyword">class</span> Target  </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    <span class="comment">// Methods  </span></div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> Request(){};  </div><div class="line">};  </div><div class="line">  </div><div class="line"><span class="comment">// "Adaptee"  </span></div><div class="line"><span class="keyword">class</span> Adaptee  </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    <span class="comment">// Methods  </span></div><div class="line">    <span class="keyword">void</span> SpecificRequest()  </div><div class="line">    {  </div><div class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="string">"Called SpecificRequest()"</span>&lt;&lt;endl;  </div><div class="line">    }  </div><div class="line">};  </div><div class="line">  </div><div class="line"><span class="comment">// "Adapter"  </span></div><div class="line"><span class="keyword">class</span> Adapter : <span class="keyword">public</span> Adaptee, <span class="keyword">public</span> Target  </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    <span class="comment">// Implements ITarget interface  </span></div><div class="line">    <span class="keyword">void</span> Request()  </div><div class="line">    {  </div><div class="line">        <span class="comment">// Possibly do some data manipulation  </span></div><div class="line">        <span class="comment">// and then call SpecificRequest    </span></div><div class="line">        <span class="keyword">this</span>-&gt;SpecificRequest();  </div><div class="line">    }  </div><div class="line">};  </div><div class="line">    </div><div class="line"><span class="keyword">int</span> main()  </div><div class="line">{  </div><div class="line">    <span class="comment">// Create adapter and place a request  </span></div><div class="line">    Target *t = <span class="keyword">new</span> Adapter();  </div><div class="line">    t-&gt;Request();  </div><div class="line">  </div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;  </div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>适配器分为对象的适配器，和类的适配器。上边给出的类图，是对象适配器的图。而类适配器与其的差别是适配器继承了Target和Adaptee。而对象适配器利用组合的方式将请求传送给被适配者。下边是类适配器。由于类适配器使用了多重继承，所以在java上不能实施。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577900649733.jpg" alt=""></p>
+<p>我们看到适配者模式的几个要点：</p>
+<ol>
+<li>适配者模式主要用于『希望复用一些现存的类，但是接口又与复用环境要求不一致的情况』，在遗留代码复用，类库迁移等方面非常有用。</li>
+<li>适配者模式有对象适配器和类适配器两种形式的实现结构，但是类适配器采用的是『多继承』的实现方式，带有不良的高耦合，所以一般不推荐采用。对象适配器采用『对象组合』的方式，更符合松耦合的精神。</li>
+<li>适配者模式的实现可以非常的灵活，不必拘泥于两种结构，例如完全可以将适配者模式中的『现存对象』作为新的接口方法参数，来达到适配的目的。</li>
+<li>适配者模式本身要求我们尽可能的使用『面向接口的编程』风格，这样才能在后期很方便的进行适配。</li>
+</ol>
+<p>而与适配者模式很相近的一个模式，叫外观模式。而实际上他的作用其实是为了简化接口。比如我们建立了一套家庭影院，这套家庭影院里拥有各种各样的方法类，但是当我们想要看电影的时候，去逐个完成准备的动作，将变得非常的繁琐。而有效的方式，则是将一系列的任务和在一起，外观类将家庭影院的诸多组件视为一个子系统，通过调用这个子系统，来实现一个方法，这个方法包含了子系统的各种方法。</p>
+<p>所以，我们知道，外观类并未将原来的子系统阻隔起来，只是提供了更简洁的接口，这种方法，也可以将客户从组件的子系统中解耦。</p>
+<p><strong>新的设计原则</strong>：</p>
+<ol>
+<li>最少知识原则，只和你的密友谈话。（意思是，当你设计一个系统，不管是任何对象，你都要注意它所交互的类有哪些，并注意它和这些类是如何交互的。）不要让太多的类耦合在一起，免得修改系统中的一部分，会影响到其他的部分。  </li>
+</ol>
+<p>最后我们再看一下 ，适配者模式，装饰模式，外观模式的区别：<br><strong>适配者模式</strong>将一个对象包装起来以改变其接口；<strong>装饰者</strong>将一个对象包装起来以增加新的行为和责任。<strong>外观</strong>将一群对象包装起来以简化其接口。</p>
+<h2 id="模板方法模式（Template_Method_Pattern）">模板方法模式（Template Method Pattern）</h2>
+<p>《设计模式》对模板方法模式的定义是：定义一个操作中的算法骨架，而将一些步骤延迟到子类中。模板方法使得子类可以再不改变算法结构的情况下，重新定义算法中的某些步骤。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577900837995.jpg" alt=""></p>
+<p><strong>抽象模板角色（AbstractClass）：</strong><br>定义了一个或多个抽象操作，以便让子类实现。这些抽象操作叫做基本操作，他们是一个顶级逻辑的组成步骤。定义并实现了一个模板方法。这个模板方法一般是一个具体方法，它给出了一个顶级逻辑的骨架，而逻辑的组成步骤在相应的抽象操作中，推迟到子类实现。顶级逻辑也有可能调用一些具体的方法。这个就是我们定义了我们固定的操作顺序。</p>
+<p><strong>具体模板角色(ConcreteClass):</strong><br>实现父类所定义的一个或多个抽象方法，它们是一个顶级逻辑的组成步骤。<br>每一个抽象模板角色都可以有任意多个具体模板角色与之对应，而每一个具体模板角色都可以给出这些抽象方法（也就是顶级逻辑的组成步骤）的不同实现，从而使得顶级逻辑的实现各不相同。</p>
+<p>来自Head First 设计模式中的一个例子的c++实现。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="keyword">class</span> CaffeineBeverage  <span class="comment">//咖啡因饮料  </span></div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    <span class="keyword">void</span> PrepareRecipe() <span class="comment">//咖啡因饮料冲泡法  </span></div><div class="line">    {  </div><div class="line">        BoilWater();  <span class="comment">//把水煮沸  </span></div><div class="line">        Brew();    <span class="comment">//冲泡  </span></div><div class="line">        PourInCup();  <span class="comment">//把咖啡因饮料倒进杯子  </span></div><div class="line">        AddCondiments(); <span class="comment">//加调料  </span></div><div class="line">    }  </div><div class="line">    <span class="keyword">void</span> BoilWater()  </div><div class="line">    {std::<span class="built_in">cout</span> &lt;&lt; <span class="string">"把水煮沸"</span> &lt;&lt; std::endl;}  </div><div class="line">    <span class="keyword">void</span> Brew()  </div><div class="line">    {<span class="keyword">static_cast</span>&lt;T *&gt;(<span class="keyword">this</span>)-&gt;Brew();}  </div><div class="line">    <span class="keyword">void</span> PourInCup()  </div><div class="line">    {std::<span class="built_in">cout</span> &lt;&lt; <span class="string">"把咖啡倒进杯子"</span> &lt;&lt; std::endl;}  </div><div class="line">    <span class="keyword">void</span> AddCondiments()  </div><div class="line">    {<span class="keyword">static_cast</span>&lt;T *&gt;(<span class="keyword">this</span>)-&gt;AddCondiments();}  </div><div class="line">};  </div><div class="line"><span class="keyword">class</span> Coffee : <span class="keyword">public</span> CaffeineBeverage&lt;Coffee&gt;  </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    <span class="keyword">void</span> Brew()  </div><div class="line">    {std::<span class="built_in">cout</span> &lt;&lt; <span class="string">"用沸水冲泡咖啡"</span> &lt;&lt; std::endl;}  </div><div class="line">    <span class="keyword">void</span> AddCondiments()  </div><div class="line">    {std::<span class="built_in">cout</span> &lt;&lt; <span class="string">"加糖和牛奶"</span> &lt;&lt; std::endl;}  </div><div class="line">};  </div><div class="line"><span class="keyword">class</span> Tea : <span class="keyword">public</span> CaffeineBeverage&lt;Tea&gt;  </div><div class="line">  </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    <span class="keyword">void</span> Brew()  </div><div class="line">    {std::<span class="built_in">cout</span> &lt;&lt; <span class="string">"用沸水浸泡茶叶"</span> &lt;&lt; std::endl;}  </div><div class="line">    <span class="keyword">void</span> AddCondiments()  </div><div class="line">    {std::<span class="built_in">cout</span> &lt;&lt; <span class="string">"加柠檬"</span> &lt;&lt; std::endl;}  </div><div class="line">};  </div><div class="line"><span class="keyword">int</span> main(<span class="keyword">void</span>)  </div><div class="line">{  </div><div class="line">    std::<span class="built_in">cout</span> &lt;&lt; <span class="string">"冲杯咖啡:"</span> &lt;&lt; std::endl;  </div><div class="line">    Coffee c;  </div><div class="line">    c.PrepareRecipe();  </div><div class="line">    std::<span class="built_in">cout</span> &lt;&lt; std::endl;  </div><div class="line">    std::<span class="built_in">cout</span> &lt;&lt; <span class="string">"冲杯茶:"</span> &lt;&lt; std::endl;  </div><div class="line">    Tea t;  </div><div class="line">    t.PrepareRecipe();  </div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;  </div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>其实在模板父类里，我们可以定义一个『默认不做事』的方法，我们称这种方法为『Hook』钩子，子类可以视情况决定要不要覆盖它们。这就让子类在实现的时候有了更多的灵活性。<br><strong>钩子</strong>： </p>
+<ul>
+<li>钩子可以让子类实现算法中的可选部分，或者钩子对于子类的实现并不重要的时候， 子类可以对钩子置之不理。</li>
+<li>让子类能够有机会对模板方法中某些即将发生的（或刚刚发生的）步骤做出反应。比如说justReOrderedList（） 的钩子方法允许子类在内部列表重新组织后执行某些动作。</li>
+<li>可以让子类有能力为其抽象类做一些决定。</li>
+</ul>
+<p>适用性：</p>
+<ol>
+<li>一次性实现一个算法的不变的部分，并将可变的行为留给子类来实现。 </li>
+<li>各子类中公共的行为应被提取出来并集中到一个公共父类中以避免代码重复。这是Opdyke和Johnson所描述过的“重分解以一般化”的一个很好的例子。首先识别现有代码中的不同之处，并且将不同之处分离为新的操作。最后，用一个调用这些新的操作的模板方法来替换这些不同的代码。 </li>
+<li>控制子类扩展。模板方法只在特定点调用“Hook”操作，这样就只允许在这些点进行扩展。</li>
+</ol>
+<p><strong>新的设计原则</strong>：<br>戏称为<strong>好莱坞原则</strong>，别调用我们，我们会调用你。我们允许低层组件将自己挂钩到系统上，但是高层组件会决定什么时候和怎样使用这些低层组件。模板方法模式就是典型的好莱坞原则。其他还有工厂方法，观察者等等。</p>
+<h2 id="迭代器（Iterator_Pattern）">迭代器（Iterator Pattern）</h2>
+<p>现在有两种储存数据的模式，一种用的是ArrayList , 而另一种则用的是数组，两种结构所拥有的方法各不相同。假如我们想要将两种数据存储方式整合在一起，然后用相同的方法使用遍历它们的时候，这个时候就要用到了鼎鼎大名的迭代器了。</p>
+<p>当我们说『集合』（collection）的时候，我们指的是一群对象。其储存方式可以使各种各样的数据结构，如，列表，数组，散列表。无论用什么方式，一律可以视为集合，有时候也称为『聚合』（aggregate）。</p>
+<p>迭代器模式的精髓：提供一个方法顺序访问一个聚合对象的各个元素，而又不暴露其内部的表示。把游走的任务放在迭代器上，而不是聚合上。这样简化了聚合的接口和实现，也让责任各得其所。</p>
+<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577900977664.jpg" alt=""></p>
+<p>重要角色：<br><strong>迭代器角色</strong>：迭代器负责定义访问和遍历元素的接口。<br><strong>具体迭代器角色（Concrete Iterator）</strong> ： 具体迭代器角色要实现迭代器接口，并要记录遍历中的当前位置。<br><strong>集合角色（Aggregate）</strong>: 集合角色负责提供创建具体迭代器角色的接口。<br><strong>具体集合角色（Concrete Aggregate）</strong>: 具体集合角色实现创建具体迭代器角色的接口——这个具体迭代器角色与该集合的结构有关。</p>
+<p>回到实例中去看：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor">#<span class="keyword">include</span> &lt;iostream&gt;  </span></div><div class="line"><span class="preprocessor">#<span class="keyword">include</span> &lt;vector&gt;  </span></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;  </div><div class="line">  </div><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> Item&gt;  </div><div class="line"><span class="keyword">class</span> Iterator  </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> first()=<span class="number">0</span>;  </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> next()=<span class="number">0</span>;  </div><div class="line">    <span class="keyword">virtual</span> Item* currentItem()=<span class="number">0</span>;  </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">bool</span> isDone()=<span class="number">0</span>;  </div><div class="line">    <span class="keyword">virtual</span> ~Iterator(){}  </div><div class="line">};  </div><div class="line">  </div><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> Item&gt;  </div><div class="line"><span class="keyword">class</span> ConcreteAggregate;  </div><div class="line">  </div><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> Item&gt;  </div><div class="line"><span class="keyword">class</span> ConcreteIterator : <span class="keyword">public</span> Iterator &lt;Item&gt;  </div><div class="line">{  </div><div class="line">    ConcreteAggregate&lt;Item&gt; * aggr;  </div><div class="line">    <span class="keyword">int</span> cur;  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    ConcreteIterator(ConcreteAggregate&lt;Item&gt;*a):aggr(a),cur(<span class="number">0</span>){}  </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> first()  </div><div class="line">    {  </div><div class="line">        cur=<span class="number">0</span>;  </div><div class="line">    }  </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> next()  </div><div class="line">    {  </div><div class="line">        <span class="keyword">if</span>(cur&lt;aggr-&gt;getLen())  </div><div class="line">            cur++;  </div><div class="line">    }  </div><div class="line">    <span class="keyword">virtual</span> Item* currentItem()  </div><div class="line">    {  </div><div class="line">        <span class="keyword">if</span>(cur&lt;aggr-&gt;getLen())  </div><div class="line">            <span class="keyword">return</span> &(*aggr)[cur];  </div><div class="line">        <span class="keyword">else</span>  </div><div class="line">            <span class="keyword">return</span> NULL;  </div><div class="line">    }  </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">bool</span> isDone()  </div><div class="line">    {  </div><div class="line">        <span class="keyword">return</span> (cur&gt;=aggr-&gt;getLen());  </div><div class="line">    }  </div><div class="line">};  </div><div class="line">  </div><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> Item&gt;  </div><div class="line"><span class="keyword">class</span> Aggregate  </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    <span class="keyword">virtual</span> Iterator&lt;Item&gt;* createIterator()=<span class="number">0</span>;  </div><div class="line">    <span class="keyword">virtual</span> ~Aggregate(){}  </div><div class="line">};  </div><div class="line">  </div><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> Item&gt;  </div><div class="line"><span class="keyword">class</span> ConcreteAggregate:<span class="keyword">public</span> Aggregate&lt;Item&gt;  </div><div class="line">{  </div><div class="line">    <span class="stl_container"><span class="built_in">vector</span>&lt;Item &gt;</span>data;  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    ConcreteAggregate()  </div><div class="line">    {  </div><div class="line">        data.push_back(<span class="number">1</span>);  </div><div class="line">        data.push_back(<span class="number">2</span>);  </div><div class="line">        data.push_back(<span class="number">3</span>);  </div><div class="line">    }  </div><div class="line">    <span class="keyword">virtual</span> Iterator&lt;Item&gt;* createIterator()  </div><div class="line">    {  </div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ConcreteIterator&lt;Item&gt;(<span class="keyword">this</span>);  </div><div class="line">    }  </div><div class="line">    Item& <span class="keyword">operator</span>[](<span class="keyword">int</span> index)  </div><div class="line">    {  </div><div class="line">        <span class="keyword">return</span> data[index];  </div><div class="line">    }  </div><div class="line">    <span class="keyword">int</span> getLen()  </div><div class="line">    {  </div><div class="line">        <span class="keyword">return</span> data.size();  </div><div class="line">    }  </div><div class="line">};  </div><div class="line">  </div><div class="line"><span class="keyword">int</span> main()  </div><div class="line">{  </div><div class="line">    Aggregate&lt;<span class="keyword">int</span>&gt; * aggr =<span class="keyword">new</span> ConcreteAggregate&lt;<span class="keyword">int</span>&gt;();  </div><div class="line">    Iterator&lt;<span class="keyword">int</span>&gt; *it=aggr-&gt;createIterator();  </div><div class="line">  </div><div class="line">    <span class="keyword">for</span>(it-&gt;first();!it-&gt;isDone();it-&gt;next())  </div><div class="line">    {  </div><div class="line">        <span class="built_in">cout</span>&lt;&lt;*(it-&gt;currentItem())&lt;&lt;endl;  </div><div class="line">    }  </div><div class="line">    <span class="keyword">delete</span> it;  </div><div class="line">    <span class="keyword">delete</span> aggr;  </div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;  </div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p><strong>迭代器</strong>的特点：</p>
+<ul>
+<li>迭代抽象： 访问一个聚合对象而无需暴露它的内部表示。</li>
+<li>迭代多态： 为遍历不同的集合结构，提供了一个统一的借口，从而支持同样的算法在不同的集合结构上进行操作。</li>
+<li>迭代器的健壮性考虑： 遍历的同时要更改迭代器所在的集合结构，会导致问题。<br>C++ 下有 STL Iterator 实现，Java 下有 java.util.Iterator 和 java.util.Enumeration。 </li>
+</ul>
+<p><strong>新的设计原则</strong>：<br><strong>单一责任</strong>： 一个类应该只有一个引起变化的原因。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/03/12/设计模式探索之路（下）/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          设计模式探索之路（下）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/03/12/Tinyhttpd-analysis/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Tinyhttpd analysis</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="设计模式探索之路（上）" data-title="设计模式探索之路（上）" data-url="http://yoursite.com/2016/03/12/设计模式探索之路（上）/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"xuelinf"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 临风
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: true
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js" type="text/javascript"></script>
+
+<script src="/js/main.js" type="text/javascript"></script>
+
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

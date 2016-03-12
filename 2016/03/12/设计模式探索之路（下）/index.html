@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>设计模式探索之路（下） | 临风|刀背藏身</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="组合模式(Composite Pattern)
+我们PC用到的文件系统，其实就是我们数据结构里的树形结构，我们处理树中的每个节点时，其实不用考虑他是叶子节点还是根节点，因为他们的成员函数都是一样的，这个就是组合模式的精髓。他模糊了简单元素和复杂元素的概念，客户程序可以向处理简单元素一样来处理复杂元素,从而使得客户程序与复杂元素的内部结构解耦。
+组合模式： 允许你将对象组合成树形结构来表现『整体/部">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式探索之路（下）">
+<meta property="og:url" content="http://yoursite.com/2016/03/12/设计模式探索之路（下）/">
+<meta property="og:site_name" content="临风|刀背藏身">
+<meta property="og:description" content="组合模式(Composite Pattern)
+我们PC用到的文件系统，其实就是我们数据结构里的树形结构，我们处理树中的每个节点时，其实不用考虑他是叶子节点还是根节点，因为他们的成员函数都是一样的，这个就是组合模式的精髓。他模糊了简单元素和复杂元素的概念，客户程序可以向处理简单元素一样来处理复杂元素,从而使得客户程序与复杂元素的内部结构解耦。
+组合模式： 允许你将对象组合成树形结构来表现『整体/部">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577901208629.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577901303514.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577901470388.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577901592239.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577901805125.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="设计模式探索之路（下）">
+<meta name="twitter:description" content="组合模式(Composite Pattern)
+我们PC用到的文件系统，其实就是我们数据结构里的树形结构，我们处理树中的每个节点时，其实不用考虑他是叶子节点还是根节点，因为他们的成员函数都是一样的，这个就是组合模式的精髓。他模糊了简单元素和复杂元素的概念，客户程序可以向处理简单元素一样来处理复杂元素,从而使得客户程序与复杂元素的内部结构解耦。
+组合模式： 允许你将对象组合成树形结构来表现『整体/部">
+
+  
+    <link rel="alternative" href="/atom.xml" title="临风|刀背藏身" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="http://7s1s1q.com1.z0.glb.clouddn.com/love.png" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">临风</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">代码是一棱刀背，幸好，有此藏身。</p>
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						<li>友情链接</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="/github.com/xuelinf" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/1221903300" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="/#" title="rss">rss</a>
+					        
+								<a class="zhihu" target="_blank" href="/zhihu.com/people/xuelinf" title="zhihu">zhihu</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/C-C/" style="font-size: 13.33px;">C/C++</a><a href="/tags/Diary/" style="font-size: 10.00px;">Diary</a><a href="/tags/Docker/" style="font-size: 10.00px;">Docker</a><a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a><a href="/tags/Linux/" style="font-size: 10.00px;">Linux</a><a href="/tags/PM/" style="font-size: 10.00px;">PM</a><a href="/tags/Python/" style="font-size: 13.33px;">Python</a><a href="/tags/TCP-IP/" style="font-size: 13.33px;">TCP/IP</a><a href="/tags/Unix/" style="font-size: 10.00px;">Unix</a><a href="/tags/design-pattern/" style="font-size: 13.33px;">design pattern</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 13.33px;">life</a><a href="/tags/web/" style="font-size: 10.00px;">web</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 13.33px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">待添加</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">请赐予我意志力</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">临风</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img lazy-src="http://7s1s1q.com1.z0.glb.clouddn.com/love.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author">临风</h1>
+			</hgroup>
+			
+			<p class="header-subtitle">代码是一棱刀背，幸好，有此藏身。</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="/github.com/xuelinf" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/1221903300" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="/#" title="rss">rss</a>
+			        
+						<a class="zhihu" target="_blank" href="/zhihu.com/people/xuelinf" title="zhihu">zhihu</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <div class="body-wrap"><article id="post-设计模式探索之路（下）" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/03/12/设计模式探索之路（下）/" class="article-date">
+  	<time datetime="2016-03-12T13:50:01.000Z" itemprop="datePublished">3月 12 2016</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      设计模式探索之路（下）
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/design-pattern/">design pattern</a></li></ul>
+	</div>
+
+        
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/Study/">Study</a>
+	</div>
+
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="组合模式(Composite_Pattern)">组合模式(Composite Pattern)</h2>
+<p>我们PC用到的文件系统，其实就是我们数据结构里的树形结构，我们处理树中的每个节点时，其实不用考虑他是叶子节点还是根节点，因为他们的成员函数都是一样的，这个就是组合模式的精髓。他模糊了简单元素和复杂元素的概念，客户程序可以向处理简单元素一样来处理复杂元素,从而使得客户程序与复杂元素的内部结构解耦。</p>
+<p><strong>组合模式</strong>： 允许你将对象组合成树形结构来表现『整体/部分』的层次结构。组合能让客户以一致的方式处理个别对象以及对象组合。<br><a id="more"></a><br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577901208629.jpg" alt=""></p>
+<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577901303514.jpg" alt=""></p>
+<p> <strong>抽象构件（Component）</strong>: 这是一个抽象角色，它给参加组合的对象定义出公共的接口以及默认行为，可以用来管理所有的子对象。在安全式的组合模式里，构件角色并不是定义出管理子对象的方法，这一定义由树枝构件对象给出。<br> <strong>树叶构件（Leaf）</strong> : 树叶对象是没有下级子对象的方法，定义出参加组合的原始对象的行为。<br> <strong>树枝构建（Compositic）</strong>: 代表参加组合的有下级子对象的对象。树枝对象给出所有的管理子对象的方法，比如add(),remove(),getChild()等。</p>
+<p>组合模式的实现根据所实现接口的区别分为两种形式，分别称为安全模式和透明模式。组合模式可以不提供父对象的管理方法，但组合模式必须在合适的地方提供子对象的管理方法（诸如：add、remove、getChild等）。</p>
+<p><strong>透明模式</strong>： 在Component里面声明所有的用来管理子类对象的方法，包括add（）、remove（），以及getChild（）方法。这样做的好处是所有的构件类都有相同的接口。在客户端看来，树叶类对象与合成类对象的区别起码在接口层次上消失了，客户端可以同等同的对待所有的对象。这就是透明形式的组合模式。</p>
+<p>这个选择的缺点是不够安全，因为树叶类对象和合成类对象在本质上是有区别的。树叶类对象不可能有下一个层次的对象，因此add（）、remove（）以及getChild（）方法没有意义，是在编译时期不会出错，而只会在运行时期才会出错或者说识别出来。针对这个，我们常常用throw 抛出异常。</p>
+<p><strong>安全方式</strong>： 是在Composite类里面声明所有的用来管理子类对象的方法。这样的做法是安全的做法，因为树叶类型的对象根本就没有管理子类对象的方法，因此，如果客户端对树叶类对象使用这些方法时，程序会在编译时期出错。<br>这个选择的缺点是不够透明，因为树叶类和合成类将具有不同的接口。</p>
+<p>上边的图安全方式的组合模式的类图结构和样例实现，透明方式就是在叶子节点的add()/remove()/GetChild()均有实现，不过是无意义的实现。大部分应用都是基于透明模式的，因为这样代码可以重用。</p>
+<p>下面看一个实例：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Menu.h  </span></div><div class="line"><span class="preprocessor">#<span class="keyword">include</span> &lt;string&gt;  </span></div><div class="line">  </div><div class="line"><span class="keyword">class</span> Menu    </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    <span class="keyword">virtual</span> ~Menu();  </div><div class="line">  </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> Add(Menu*);  </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> Remove(Menu*);  </div><div class="line">    <span class="keyword">virtual</span> Menu* GetChild(<span class="keyword">int</span>);  </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> Display() = <span class="number">0</span>;  </div><div class="line"><span class="keyword">protected</span>:  </div><div class="line">    Menu();  </div><div class="line">    Menu(std::<span class="built_in">string</span>);  </div><div class="line">    std::<span class="built_in">string</span> m_strName;  </div><div class="line">};  </div><div class="line">  </div><div class="line"><span class="comment">//Menu.cpp  </span></div><div class="line"><span class="preprocessor">#<span class="keyword">include</span> "stdafx.h"  </span></div><div class="line"><span class="preprocessor">#<span class="keyword">include</span> "Menu.h"  </span></div><div class="line">  </div><div class="line">Menu::Menu()  </div><div class="line">{  </div><div class="line">  </div><div class="line">}  </div><div class="line">  </div><div class="line">Menu::Menu(std::<span class="built_in">string</span> strName) : m_strName(strName)  </div><div class="line">{  </div><div class="line">  </div><div class="line">}  </div><div class="line">  </div><div class="line">Menu::~Menu()  </div><div class="line">{  </div><div class="line">  </div><div class="line">}  </div><div class="line">  </div><div class="line"><span class="keyword">void</span> Menu::Add(Menu* pMenu)  </div><div class="line">{}  </div><div class="line">  </div><div class="line"><span class="keyword">void</span> Menu::Remove(Menu* pMenu)  </div><div class="line">{}  </div><div class="line">  </div><div class="line">Menu* Menu::GetChild(<span class="keyword">int</span> index)  </div><div class="line">{  </div><div class="line">    <span class="keyword">return</span> NULL;  </div><div class="line">}  </div><div class="line">  </div><div class="line"><span class="comment">//SubMenu.h  </span></div><div class="line"><span class="preprocessor">#<span class="keyword">include</span> "Menu.h"  </span></div><div class="line">  </div><div class="line"><span class="keyword">class</span> SubMenu : <span class="keyword">public</span> Menu    </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    SubMenu();  </div><div class="line">    SubMenu(std::<span class="built_in">string</span>);  </div><div class="line">    <span class="keyword">virtual</span> ~SubMenu();  </div><div class="line">  </div><div class="line">    <span class="keyword">void</span> Display();  </div><div class="line">};  </div><div class="line">  </div><div class="line"><span class="comment">//SubMenu.cpp  </span></div><div class="line"><span class="preprocessor">#<span class="keyword">include</span> "stdafx.h"  </span></div><div class="line"><span class="preprocessor">#<span class="keyword">include</span> "SubMenu.h"  </span></div><div class="line"><span class="preprocessor">#<span class="keyword">include</span> &lt;iostream&gt;  </span></div><div class="line">  </div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;  </div><div class="line">  </div><div class="line">SubMenu::SubMenu()  </div><div class="line">{  </div><div class="line">  </div><div class="line">}  </div><div class="line">  </div><div class="line">SubMenu::SubMenu(<span class="built_in">string</span> strName) : Menu(strName)  </div><div class="line">{  </div><div class="line">  </div><div class="line">}  </div><div class="line">  </div><div class="line">SubMenu::~SubMenu()  </div><div class="line">{  </div><div class="line">  </div><div class="line">}  </div><div class="line">  </div><div class="line"><span class="keyword">void</span> SubMenu::Display()  </div><div class="line">{  </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; m_strName &lt;&lt; endl;  </div><div class="line">}  </div><div class="line">  </div><div class="line"><span class="comment">//CompositMenu.h  </span></div><div class="line"><span class="preprocessor">#<span class="keyword">include</span> "Menu.h"  </span></div><div class="line"><span class="preprocessor">#<span class="keyword">include</span> &lt;vector&gt;  </span></div><div class="line">  </div><div class="line"><span class="keyword">class</span> CompositMenu : <span class="keyword">public</span> Menu  </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    CompositMenu();  </div><div class="line">    CompositMenu(std::<span class="built_in">string</span>);  </div><div class="line">    <span class="keyword">virtual</span> ~CompositMenu();  </div><div class="line">  </div><div class="line">    <span class="keyword">void</span> Add(Menu*);  </div><div class="line">    <span class="keyword">void</span> Remove(Menu*);  </div><div class="line">    Menu* GetChild(<span class="keyword">int</span>);  </div><div class="line">    <span class="keyword">void</span> Display();  </div><div class="line"><span class="keyword">private</span>:  </div><div class="line">    std::<span class="stl_container"><span class="built_in">vector</span>&lt;Menu*&gt;</span> m_vMenu;  </div><div class="line">};  </div><div class="line">  </div><div class="line"><span class="comment">//CompositMenu.cpp  </span></div><div class="line"><span class="preprocessor">#<span class="keyword">include</span> "stdafx.h"  </span></div><div class="line"><span class="preprocessor">#<span class="keyword">include</span> "CompositMenu.h"  </span></div><div class="line"><span class="preprocessor">#<span class="keyword">include</span> &lt;iostream&gt;  </span></div><div class="line">  </div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;  </div><div class="line">  </div><div class="line">CompositMenu::CompositMenu()  </div><div class="line">{  </div><div class="line">      </div><div class="line">}  </div><div class="line">  </div><div class="line">CompositMenu::CompositMenu(<span class="built_in">string</span> strName) : Menu(strName)  </div><div class="line">{  </div><div class="line">  </div><div class="line">}  </div><div class="line">  </div><div class="line">CompositMenu::~CompositMenu()  </div><div class="line">{  </div><div class="line">  </div><div class="line">}  </div><div class="line">  </div><div class="line"><span class="keyword">void</span> CompositMenu::Add(Menu* pMenu)  </div><div class="line">{  </div><div class="line">    m_vMenu.push_back(pMenu);  </div><div class="line">}  </div><div class="line">  </div><div class="line"><span class="keyword">void</span> CompositMenu::Remove(Menu* pMenu)  </div><div class="line">{  </div><div class="line">    m_vMenu.erase(&pMenu);  </div><div class="line">}  </div><div class="line">  </div><div class="line">Menu* CompositMenu::GetChild(<span class="keyword">int</span> index)  </div><div class="line">{  </div><div class="line">    <span class="keyword">return</span> m_vMenu[index];  </div><div class="line">}  </div><div class="line">  </div><div class="line"><span class="keyword">void</span> CompositMenu::Display()  </div><div class="line">{  </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"+"</span> &lt;&lt; m_strName &lt;&lt; endl;  </div><div class="line">    <span class="stl_container"><span class="built_in">vector</span>&lt;Menu*&gt;</span>::iterator it = m_vMenu.begin();  </div><div class="line">    <span class="keyword">for</span> (; it != m_vMenu.end(); ++it)  </div><div class="line">    {  </div><div class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"|-"</span>;  </div><div class="line">        (*it)-&gt;Display();  </div><div class="line">    }  </div><div class="line">}  </div><div class="line">  </div><div class="line"><span class="preprocessor">#<span class="keyword">include</span> "stdafx.h"  </span></div><div class="line"><span class="preprocessor">#<span class="keyword">include</span> "Menu.h"  </span></div><div class="line"><span class="preprocessor">#<span class="keyword">include</span> "SubMenu.h"  </span></div><div class="line"><span class="preprocessor">#<span class="keyword">include</span> "CompositMenu.h"  </span></div><div class="line">  </div><div class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])  </div><div class="line">{  </div><div class="line">    Menu* pMenu = <span class="keyword">new</span> CompositMenu(<span class="string">"国内新闻"</span>);  </div><div class="line">    pMenu-&gt;Add(<span class="keyword">new</span> SubMenu(<span class="string">"时事新闻"</span>));  </div><div class="line">    pMenu-&gt;Add(<span class="keyword">new</span> SubMenu(<span class="string">"社会新闻"</span>));  </div><div class="line">    pMenu-&gt;Display();  </div><div class="line">    pMenu = <span class="keyword">new</span> CompositMenu(<span class="string">"国际新闻"</span>);  </div><div class="line">    pMenu-&gt;Add(<span class="keyword">new</span> SubMenu(<span class="string">"国际要闻"</span>));  </div><div class="line">    pMenu-&gt;Add(<span class="keyword">new</span> SubMenu(<span class="string">"环球视野"</span>));  </div><div class="line">    pMenu-&gt;Display();  </div><div class="line">  </div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;  </div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p><strong>几个要点：</strong></p>
+<ul>
+<li>组合模式中，是将“Add和Remove等和对象容器相关的方法”定义在“表示抽象对象的Component类”中，还是将其定义在“表示对象容器的Composite类”中，是一个关乎“透明性”和“安全性”的两难问题，需要仔细权衡。这里有可能违背面向对象的“单一职责原则”，但是对于这种特殊结构，这又是必须付出的代价。</li>
+<li>组合模式在具体实现中，可以让父对象中的子对象反向追溯，这样做的话，当需要删除子节点的时候，通过父节点就更容易操作一些。</li>
+<li>如果父对象有频繁的遍历需求，那么就可以使用缓存的技巧来改善效率。</li>
+<li>将“客户代码与复杂的对象容器结构”解耦是组合模式的核心思想，解耦之后，客户代码将与纯粹的抽象接口——而非对象容器的复内部实现结构——发生依赖关系，从而更能“应对变化”。</li>
+<li>客户端尽量不要直接调用树叶类的方法，而是借助其父类（Component）的多态性，完成调用，这样可以增加代码的复用性。</li>
+</ul>
+<h2 id="状态模式（State_Pattern）">状态模式（State Pattern）</h2>
+<p><strong>状态模式</strong>：允许对象在内部状态改变时改变它的行为，对象看起来好像修改了它的类。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577901470388.jpg" alt=""></p>
+<p>就像我们平时用的开关，开关有两个状态，开启和关闭，当它处于不同的状态的时候它的行为是不一样的，当我们遇到了更多的状态的时候，就需要动用到了这个状态模式。</p>
+<p><strong>Context 上下文环境</strong>： 它定义了客户程序需要的接口并维护一个具体状态角色的实例，将与状态相关的操作委托给当前的具体状态对象来处理。<br><strong>Stata 抽象状态</strong>: 定义了一个接口以封装使用上下文环境的一个特定状态相关的行为。<br><strong>Concrete State 具体状态</strong>： 实例抽象状态定义的接口。</p>
+<p>下面例子以游戏中坦克为例，坦克架起的时候，攻击力加强，不能移动。收起的时候，可攻击可移动。c++ 实现如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor">#<span class="keyword">include</span> &lt;iostream&gt;  </span></div><div class="line"><span class="keyword">class</span> SiegeTank;  </div><div class="line"><span class="keyword">class</span> ISiegeTankState  </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> move(<span class="keyword">int</span> x, <span class="keyword">int</span> y) = <span class="number">0</span>;  </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> attack() = <span class="number">0</span>;  </div><div class="line">};  </div><div class="line">  </div><div class="line"><span class="keyword">class</span> SiegeState : <span class="keyword">public</span> ISiegeTankState  </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    SiegeState(SiegeTank* pTank): m_pTank(pTank){}  </div><div class="line">      </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> move(<span class="keyword">int</span> x, <span class="keyword">int</span> y)  </div><div class="line">    {  </div><div class="line">        std::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Can't move in siege mode."</span> &lt;&lt; std::endl;  </div><div class="line">    }  </div><div class="line">  </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> attack()  </div><div class="line">    {  </div><div class="line">        std::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Attacking for 40"</span> &lt;&lt; std::endl;  </div><div class="line">    }  </div><div class="line">  </div><div class="line"><span class="keyword">private</span>:  </div><div class="line">    SiegeTank* m_pTank;  </div><div class="line">};  </div><div class="line">  </div><div class="line"><span class="keyword">class</span> TankState : <span class="keyword">public</span> ISiegeTankState  </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    TankState(SiegeTank* pTank): m_pTank(pTank){}  </div><div class="line">  </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> move(<span class="keyword">int</span> x, <span class="keyword">int</span> y)  </div><div class="line">    {  </div><div class="line">        std::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Move to ("</span> &lt;&lt; x &lt;&lt; <span class="string">", "</span> &lt;&lt; y &lt;&lt; <span class="string">")"</span> &lt;&lt; std::endl;  </div><div class="line">    }  </div><div class="line">  </div><div class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span> attack()  </div><div class="line">    {  </div><div class="line">        std::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Attacking for 20"</span> &lt;&lt; std::endl;  </div><div class="line">    }  </div><div class="line">  </div><div class="line"><span class="keyword">private</span>:  </div><div class="line">    SiegeTank* m_pTank;  </div><div class="line">};  </div><div class="line">  </div><div class="line"><span class="keyword">class</span> SiegeTank  </div><div class="line">{  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    SiegeTank()  </div><div class="line">    {  </div><div class="line">        m_pTankState = <span class="keyword">new</span> TankState(<span class="keyword">this</span>);  </div><div class="line">        m_pSiegeState = <span class="keyword">new</span> SiegeState(<span class="keyword">this</span>);  </div><div class="line">        m_pSiegeTankState = m_pTankState;  </div><div class="line">    }  </div><div class="line">  </div><div class="line">    <span class="keyword">void</span> enterTankMode()  </div><div class="line">    {  </div><div class="line">        m_pSiegeTankState = m_pTankState;  </div><div class="line">        std::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Switch to tank mode"</span> &lt;&lt; std::endl;  </div><div class="line">    }  </div><div class="line">  </div><div class="line">    <span class="keyword">void</span> enterSiegeMode()  </div><div class="line">    {  </div><div class="line">        m_pSiegeTankState = m_pSiegeState;  </div><div class="line">        std::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Switch to siege mode"</span> &lt;&lt; std::endl;  </div><div class="line">    }  </div><div class="line">  </div><div class="line"><span class="keyword">public</span>:  </div><div class="line">    <span class="keyword">void</span> attack()  </div><div class="line">    {  </div><div class="line">        m_pSiegeTankState-&gt;attack();  </div><div class="line">    }  </div><div class="line">  </div><div class="line">    <span class="keyword">void</span> move(<span class="keyword">int</span> x, <span class="keyword">int</span> y)  </div><div class="line">    {  </div><div class="line">        m_pSiegeTankState-&gt;move(x, y);  </div><div class="line">    }  </div><div class="line">  </div><div class="line"><span class="keyword">private</span>:  </div><div class="line">    <span class="keyword">void</span> setState(ISiegeTankState* pSiegeTankMode)  </div><div class="line">    {  </div><div class="line">        m_pSiegeTankState = pSiegeTankMode;  </div><div class="line">    }  </div><div class="line">  </div><div class="line"><span class="keyword">private</span>:  </div><div class="line">    TankState* m_pTankState;  </div><div class="line">    SiegeState* m_pSiegeState;  </div><div class="line">    ISiegeTankState* m_pSiegeTankState;  </div><div class="line">};  </div><div class="line">  </div><div class="line"><span class="keyword">int</span> main()  </div><div class="line">{  </div><div class="line">    SiegeTank tank;  </div><div class="line">    tank.enterTankMode();  </div><div class="line">    tank.attack();  </div><div class="line">    tank.move(<span class="number">1</span>, <span class="number">1</span>);  </div><div class="line">  </div><div class="line">    tank.enterSiegeMode();  </div><div class="line">    tank.attack();  </div><div class="line">    tank.move(<span class="number">2</span>, <span class="number">2</span>);  </div><div class="line">  </div><div class="line">    tank.enterTankMode();  </div><div class="line">    tank.attack();  </div><div class="line">    tank.move(<span class="number">3</span>, <span class="number">3</span>);  </div><div class="line">  </div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;  </div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p><strong>状态模式与策略模式</strong>：<br>状态模式中，我们将一群行为封装在状态对象中，context 的行为随时可委托到那些状态对象中的一个。当前状态在状态对象的集合中游走改变，反映出context 内部的状态，context的行为也因此跟着改变。<br>策略模式中，客户通常主动指定Context 所要组合的策略对象是哪一个。</p>
+<p>一般来说，策略模式是一个弹性替代继承的一种方案。状态模式则是弹性替代了过多的条件判断。</p>
+<p>状态模式主要解决的是党当控制一个状态转换的条件表达式过于复杂的时候，把状态的判断逻辑转移到表示不同状态的一个系列类中，可以吧复杂的判断逻辑简单化。当一个对象行为取决于它的状态，并且它必须在运行时刻根据状态改变它的行为时，就可以考虑使用状态模式了。</p>
+<h2 id="代理模式（Proxy_Pattern）">代理模式（Proxy Pattern）</h2>
+<p><strong>代理模式</strong>： 为另一个对象提供一个替身或占位符以控制对这个对象的访问。使用代理模式创建代表（representative）对象，让代表对象控制某对象的访问，被代理的对象可以是远程的对象，创建开销大的对象或需要安全控制的对象。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577901592239.jpg" alt=""></p>
+<ul>
+<li><strong>抽象主题角色（Subject）</strong>：生命了真是主体和代理主题的共同接口，这样一来在任何使用真实主题的地方，都可以使用代理主题。</li>
+<li><strong>代理主题角色（Proxy）</strong>: 代理主题角色内部含有对真实主题的引用，从而可以在任何时候操作真实主题对象；代理主题角色提供一个真实主题相同的接口，以便在任何时候都可以代替真实主题；控制真实主题的应用，负责在需要的时候创建真实主题；代理角色通常在讲客户端调用传递给真实主题之前或之后，都要执行某个操作，而不是单纯地将调用传递给真实主题对象。</li>
+<li><strong>真实主题角色（RealSubject）：</strong> 定义了代理角色所代表的真实对象。</li>
+</ul>
+<p><strong>代理模式的分类</strong>：</p>
+<ul>
+<li><strong>远程代理</strong>： 为一个位于不同的地址空间的对象提供一个局域代表对象。这个不同的地址空间可以是在本机器中，也可以是在另一个机器中。远程代理又叫大使（Ambassador）。好处是系统可以将网络的细节隐藏起来，使得客户端不必考虑网络的存在。客户完全可以认为被代理的对象是局域的而不是远程的，而代理对象承担了大部分的网络通讯工作。</li>
+<li><strong>虚拟代理</strong>：根据需要创建一个资源消耗较大的对象，使得此对象只在需要的时候才会被真正的创建，使用虚拟代理模式的好处就是代理对象可以在必要的时候才被代理的对象加载；代理可以对加载的过程加以必要的优化。当一个模块在加载十分耗费资源的情况下，虚拟代理的好处就非常明显了。</li>
+<li><strong>Copy-on-Write（写入时复制代理）</strong>： 虚拟代理的一种，把复制（克隆）拖延到只有客户端需要时，才真正采取行动。</li>
+<li><strong>保护代理（Protector Access）</strong>： 控制一个对象的访问，如果需要，可以给不同的用户提供不同级别的使用权限。保护代理的好处是它可以在运行时对用户的有关权限进行检查，然后在核实后决定将调用传递给被代理的对象。</li>
+<li><strong>Cache 代理</strong>： 为某一个目标操作的结果提供临时的储存空间，以便多个客户端可以共享这些结果。</li>
+<li><strong>防火墙（Firewall）代理</strong>： 保护目标，不让恶意用户接近。</li>
+<li><strong>同步化代理（Synchronization）</strong>： 使几个用户能够使用一个对象而没有冲突。</li>
+<li><strong>智能引用代理（SmartReference）</strong>： 当一个对象被引用的时候，提供一些额外的操作，比如将此对象调用的次数记录下来等等。</li>
+<li><strong>缓存代理</strong>： 为开销大的运算结果提供暂时存储；它允许多个客户共享结果，以减少计算或网络延迟。<br><strong>复杂隐蔽代理（Complexity Hiding Proxy）</strong> : 用来隐藏一个类的复杂集合的复杂度，并进行访问控制。有时候也成为外观代理（Facade Proxy），复杂隐藏代理和外观代理是不一样的，因为代理控制访问，而外观模式只是提供另外一组接口。<br>其中，远程代理，虚拟代理，智能引用代理，保护代理最为常见。</li>
+</ul>
+<p>在C++ 中，智能指针采用引入计数器的方法可以帮助管理内存，而其使用的设计模式就是代理模式，代码重现如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor">#include "stdafx.h"  </span></div><div class="line"><span class="preprocessor">#include &lt;assert.h&gt;  </span></div><div class="line">  </div><div class="line"><span class="preprocessor">#define KSAFE_DELETE(p) \  </span></div><div class="line">    <span class="keyword">if</span> (p)           \  </div><div class="line">        {                \  </div><div class="line">        delete p;    \  </div><div class="line">        p = <span class="type">NULL</span>;    \  </div><div class="line">        }  </div><div class="line"><span class="class">  </span></div><div class="line"><span class="keyword">class</span> <span class="type">KRefCount</span>  </div><div class="line">{  </div><div class="line">public:  </div><div class="line">    <span class="type">KRefCount</span><span class="container">()</span>:m_nCount<span class="container">(0)</span>{}  </div><div class="line">  </div><div class="line">public:  </div><div class="line">    void <span class="type">AddRef</span><span class="container">()</span>{m_nCount++;}  </div><div class="line">    int <span class="type">Release</span><span class="container">()</span>{return <span class="comment">--m_nCount;}  </span></div><div class="line">    void <span class="type">Reset</span><span class="container">()</span>{m_nCount=0;}  </div><div class="line">  </div><div class="line">private:  </div><div class="line">    int m_nCount;  </div><div class="line">};  </div><div class="line">  </div><div class="line">template &lt;typename <span class="type">T</span>&gt;  </div><div class="line"><span class="keyword">class</span> <span class="type">KSmartPtr</span>  </div><div class="line">{  </div><div class="line">public:  </div><div class="line">    <span class="type">KSmartPtr</span><span class="container">(<span class="title">void</span>)</span>  </div><div class="line">        : m_pData<span class="container">(<span class="type">NULL</span>)</span>  </div><div class="line">    {  </div><div class="line">        m_pReference = new <span class="type">KRefCount</span><span class="container">()</span>;  </div><div class="line">        m_pReference-&gt;<span class="type">AddRef</span><span class="container">()</span>;  </div><div class="line">    }  </div><div class="line">    <span class="type">KSmartPtr</span><span class="container">(<span class="type">T</span>* <span class="title">pValue</span>)</span>  </div><div class="line">        : m_pData<span class="container">(<span class="title">pValue</span>)</span>  </div><div class="line">    {  </div><div class="line">        m_pReference = new <span class="type">KRefCount</span><span class="container">()</span>;  </div><div class="line">        m_pReference-&gt;<span class="type">AddRef</span><span class="container">()</span>;  </div><div class="line">    }  </div><div class="line">    <span class="type">KSmartPtr</span><span class="container">(<span class="title">const</span> <span class="type">KSmartPtr</span>&lt;<span class="type">T</span>&gt;& <span class="title">sp</span>)</span>  </div><div class="line">        : m_pData<span class="container">(<span class="title">sp</span>.<span class="title">m_pData</span>)</span>  </div><div class="line">        , m_pReference<span class="container">(<span class="title">sp</span>.<span class="title">m_pReference</span>)</span>  </div><div class="line">    {  </div><div class="line">        m_pReference-&gt;<span class="type">AddRef</span><span class="container">()</span>;  </div><div class="line">    }  </div><div class="line">    ~<span class="type">KSmartPtr</span><span class="container">(<span class="title">void</span>)</span>  </div><div class="line">    {  </div><div class="line">        if <span class="container">(<span class="title">m_pReference</span> && <span class="title">m_pReference</span>-&gt;<span class="type">Release</span>()</span> == 0)  </div><div class="line">        {  </div><div class="line">            <span class="type">KSAFE_DELETE</span><span class="container">(<span class="title">m_pData</span>)</span>;  </div><div class="line">            <span class="type">KSAFE_DELETE</span><span class="container">(<span class="title">m_pReference</span>)</span>;  </div><div class="line">        }  </div><div class="line">    }  </div><div class="line">  </div><div class="line">    inline <span class="type">T</span>& operator*<span class="container">()</span>  </div><div class="line">    {  </div><div class="line">        return *m_pData;  </div><div class="line">    }  </div><div class="line">    inline <span class="type">T</span>* operator-&gt;<span class="container">()</span>  </div><div class="line">    {  </div><div class="line">        return m_pData;  </div><div class="line">    }  </div><div class="line">    <span class="type">KSmartPtr</span>&lt;<span class="type">T</span>&gt;& operator=<span class="container">(<span class="title">const</span> <span class="type">KSmartPtr</span>&lt;<span class="type">T</span>&gt;& <span class="title">sp</span>)</span>  </div><div class="line">    {  </div><div class="line">        if <span class="container">(<span class="title">this</span> != &<span class="title">sp</span>)</span>  </div><div class="line">        {  </div><div class="line">            if <span class="container">(<span class="title">m_pReference</span> && <span class="title">m_pReference</span>-&gt;<span class="type">Release</span>()</span> == 0)  </div><div class="line">            {  </div><div class="line">                <span class="type">KSAFE_DELETE</span><span class="container">(<span class="title">m_pData</span>)</span>;  </div><div class="line">                <span class="type">KSAFE_DELETE</span><span class="container">(<span class="title">m_pReference</span>)</span>;  </div><div class="line">            }  </div><div class="line">  </div><div class="line">            m_pData = sp.m_pData;  </div><div class="line">            m_pReference = sp.m_pReference;  </div><div class="line">            m_pReference-&gt;<span class="type">AddRef</span><span class="container">()</span>;  </div><div class="line">        }  </div><div class="line">  </div><div class="line">        return *this;  </div><div class="line">    }  </div><div class="line">    <span class="type">KSmartPtr</span>&lt;<span class="type">T</span>&gt;& operator=<span class="container">(<span class="type">T</span>* <span class="title">pValue</span>)</span>  </div><div class="line">    {  </div><div class="line">        if <span class="container">(<span class="title">m_pReference</span> && <span class="title">m_pReference</span>-&gt;<span class="type">Release</span>()</span> == 0)  </div><div class="line">        {  </div><div class="line">            <span class="type">KSAFE_DELETE</span><span class="container">(<span class="title">m_pData</span>)</span>;  </div><div class="line">            <span class="type">KSAFE_DELETE</span><span class="container">(<span class="title">m_pReference</span>)</span>;  </div><div class="line">        }  </div><div class="line">        m_pData = pValue;  </div><div class="line">        m_pReference = new <span class="type">KRefCount</span>;  </div><div class="line">        m_pReference-&gt;<span class="type">AddRef</span><span class="container">()</span>;  </div><div class="line">  </div><div class="line">        return *this;  </div><div class="line">    }  </div><div class="line">  </div><div class="line">    <span class="type">T</span>* <span class="type">Get</span><span class="container">()</span>  </div><div class="line">    {  </div><div class="line">        <span class="type">T</span>* ptr = <span class="type">NULL</span>;          </div><div class="line">        ptr = m_pData;  </div><div class="line">  </div><div class="line">        return ptr;  </div><div class="line">    }  </div><div class="line">    void <span class="type">Attach</span><span class="container">(<span class="type">T</span>* <span class="title">pObject</span>)</span>  </div><div class="line">    {  </div><div class="line">        if <span class="container">(<span class="title">m_pReference</span>-&gt;<span class="type">Release</span>()</span> == 0)  </div><div class="line">        {  </div><div class="line">            <span class="type">KSAFE_DELETE</span><span class="container">(<span class="title">m_pData</span>)</span>;  </div><div class="line">            <span class="type">KSAFE_DELETE</span><span class="container">(<span class="title">m_pReference</span>)</span>;  </div><div class="line">        }  </div><div class="line">  </div><div class="line">        m_pData = pObject;  </div><div class="line">        m_pReference = new <span class="type">KRefCount</span>;  </div><div class="line">        m_pReference-&gt;<span class="type">AddRef</span><span class="container">()</span>;  </div><div class="line">    }  </div><div class="line">  </div><div class="line">    <span class="type">T</span>* <span class="type">Detach</span><span class="container">()</span>  </div><div class="line">    {  </div><div class="line">        <span class="type">T</span>* ptr = <span class="type">NULL</span>;  </div><div class="line">  </div><div class="line">        if <span class="container">(<span class="title">m_pData</span>)</span>  </div><div class="line">        {             </div><div class="line">            ptr = m_pData;  </div><div class="line">            m_pData = <span class="type">NULL</span>;  </div><div class="line">            m_pReference-&gt;<span class="type">Reset</span><span class="container">()</span>;  </div><div class="line">        }  </div><div class="line">        return ptr;  </div><div class="line">    }  </div><div class="line">  </div><div class="line">private:  </div><div class="line">    <span class="type">KRefCount</span>* m_pReference;  </div><div class="line">    <span class="type">T</span>* m_pData;  </div><div class="line">};</div></pre></td></tr></table></figure>
+
+<p>适配器为适配对象提供了不同的接口，而代理模式则是提供了相同的接口。<br>装饰者为对象添加多个功能，而代理模式则是控制对对象的访问。<br><strong>在软件系统中</strong>，加一个中间层使我们常用的解决方法，常常就是使用的代理模式。</p>
+<h2 id="设计模式之王—MVC（Model_-_View_-_Controller）">设计模式之王—MVC（Model - View - Controller）</h2>
+<p>MVC 模式是复合模式的经典例子，也是现在开发中最常用到的设计模式，下面对它进行一一划分，因为C++ 中的没有现成的例子（或者说我的C++ 水平还很菜，没有意识到~MFC 比较接近），HeadFirst 设计模式中是以java为例写的，iOS开发中也常常用到。</p>
+<p><strong>Model</strong>： 模型存储数据。对应了 Swift 中的 Album 这个类。<br><strong>View</strong>： 负责模型的可视化展示，并且负责和用户交互，在 Swift 开发中，对应了UIView 这个类。<br><strong>Controller</strong>: 控制器是整个系统的掌控者，它连接了模型层和数据层，并且吧数据在视图中展示出来，监听各种事件，负责数据的各种操作。对应Swift中的 ViewController 类。</p>
+<p>下面这个是斯坦福大学公开课中给的MVC 的类图，非常的形象，被各种使用：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-12-14577901805125.jpg" alt=""></p>
+<p>view中射出的箭头，指向target，代表在ios中对界面上的操作，反馈给了controller中去。<br>model 中的小发射塔，设定观察者，当model发生改变，会给观察者们以反馈。典型的例子就是iOS中的键盘呼出。<br><strong>Model</strong>: 它是应用数据和应用的状态，可能是一个数据库，也可能是你发动时创建的内存，或是你从网络得到的东西，它本质上是应用程序的数据，它基本上什么事情都不做。</p>
+<p><strong>View</strong>：在界面上看到的东西，是互动的对象，它代表着你所使用的界面相称的用户模型，但它不清楚数据本身，视图允许你操纵数据，如果我有一个能改变磁盘上数据的滑动条，这个滑动条就是视图，他不存储任何数据，他们完全是动态的，他们被创建后，使用完就会清楚，他们很容易配置，如表格视图，他不了解数据，只代表数据。</p>
+<p><strong>Model</strong>：Model是你的应用中数据的存储或数据的表现，相同的模型应该可以在不同的界面中重复使用和未作改变，如果你有代表一些数据集合的应用，假设这是个代表人口和选举信息的数据，这个数据本身，这个模型并不清楚信息是如何展示给用户，因此这个模型能够运用于不同的平台，他能用在不同的应用上，这个的前提是它独立的如何展现</p>
+<p><strong>Controller</strong>：可以管理并把数据展示给视图，同样的，当视图想要操作数据，控制器会是视图能这样做的管道。在这个基础上，视图和模型永远不应该相互知道或相互交谈，控制器是管理，演示和控制的媒介。控制器基本是告诉视图关于数据的改变以及在视图需要时改变数据，大部分你的应用逻辑都会在控制器中。</p>
+<p>那么MVC模式都复合了上边了解过的那些模式呢？</p>
+<ul>
+<li><strong>策略模式</strong>：视图是一个对象，可以被调整使用不同的策略，而控制器提供了策略。视图只关心系统中的可视部分，对于任何界面行为，都委托给控制器处理。使用策略模式也可以让视图和模型之间的关系解耦，因为控制器负责和模型交换来传递用户的请求。对于工作是怎么完成的，视图毫不知情。</li>
+<li><strong>观察者模式</strong>： 为模型设立观察者，当模型发生变化的时候，会将变化反馈给所有的观察者，也就是控制器，做出相应的改变。</li>
+<li><strong>组合模式</strong>： 视图是GUI组件的组合。顶层的组件包含其他组件，一直到叶子节点。</li>
+</ul>
+<p><strong>由于我们使用的是上帝视角，所以其实以上部分，谁与谁之间不能对话，不能调用显得没有那么强硬，我们在编码的过程中，实际上可以实现任何操作，但是，应当遵循的原则，是按照图片中所说的，让model 和 View 尽量解耦，所有的操作应当在Controller中完成。</strong></p>
+<p>因为目前没有学习 Java ，Swift 也只是简单的上了下手，对MVC 模型的实战留在日后，而MVC 与web的操作在适配MVC 这一模式，使它更符合浏览器 / 服务器的模型，人们叫它 Model 2，以后有时间继续深挖。</p>
+<h2 id="只是个开始">只是个开始</h2>
+<p>至此，Headfrist 设计模式中提到的14种设计模式被我用了大约一周多的时间过了一遍，书讲的很通俗很入门，但缺点就是比较浅，没法对每一种模式有更深入的认识。另外，作为凌驾于所有语言之上的设计模式，认真学习它是必须和刻不容缓的。在此基础上，从这本书开始，我应当继续探索设计模式的内容，以贴近实践的方式体会和理解设计模式给开发带来的优势，下边是对这些设计模式的一个分类和一句话总结。</p>
+<p><strong>创建型</strong>（4，5未提及）用来处理对象的创建过程：</p>
+<ol>
+<li><strong>单例模式(Singleton Pattern)</strong>： 确保有且只有一个对象被创建，提供一个访问它的全局访问点。</li>
+<li><strong>工厂方法模式(Factory Method Pattern)</strong>： 定义一个创建产品对象的工厂接口，而由子类决定要创建的具体类是哪一个，也就是将实际创建工作推迟到子类中去。</li>
+<li><strong>抽象工厂模式(Abstract Factory Pattern)</strong>： 提供一个创建一些列相关或者相互依赖的接口，而无需指定它们具体的类。</li>
+<li><strong>建造者模式（Builder pattern）</strong>:  讲一个复杂的构建与其表示分离，使得同样的构建过程可以创建不同的表示。</li>
+<li><strong>原型模式（Prototype Pattern）</strong>： 用原型实例指定创建对象的种类，并且通过拷贝这些原型创建新的对象。</li>
+</ol>
+<p><strong>结构型</strong>用来处理类或对象的组合：</p>
+<ol>
+<li><strong>适配器模式（Adapter Pattern）</strong>： 讲一个类的接口转换成客户希望的另一个接口，使得原本由于接口不兼容不能一起工作的那些类可以一起工作。</li>
+<li><strong>组合模式（Composite Pattern）</strong>： 将对象组合成树形结构以表示『部分-整体』的层次结构，使得用户对单个对象和组合对象的使用具有一致性。</li>
+<li><strong>外观模式（Facade Pattern）</strong>： 为子系统中的一组接口提供一个一致的界面，此模式定义了一个高层接口，这个接口使得这一子系统更加容易使用。</li>
+<li><strong>装饰者模式（Decorator Pattern ）</strong>： 动态的给一个对象添加一些额外的职责，就增加功能来说，这一模式比生成子类更为灵活。（包装一个对象，提供新的行为）。</li>
+<li><strong>代理模式（Proxy Pattern）</strong>： 为其他对象提供一种代理以控制对这个对象的访问。</li>
+<li><strong>桥接模式（Bridge Pattern）</strong>： 将抽象部分与实际部分分离，使他们可以独立的变化。</li>
+<li><strong>享元模式（Flyweight Pattern）</strong>： 以共享的方式高效的支持大量的细粒度的对象。</li>
+</ol>
+<p><strong>行为型</strong>用来对类和对象怎样交互和分配职责进行描述：</p>
+<ol>
+<li><strong>命令模式（Command Pattern）</strong>： 将一个请求封装为一个对象，从而使你可用不同的请求对客户端进行参数化；对请求排队或记录请求日志，以及支持可撤销的操作。</li>
+<li><strong>迭代器模式（Iterator Pattern）</strong>： 提供一个方法顺序访问一个聚合对象中的各个元素，而不需要暴露该对象内部的表示。</li>
+<li><strong>观察者模式（Observer Pattern）</strong>： 定义对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都得到通知并自动更新。</li>
+<li><strong>状态模式（State Pattern）</strong>: 允许一个对象在其内部改变时改变它的行为，使对象看起来似乎修改了它的类。封装基本状态的行为，并使用委托在行为之间切换。</li>
+<li><strong>策略模式</strong>： 准备一组算法，并将每个算法封装起来，使用委托来决定使用哪一个。</li>
+<li><strong>模板方法模式（Template Method Pattern）</strong>： 子类在不改变一个算法的结构情况下，可以重定义该算法的某些特定步骤。</li>
+<li><strong>责任链模式（Chain of Responsibility Pattern）</strong>： 在该模式里，很多对象由每一个对象对其下家的引用而连接起来形成一条链。请求在这个链上传递，直到链上某一个对象决定处理此请求，使得系统可以在不影响客户端的情况下动态的重新组织链和分配责任。</li>
+<li><strong>解释器模式（Interpreter Pattern）</strong>： 描述了如何为简单的语言顶一个语法，如何在该语言中表示一个句子，以及如何解释这些句子。</li>
+<li><strong>中介者模式（Mediator Pattern） </strong>： 定义一个中介对象来封装系列对象之间的交互。中介者使各个对象不需要显示的相互调用，从而使其耦合性松散，而且可以独立的改变他们之间的交互。</li>
+<li><strong>备忘录模式（Memento Pattern）</strong>： 在不破坏封装的前提下，捕获一个对象的内部状态，并在该对象之外保存这个状态。</li>
+<li><strong>访问者模式（Visitor Pattern）</strong>： 表示一个作用于某对象结构中的各个元素的操作，它使你可以在不改变各元素的类的前提下定义作用于这些元素的新操作。</li>
+</ol>
+<p>最后，是几个奉劝：</p>
+<ul>
+<li>学会用模式去思考</li>
+<li>保持一切越简单越好</li>
+<li>设计模式不是银弹，不是万灵丹</li>
+<li>你应当知道何时需要模式</li>
+<li>重构的时间，其实就是运用模式的时间</li>
+<li>拿掉你不需要的设计模式</li>
+</ul>
+<p>设计模式的魅力是无穷的，而设计模式的学习和体悟，需要通过不断的实践去反思和体会的，旅途刚刚开始，Keep Moving…</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/03/12/设计模式探索之路（上）/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">设计模式探索之路（上）</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="设计模式探索之路（下）" data-title="设计模式探索之路（下）" data-url="http://yoursite.com/2016/03/12/设计模式探索之路（下）/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"xuelinf"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 临风
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: true
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js" type="text/javascript"></script>
+
+<script src="/js/main.js" type="text/javascript"></script>
+
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
