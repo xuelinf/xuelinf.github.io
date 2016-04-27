@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>HTTP再详解 | 临风|刀背藏身</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="之前对HTTP 的内容做过梳理，如今看来显得太过粗略，很多值得关注的细节都直接被省略，也只是对整个结构感受较为清晰罢了。现在结合《HTTP 权威指南》这本将近七百页的大部头，我对HTTP 重新做了梳理和理解，当然在阅读的过程中，我感觉即使是权威指南，在讲解的时候，仍然是粗略的，有很多内容明显的看起来其中有很多文章。所以，这大约是我第一遍的HTTP 再详解，再后边，我会对HTTP 的更多内容，做已更">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTTP再详解">
+<meta property="og:url" content="http://yoursite.com/2016/04/27/HTTP再详解/">
+<meta property="og:site_name" content="临风|刀背藏身">
+<meta property="og:description" content="之前对HTTP 的内容做过梳理，如今看来显得太过粗略，很多值得关注的细节都直接被省略，也只是对整个结构感受较为清晰罢了。现在结合《HTTP 权威指南》这本将近七百页的大部头，我对HTTP 重新做了梳理和理解，当然在阅读的过程中，我感觉即使是权威指南，在讲解的时候，仍然是粗略的，有很多内容明显的看起来其中有很多文章。所以，这大约是我第一遍的HTTP 再详解，再后边，我会对HTTP 的更多内容，做已更">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14609000091165.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14609658165005.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14609660727847.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14609661357874.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14609664853726.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14609664914763.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14610508715798.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14611200094685.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14611200650513.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14613152822853.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14613168465645.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14613176934946.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14613179676011.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14613267668464.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14613325046800.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14613368816595.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14614015756784.jpg">
+<meta property="og:image" content="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14614149936666.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="HTTP再详解">
+<meta name="twitter:description" content="之前对HTTP 的内容做过梳理，如今看来显得太过粗略，很多值得关注的细节都直接被省略，也只是对整个结构感受较为清晰罢了。现在结合《HTTP 权威指南》这本将近七百页的大部头，我对HTTP 重新做了梳理和理解，当然在阅读的过程中，我感觉即使是权威指南，在讲解的时候，仍然是粗略的，有很多内容明显的看起来其中有很多文章。所以，这大约是我第一遍的HTTP 再详解，再后边，我会对HTTP 的更多内容，做已更">
+
+  
+    <link rel="alternative" href="/atom.xml" title="临风|刀背藏身" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="http://7s1s1q.com1.z0.glb.clouddn.com/love.png" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">临风</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">代码是一棱刀背，幸好，有此藏身。</p>
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						<li>友情链接</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="/github.com/xuelinf" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/1221903300" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="/#" title="rss">rss</a>
+					        
+								<a class="zhihu" target="_blank" href="/zhihu.com/people/xuelinf" title="zhihu">zhihu</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/C-C/" style="font-size: 13.33px;">C/C++</a><a href="/tags/Diary/" style="font-size: 10.00px;">Diary</a><a href="/tags/Docker/" style="font-size: 10.00px;">Docker</a><a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a><a href="/tags/Linux/" style="font-size: 10.00px;">Linux</a><a href="/tags/PM/" style="font-size: 10.00px;">PM</a><a href="/tags/Python/" style="font-size: 13.33px;">Python</a><a href="/tags/TCP-IP/" style="font-size: 16.67px;">TCP/IP</a><a href="/tags/Unix/" style="font-size: 10.00px;">Unix</a><a href="/tags/design-pattern/" style="font-size: 13.33px;">design pattern</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 13.33px;">life</a><a href="/tags/web/" style="font-size: 10.00px;">web</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 13.33px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">待添加</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">请赐予我意志力</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">临风</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img lazy-src="http://7s1s1q.com1.z0.glb.clouddn.com/love.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author">临风</h1>
+			</hgroup>
+			
+			<p class="header-subtitle">代码是一棱刀背，幸好，有此藏身。</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="/github.com/xuelinf" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/1221903300" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="/#" title="rss">rss</a>
+			        
+						<a class="zhihu" target="_blank" href="/zhihu.com/people/xuelinf" title="zhihu">zhihu</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <div class="body-wrap"><article id="post-HTTP再详解" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/04/27/HTTP再详解/" class="article-date">
+  	<time datetime="2016-04-27T02:05:51.000Z" itemprop="datePublished">4月 27 2016</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      HTTP再详解
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li></ul>
+	</div>
+
+        
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/Study/">Study</a>
+	</div>
+
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>之前对HTTP 的内容做过梳理，如今看来显得太过粗略，很多值得关注的细节都直接被省略，也只是对整个结构感受较为清晰罢了。现在结合《HTTP 权威指南》这本将近七百页的大部头，我对HTTP 重新做了梳理和理解，当然在阅读的过程中，我感觉即使是权威指南，在讲解的时候，仍然是粗略的，有很多内容明显的看起来其中有很多文章。所以，这大约是我第一遍的HTTP 再详解，再后边，我会对HTTP 的更多内容，做已更细节的理解。如HTTP 版本差异，method 的在现实应用场景到底会有哪些安全问题，HTTP头域里隐藏着哪些玄机，编码种种，代理、缓存。<br><a id="more"></a></p>
+<h1 id="概述">概述</h1>
+<p>本部分内容较为笼统，直接快速跳过，只简述极少内容。</p>
+<h2 id="版本协议">版本协议</h2>
+<ul>
+<li>HTTP/1.0: 使得包含图片的web页面和交互表格可以实现。</li>
+<li>HTTP/1.0+: 包括持久keep-alive，虚拟机支持，代理连接被加入。</li>
+<li>HTTP/1.1 校正HTTP设计中的结构缺陷，明确语义，性能优化。</li>
+<li>HTTP/2.0: 关注性能的提升，更强大的服务逻辑远程执行框架。</li>
+</ul>
+<h2 id="Web_结构组件">Web 结构组件</h2>
+<p>Web 上比较重要的应用：</p>
+<ul>
+<li>代理，中间实体</li>
+<li>缓存，HTTP仓库，常用页面的副本保存在离客户端较近的地方，CDN。</li>
+<li>网关，帮助连接到特殊的Web服务器,HTTP/FTP 网关。</li>
+<li>隧道，HTTP报文进行盲转发的特殊处理，SSL。</li>
+<li>Agent代理，发起自动HTTP请求的半智能Web 客户端，爬虫。</li>
+</ul>
+<h1 id="URL">URL</h1>
+<p>这是在研究WEB 安全中的重要的内容，在我们抓取到的包内容中，包含非常多的信息。</p>
+<h2 id="URL_结构">URL 结构</h2>
+<ul>
+<li>第一部分是URL 方案，scheme，方案可以告知Web 客户端怎样访问资源。常见例子中，URL 说明要使用HTTP 协议。</li>
+<li>URL 第二部分,host 主机 ，www.google.com ，指服务器的位置，也就是资源位于何处，此处通过DNS 解析可以解析到其IP 地址。</li>
+<li>URL 第三部分，比如/seasonal/index.html ，是资源路径，说明了请求服务器上哪个资源。</li>
+</ul>
+<p>其重点在于第三部分，第三部分可以承载URL 的语法，很多的入侵行为也出现在第三部分。</p>
+<h3 id="URL_语法">URL 语法</h3>
+<p><scheme>://<user>:<password>@<host>:<port>/<path>;<params>?<query>#<frag></frag></query></params></port></host></password></user></scheme></p>
+<p>以上是一个URL 的通用格式，包含9部分内容。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14609000091165.jpg" alt=""></p>
+<h2 id="编码机制">编码机制</h2>
+<p>为了避开安全字符集（US-ASCII）表示法带来的限制，为URL 设计了一种新的编码机制，通过一种『转义』表示法来表示不安全字符，包含一个百分号和两个表示字符ASCII 码的十六进制。</p>
+<p>同时，保留了一些有特殊含义的字符，这些字符与某些协议或网关会产生混淆，所以应当注意，在将其用于保留用途之外的场合时，应当对其进行编码。其中有：<strong>% / . .. # ? ; : $,+ @,&amp;,= {}|\^~[]’ &lt;&gt;”</strong></p>
+<p><strong>URL 包含的内容丰富多样，但是这些字段更多的信息，在后边才会介绍到，在这里，了解了URL 的基本格式和编码机制已经基本足够，而其中包含的字段和意义，再后边会有更详细的介绍。</strong></p>
+<h1 id="HTTP_报文流">HTTP 报文流</h1>
+<h2 id="报文流">报文流</h2>
+<p>报文的流动方向和基本的格式在此不再过多介绍，因为这一部分属于基础内容，在所有的内容中都会接触，无需记录也不会忘记，这里简要记录一下：</p>
+<ol>
+<li>method 方法： 如GET，HEAD，POST 等。</li>
+<li>request-URL : 命名请求的资源。</li>
+<li>version: HTTP 版本。</li>
+<li>status-code: 状态码，描述请求过程中发生的情况，后边会有详述。</li>
+<li>reason-phrase: 原因短语，仅用于人阅读，机器忽视，属于状态码的可读版本。</li>
+<li>header： 有多个键值对，以一个空行结束CRLF。</li>
+<li>entity-body： 实体部分，以一个空行结束。</li>
+</ol>
+<h2 id="起始行">起始行</h2>
+<p>起始行可以分为请求行和响应行，其起始行的内容不同。对于起始行，其起始行包含有method, request-URL,version。一些常见的方法有：</p>
+<ol>
+<li>GET， 获取一份文档</li>
+<li>HEAD，获取首部</li>
+<li>POST，向服务器发送需要处理的数据</li>
+<li>TRACE，对可能经过的代理服务器传送到服务器上的报文进行追踪</li>
+<li>OPTIONS，决定可以在服务器上执行哪些方法</li>
+<li>DELETE，从服务器上删除一份文档</li>
+</ol>
+<p>GET，HEAD 方法被认为是安全的，是因为这些方法不会再服务器上产生什么结果，而像POST 方法，会提交信息在服务器上，就会执行一系列动作。而安全方法并非说不会执行服务器动作，而是当出现可能不安全行为的时候，会发出警告，这些由用户决议。</p>
+<p><strong>HEAD</strong>：响应中只返回头部，不返回实体，使用HEAD，可以在不获取资源的情况下了解资源的情况，判断类型等；通过查看响应状态码，确定某对象是否存在；通过查看首部，测试资源是否被修改。</p>
+<p><strong>PUT</strong>： 该方法是向服务器写入文档，其语义就是让服务器用请求的主体部分来创建一个由所请求的URL 命名的文档，如果已存在，就替换之。执行PUT 请求，需要先登录。</p>
+<p><strong>POST</strong>： 用来向服务器输入数据，一般用来支撑HTML 表单数据，发送给服务器。</p>
+<p><strong>TRACE</strong>: 该请求可能会要求穿过防火墙、代理、网关等，都会修改HTTP 内容。而其目的一般用于诊断，一般用于验证请求是否如愿穿过了请求，或者响应链。但是，目前仍然有一些缺点，比如TRACE ，不会区分不同的方法机制。TRACE 请求中不带有实体的主体部分。TRACE 响应的实体主体部分包含了响应服务器收到的请求的精确副本。</p>
+<p><strong>OPTION</strong>: 请求web 服务器告知其支持的各种功能，包括通常支持的方法，或者对某些特殊资源支持哪些方法。</p>
+<p><strong>DELETE</strong>: 请求服务器删除URL 所指定的资源。</p>
+<p><strong>扩展方法</strong>： 其他还有一些扩展的方法，LOCK 锁定资源, MKCOL 允许用户创建资源, COPY 复制资源, MOVE 服务器上移动资源。</p>
+<p>对于响应行，则一般会返回状态码，和reason-phrase，状态码是人们规定的一系列表示状态的code.</p>
+<ul>
+<li>1开头，表示信息提示，目前定义了100，101</li>
+<li>2开头的，表示成功，200~206 最常见的还是200</li>
+<li>3开头，表示重定向，300~305</li>
+<li>4开头，客户端错误，400~415</li>
+<li>5开头，服务器错误，500~505</li>
+</ul>
+<p><strong>100 Continue</strong>:<br>100状态码是HTTP/1.1 之后引入的信息性状态码， 其复杂性和感知价值存在一些争论。他实际上是客户端要向服务器发送一个实体，同时愿意在发送实体前等待100 Continue 响应，所以会发送一个值为100 Continue 的Except 请求首部。但中间会有很多问题，比如服务器如果没有回复响应，客户端一定要一直等着么，所以一般客户端会设置一个超时时间，超过后客户端会直接发送实体。而服务器需要处理几种情况，一种是还没有响应就收到了实体，一种是由于错误等服务器决定结束响应。对于代理，同样应当有处理逻辑，比如兼容问题，比如错误响应等。</p>
+<p><strong>200 成功状态码</strong>：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14609658165005.jpg" alt=""></p>
+<p>成功状态码存在的问题是，hack 可能会伪装成服务器，向客户端发送虚假的成功码，就会劫持客户，所以此处的响应码就可能包含更多的信息。</p>
+<p><strong>重定向状态码</strong>：<br>对于重定向状态码来说，也是极有可能对客户端发生劫持的内容，有可能将用户导向错误的地址，以下是更为详细的内容：</p>
+<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14609660727847.jpg" alt=""><br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14609661357874.jpg" alt=""><br>从图中可以看出，不同的状态码其实非常相近，其实内部各有区别，对于不同版本的HTTP 都有其处理上的差别，在此不再详述，有需要时再详细识别。</p>
+<p><strong>客户端错误码</strong></p>
+<p>4开头的状态码大概是用户最讨厌碰见的状态码，这一部分也包含了非常多的内容，同样的，在此不详述，具体见下表。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14609664853726.jpg" alt=""></p>
+<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14609664914763.jpg" alt=""></p>
+<p><strong>服务器错误状态码</strong></p>
+<p>当服务器自身出现错误的时候，就会返回这样的状态码，同样的，不同的状态码也代表了服务器不同的状态。</p>
+<ul>
+<li>500 Internal server error： 服务器遇到一个妨碍它为请求提供服务的错误。</li>
+<li>501 not implemented ： 客户端发起的请求超过服务器能力范围。</li>
+<li>502 bad gateway: 作为代理或者网关使用的服务器从请求响应链的下一条链路上收到了一条伪响应。</li>
+<li>503 service unavailable： 目前无法提供服务，如果知道什么时候可以提供服务，会在首部包含一个retry-after，告知。</li>
+<li>504 gateway timeout: 等待另一个服务器对其请求进行响应超时了。</li>
+<li>505 http version not supported： 使用了它不支持的协议版本。</li>
+</ul>
+<h2 id="首部">首部</h2>
+<p>首部其所包含的内容和属性更多，一般来说，可以分为以下几类：</p>
+<ol>
+<li>通用首部：可以出现在请求报文和响应报文</li>
+<li>请求首部：有关请求的信息</li>
+<li>响应首部：如题</li>
+<li>实体首部：描述主体长度，内容，或资源自身。</li>
+<li>扩展首部：规范未定义的新首部。</li>
+</ol>
+<p>另外，如果想让某行分出多行提高可读性，记得要在多出来的行前加入空格或者tab。</p>
+<p><strong>通用首部：</strong></p>
+<ul>
+<li>Connection 允许客户端和服务器指定与请求/响应连接有关的选项</li>
+<li>Date 提供日期和时间的标志</li>
+<li>MIME-Version MIME 版本号。</li>
+<li>Trailer 如果报文采用了分块传输编码，使用这个首部列出报文拖挂（trailer）部分的首部集合。</li>
+<li>Transfer-Encoding 采用的编码方式。</li>
+<li>Update 更新的协议和版本。</li>
+<li>Via 显示经过的中间节点。</li>
+</ul>
+<p>强调一点，<strong>Connection</strong>首部是一个逐跳首部，只适用于单挑传输链路，他不会沿着传输链路向下传输，也就是只在两个最近连接中产生作用。<br>同时，还有两个通用的缓存首部，就是允许http应用程序缓存对象本地副本的首部。</p>
+<ul>
+<li>Cache-Control 用于随报文传送缓存指示</li>
+<li>Pragma 另一种随报文传送指示的方式，并不专用于缓存</li>
+</ul>
+<p><strong>请求首部</strong></p>
+<ul>
+<li>Client-IP 客户端机器的IP 地址。</li>
+<li>From 客户端用户的E-mail 地址。</li>
+<li>Host 接受请求的服务器的主机名和端口号。</li>
+<li>Referer UA-Color UA-CPU UA-Disp UA-OS UA-Pixels User-Agent</li>
+</ul>
+<p>后边这些，基本上很少会出现，也很难去寄希望挖掘到有用的信息。</p>
+<ul>
+<li>Accept 首部为客户端提供了一种将其倾向告知服务器的方式。包括了媒体类型，字符集，编码方式，语言等内容。</li>
+<li>条件请求首部，则是为请求加入一些限制。</li>
+<li>安全请求首部，对请求进行质询/响应认证，其中Authorization ,cookie, cookie2 首部就是这一类。</li>
+<li>代理请求首部。</li>
+</ul>
+<p><strong>响应首部</strong></p>
+<ul>
+<li>Age  响应持续时间，从最初创建开始</li>
+<li>Public 服务器为其资源支持的请求方法列表</li>
+<li>Retry-After 资源不可用时，可响应的重试时间</li>
+<li>Server 服务器应用程序软件的名称和版本</li>
+<li>Title html文档标题</li>
+<li>Warning 警告报文</li>
+<li>协商首部，具有一定协商能力，内容包括对某资源可接受的范围和向阳发生变化的时候可选择。</li>
+<li>安全响应首部，对应于前边的authenticate,cookie</li>
+</ul>
+<p><strong>实体首部</strong><br>此处可能会发生安全问题，比如劫持服务器，像客户发送错误的 location ，让客户链接向错误的地址。</p>
+<ul>
+<li>Allow 可以对实体执行的请求方法</li>
+<li>Location 告知客户端实体实际上位于何处，用于接收端定向到资源的位置上去。</li>
+<li>内容首部，包括Content-Base（解析主体相对URL 时使用的基础URL），对主体执行的编码方式，自然语言，主体长度，资源位置，MD5，字节范围，对象类型等。</li>
+<li>实体缓存首部，对被缓存的实体添加的一些信息，如验证已缓存的副本是否仍然有效等等。其中包括了标记，不再有效的日期，最后一次被修改的时间等。</li>
+</ul>
+<h1 id="连接管理">连接管理</h1>
+<p>本部分，介绍的是HTTP 以及其之下的TCP 的原理和内容，实际上，这也是报文流的过程结构，其中会有许多安全上的危险发生。</p>
+<h2 id="TCP">TCP</h2>
+<p>先列一下TCP 套接字的常用接口函数，很常用，这是在分析代码时候必要的寻找流程的几个关键节点。</p>
+<ul>
+<li>s = socket() 创建套接字。</li>
+<li>bind(s, <ip:port>) 绑定地址和端口</ip:port></li>
+<li>connect(s, <remote ip:port="">) 创建本地套接字和远程主机和端口的链接</remote></li>
+<li>listen(s, …) 坚挺</li>
+<li>s2 = accept(s) 等待某人建立一条道本地端口的连接。</li>
+<li>n = read(s, buffer, n) 从套接字到缓冲区读取n 个字节。</li>
+<li>n = write(s, buffer, n) 从缓冲区向套接字写入n 个字节。</li>
+<li>close(s) 关闭</li>
+<li>shutdown(s,<side>) 关闭TCP 连接的输入或输出端</side></li>
+<li>getsockopt(s, ..) 读取某内部套接字配置选项的值</li>
+<li>setsockopt(s, ..) 修改某内部套接字配置选项的值</li>
+</ul>
+<p>以下就是一个正常的HTTP 服务器和客户端交互的过程。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14610508715798.jpg" alt=""></p>
+<h2 id="HTTP_TCP_性能考量">HTTP TCP 性能考量</h2>
+<p><strong>HTTP 事务的时延</strong></p>
+<p>在日常上网过程中，我们时常被龟一样的网速折磨，其中有很多原因，有一部分是HTTP 的事务上的，一部分是TCP 之上的。HTTP上的事务延迟可能的原因有：</p>
+<ol>
+<li>通过DNS 解析将主机名换成一个IP 可能会花费不小的时间。</li>
+<li>TCP 连接的建立时间延迟。</li>
+<li>对TCP 报文的解析和处理依靠服务器性能，有一定的时间延迟。</li>
+<li>Web 响应时间延迟。</li>
+</ol>
+<p><strong>TCP相关的时间延迟</strong></p>
+<p>此处就进入较为深入的部分了，本来在研究上不需要达到这一地步，但是出于兴趣，做以简要挖掘。</p>
+<ul>
+<li>TCP 建立握手。</li>
+<li>TCP 慢启动拥塞控制。</li>
+<li>数据聚集的Nagle 算法。</li>
+<li>用于捎带确认的TCP 延迟确认算法</li>
+<li>TIME_WAIT 时间延迟和端口耗尽。</li>
+</ul>
+<p>对于第一点，HTTP 通过保持重用现存连接来解决每次握手花费时间的问题。</p>
+<p>低于第二点，不需过多解释，HTTP 为了解决在初始调谐时速度慢的问题，采用长连接，也就是持久连接的方式解决。</p>
+<p>对于第三点，Nagle 算法解决的问题，是说TCP 的数据流接口，允许任意尺寸的数据放入栈中，一次一个字节也可以，但是当大量的一字节内容发送，而实际上TCP 为这一字节的内容要装在40字节的标记和首部，造成了性能的严重下降。Nagle 算法就是试图将大量TCP 数据绑在一起，提高网络效率。Nagle 算法的主旨是鼓励网络发送全尺寸段（1500字节），只有在目前所有挂起的分组都被确认了，才可以立即发送非全尺寸段。而其他时间，则是将他们缓存起来，积累到一个全尺寸分组才发出去。</p>
+<p>Nagle 算法在优化网络的同时，可能会对HTTP 性能造成一定影响，因为一个小的报文，必须要等到之前所有段都确认了，才可以发送，而这段时间，会有延迟，一般来说，HTTP 会设置参数TCP_NODELAY ,来禁用。当然这里还有很多文章可以做。</p>
+<p>对于第四点，在我们TCP 连接的时候，每一个发出去的报文，都期望收到一个很小的确认包，但是因为报文非常小，不值得每次都单独发送，所以有时候延迟确认算法会在一个特定的窗口内将确认包放在缓冲区，等待一个时间窗口内，看能够有输出数据分组发出，将这个确认报文捎带上，如果这段时间里没有，就单独发包。这一点上，本来是为了解决TCP 连接中频繁发小包引起的性能问题而采用的算法，但是HTTP 确实具有明显的双峰特征，就是一端会频繁输出，而另一端只是频繁接收，如果还是使用这种延迟算法，则可能会带来性能上的下降，此时就应当调整和禁止延迟确认算法，来提高性能。</p>
+<p>对于第五点，TIME_WAIT 的出现时机应当都很清楚，这个状态一般需要保持一小段时间，通常使用的是<strong>最大分段使用期的两倍，2MSL，通常两分钟</strong>，来确保这个时间段不会创建具有相同地址和端口号的连接。而如果一个服务器是短连接属性的，如果一段时间有较高的访问，就会出现大量的TIME_WAIT 状态，导致端口耗尽，性能急剧下降。一般的解决办法是剪短TIME_WAIT 时间，或者是用虚拟地址，增加更多的连接组合。</p>
+<p><strong>提高HTTP 性能的技术</strong></p>
+<ul>
+<li>并行连接，多条TCP 连接发起并发的HTTP请求。</li>
+<li>持久连接，重用TCP 连接，消除连接和关闭的时间延迟。</li>
+<li>管道化连接，通过共享的TCP 连接发起并发的HTTP 请求。</li>
+<li>复用的连接，交替传送请求和响应报文。</li>
+</ul>
+<p>对于并行连接，无需过多解释，目前考虑到性能等方面，浏览器一般支持的并行连接数量是4个。</p>
+<p>对于持久连接，也就是保持TCP 连接状态，HTTP/1.0+ 上采用的是keep-alive 连接，HTTP/1.1 上采用的是 persistent 连接。关于keep-alive 中有很多信息，但是没有过于复杂的知识点，都是可以理解的内容，不再赘述。</p>
+<p>对于管道化连接，他是keep-alive的进一步优化。在响应到达之前，可以将多条请求放入队列，如此连续的以管道化的形式进行传输，可以降低网络上的环回时间，提高性能。<br>注意，为了实现这种高性能，实际上是有一些限制：</p>
+<ul>
+<li>客户端应确认连接是持久的</li>
+<li>HTTP 响应不能失序，否则无法与请求匹配。</li>
+<li>客户端要做好随时可能会关闭的准备，以及要重发所有未完成请求的准备。</li>
+<li>不应发送产生副作用的请求，如POST。（非幂等请求）<strong>HTTP 的幂等性待搞明白，简单来说就是一次和多次请求带来的副作用应当是一样的</strong><a href="http://www.cnblogs.com/weidagang2046/archive/2011/06/04/2063696.html" target="_blank" rel="external">参考文章</a></li>
+</ul>
+<p>另外，关闭连接也包含了大量的内容，这里我不想深究了，因为在保持连接部分里边的坑就目测很深，关闭连接里边也很深，因为要涉及到冲连接，安全性，数据完整，幂等性这些东西，都会有很多需要处理的内容，待到以后需要用到，再深究吧。简单的说，关闭连接，包括内容有『任意』接触连接，content-length 和截尾操作，连接关闭容限，重试等。</p>
+<h1 id="HTTP_结构">HTTP 结构</h1>
+<p>这一部分，略过了一些内容，只选择有价值的一部分，另外一些可能会有更深层的信息待挖。</p>
+<h2 id="响应实体">响应实体</h2>
+<p>响应实体的报文通常包括：</p>
+<ul>
+<li>描述响应主体MIME类型的Content-Type 首部。</li>
+<li>描述响应主体长度的 Content-Length 首部。</li>
+<li>报文主体。</li>
+</ul>
+<p>其中MIME类型负责指示资源的类型，一般服务器会提供魔法分类，或者是自定义分类。</p>
+<p><strong>重定向：</strong></p>
+<p>一个3xx 的重定向响应一般有如下情况</p>
+<ul>
+<li>永久删除资源：301</li>
+<li>临时删除资源：303 307</li>
+<li>URL 增强，一般是重写URL用于嵌入上下文，客户端会根据这个重定向信息重新发起请求。303 307</li>
+<li>负载均衡 303 307</li>
+<li>服务器关联，Web 服务器可能会有某些用户的本地信息，服务器可以将客户端重定向到包含那个客户信息的服务器上去。 303 307</li>
+<li>规范目录名称：也就是规范URL 名。</li>
+</ul>
+<h2 id="代理">代理</h2>
+<p>这是一个和其他部分没有太大联系的门类，其中包含的信息非常的大，在这里，我先留个坑，不花费时间去处理这个内容，留待单开补充。</p>
+<h2 id="缓存">缓存</h2>
+<p>缓存是解决带宽瓶颈的一个重要的方法，以CDN 为代表的技术仍然是主流。主要解决了网络时延，带宽瓶颈，瞬间拥塞，冗余数据的问题。</p>
+<p>缓存包含的技术术语有：命中与未命中（这个很常见），再验证（新鲜度检测）。</p>
+<p><strong>命中与未命中</strong><br><strong>再验证</strong>，缓存对缓存的副本再验证时，会向原始服务器发送一个小的再验证请求，如果内容没有变化，服务器会响应304，这个被称作再验证命中。这种方式要与原始服务器进行核对，所以比单纯的缓存命中要慢。</p>
+<p>HTTP 为我们提供了几个用来对已缓存对象进行再验证的工具，最常用的是 If-Modified-Since 首部。首部添加到GET 请求中，告诉服务器，只有在缓存了对象的副本，又对其进行了修改的情况下，才发送此对象。对于再验证命中，则返回304，表示仍然新鲜。如果未命中，则像正常响应200.如果已删除，返回404，缓存的副本也将删除。</p>
+<p><strong>命中率</strong>，这是一个重要的考量目标，缓存提供服务所占的比率，他与缓存大小，缓存用户兴趣点的相似性，缓存数据的变化或者个性化频率，以及缓存的配置，都影响到命中率。</p>
+<p><strong>字节命中率</strong>，由于有些大型对象被访问的次数可能较少，但是由于尺寸的原因，对整个数据流量的贡献却很大。所以，有时候使用字节命中率更加准确。字节命中率表示缓存提供的字节在传输的所有字节中所占的比率。</p>
+<p>客户端判断命中和未命中的方法是使用Date 首部，将响应的Date首部值与当前时间比较，如果响应日期比较早，可能认为这是一条缓存的响应，也可以使用Age 首部进行判断。</p>
+<p><strong>代理缓存的层次结构</strong></p>
+<p>实际上，缓存还存在有层次化的结构，一级缓存二级缓存等，这是为了逐步采用更大，功能更强的缓存来装在更多的用户共享文档。</p>
+<p>而更加复杂的，还有网状缓存，内容路由以及对等缓存。可以考虑现在的P2P技术与之类似。</p>
+<h3 id="缓存处理的基本步骤">缓存处理的基本步骤</h3>
+<ul>
+<li>接收，缓存读取请求报文。</li>
+<li>解析，提取URL 和首部。</li>
+<li>查询，查看是否有本地副本可用，没有就获取一份副本，将其保存本地。</li>
+<li>新鲜度检测，如果已有，就验证是否新鲜，如果不新鲜，则请求服务器是否有更新。</li>
+<li>创建响应，缓存构建响应报文。</li>
+<li>发送</li>
+<li>日志</li>
+</ul>
+<p>下图是一个新鲜的缓存命中<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14611200094685.jpg" alt=""></p>
+<p>以一个更为一般化的流程图做以描述：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14611200650513.jpg" alt=""></p>
+<p>服务器可以通过HTT 定义集中方式来控制缓存：Cache-Control ，Expires 首部等等，里边的内容包括max-age，详细的不再纠结。</p>
+<p>后边关于缓存还有更多的知识点，甚至还有一些算法，比如使用期的算法，新鲜生存期算法，新鲜度算法等等。</p>
+<h1 id="集成点：_网关，隧道，中继">集成点： 网关，隧道，中继</h1>
+<h2 id="网关">网关</h2>
+<p>网关的概念可以作为某种翻译器理解，抽象出了一种能够到达资源的方法。更形象的讲，网关就是一个门，用用程序可以通过接口请求网关来处理请求，网关提供响应。同时网关可以向数据库发送查询语句，生成动态内容等。</p>
+<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14613152822853.jpg" alt=""></p>
+<p>Web 网关在一侧使用HTTP 协议，在另一侧则使用另一种协议。例如当网关收到了一个对FTP 资源的请求，客户端实际上发送的是HTTP 请求，而网关则会打开一条到原始服务器的FTP 端口，通过FTP 协议去获取对象。完成之后，将对象放在HTTP 响应中返回给客户端。</p>
+<p>再比如，客户端以普通的HTTP 形式浏览Web 内容，而网关可以自动加密用户对话，这是常见的HTTP/HTTPS 安全网关。而另外一种客户端安全加速网关则是反过来的HTTPS/HTTP 网关，这是为了确保在客户端和网关连接中途发生安全问题。</p>
+<p>而最常见的网关，则是为了在客户端通过HTTP 通信的时候，能够与服务器端的应用程序相连，这时候就是需要调用服务器上应用程序的API ，来实现应用程序的调用。<strong>最早期的应用程序网关API 是CGI</strong>，而纯CGI 来写的人已经很少了，因为注入ASP，PHP 已经将CGI 包装好，实现了其特性，本质上CGI 就像一个非常简单的协议，人们更习惯使用更加简单易读的PHP 等语言。</p>
+<p>在CGI 初始，由于CGI 是分离的，服务器要为每条CGI 请求引发一个新进程，这会极大的限制服务器的性能，为解决这个问题，人们开发的新语言FastCGI ，这个接口模拟CGI，作为持久守护进程运行的，消除了每个请求简历和拆除进程带来的性能损耗。当然实际上，现在还是PHP 这些语言的天下。</p>
+<p>时至今天，应用程序和Web服务的接口越来越多，甚至我们也看到了Chrome Book 甚至可以仅仅将一个浏览器就可以作为一个操作系统的入口。这时候，HTTP 其实可以作为一种连接应用程序的基础软件来看待，而此时，将HTTP 协议与其他应用程序的协议之间的协商和接口，都成为了重要的内容。</p>
+<h2 id="隧道">隧道</h2>
+<p>接上一个话题，刚才说的是通过HTTP 协议，与应用程序之间建立接口，而HTTP 还有另一个用法，就是为应用程序之间建立通信，这就是隧道（Web tunnel）。通过隧道，非HTTP 协议可以在HTTP 协议包装下，穿过只允许Web 流量的防火墙了。</p>
+<p>常见的隧道建立方式是通过<strong>Connect</strong> 建立的，CONNECT 方法请求隧道网关创建一条到达任意目的服务器和端口的TCP 连接，并对客户端和服务器之间后继数据进行盲转发。下图就是以建立SSL 隧道为例，注意看其中的请求，则是以CONNECT 为首，主机号和端口号取代了URI，响应短语经常为Connection Established。</p>
+<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14613168465645.jpg" alt=""></p>
+<p>为什么我们要实现SSL 的隧道呢，因为对于传统的代理服务器，SSL 的信息是加密的，防火墙无法识别，就会被HTTP 防火墙拦截。而实现了隧道化的SSL ，加密数据放入正常的HTTP 报文中，就能通过防火墙了。在隧道的起点用HTTP 封装SSL ，然后以普通HTTP 报文的形式通过防火墙，然后在对报文解封，继续进行普通的SSL 连接。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14613176934946.jpg" alt=""></p>
+<p>SSL 隧道与我们刚才所讲的网关实现HTTP/HTTPS 有一定的差别。相比于隧道，网关实现方式有几个缺点：</p>
+<ol>
+<li>客户端到网关之间的连接是普通的HTTP，因为只有普通的http 才可以通过防火墙。</li>
+<li>尽管代理是已认证的主体，但客户端无法对远端的服务器执行SSL 客户端认证 X509证书。</li>
+<li>网关要支持完整的SSL 实现。</li>
+</ol>
+<p>同时，隧道为了安全考虑，也需要将代理的认证支持与隧道配合使用，对客户端使用隧道权利进行认证，过程如图。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14613179676011.jpg" alt=""></p>
+<p>出于对隧道安全的考虑，因为我们在传输过程中，不知道其内容是什么，所以有些人就可能通过诸如SSL 隧道，越过防火墙传递其他流量，包含一些恶意信息等，所以一般情况下，网关只对特定的端口和特定的内容开发端口，如443.</p>
+<h2 id="中继">中继</h2>
+<p>中继的内容不多，理解为一个没有完全遵循HTTP 规范的HTTP 代理。中继在两个连接之间，只进行盲转发。当然，我们也可以在中继上部署一些简单的过滤，诊断和内容转换的功能。</p>
+<p>但是，中继上存在一个严重的问题，它无法正确处理Connection 首部，所以有潜在挂起 keep-alive 连接的可能。因为Connection 它是逐跳首部，只适用于单条传输链路，中继仅仅是盲转发，无法理解，也无法让他沿着链路一直传送下去，但是对于服务器和客户端，双方都以为建立了keep-alive 长连接，但实际上并非如此。所以，就陷入了麻烦。当然，现代的方法，采用了更加智能的判断方式，来消除这一个风险。</p>
+<h1 id="Web_robot">Web robot</h1>
+<h2 id="爬虫">爬虫</h2>
+<p>爬虫是一个有趣的门类，他看起来很简单，似乎也有很多现成的解决方案，但是在实际的场景中，却又会有很多新的问题要解决，爬虫和反爬虫之间的斗争也一直在延续。本质上，在网络上活跃的自动化脚本，都可以叫做爬虫，他们日夜不停的执行着任务，为自己的老板收集大量的有用的内容。</p>
+<p>下面是围绕到爬虫的一些必要的内容，当然，这是与HTTP 相关的内容：</p>
+<h3 id="连接提取和相对链接标准化"><strong>连接提取和相对链接标准化</strong></h3>
+<p>很简单，我们爬去的URL ，有些可能是相对链接，所以我们要根据其父亲结点，将相对链接标准化，处理成能够规范整理的信息。</p>
+<h3 id="环路避免"><strong>环路避免</strong></h3>
+<p>为了避免出现循环和重复，对那些访问过的URL ，我们要用特殊的结构保存起来，以确保在爬取的是新的URL，一般采用下面这些技术：</p>
+<ul>
+<li><strong>树和散列表</strong>，使用树形结构和散列表的结构，去寻找已访问的URL，提高了一定的速度，但在空间上仍然是巨大的。</li>
+<li><strong>有损的存在位图</strong>，这里用的就是位图的概念，建立一个存在位数组，对每个URL 都转换为一个定长的数字，这个数字对应在数组的位置就是存在位，爬行过之后，该位置就置位。由于URL 潜在数量是近乎无限的，但是给予的空间总是有限的，所以很可能有两个不同的URL 对应于一个存在位，所以就可能会有部分URL 被忽略，所以是有损的。</li>
+<li><strong>本地化列表</strong>，URL 列表应保存一份在本地硬盘，防止机器人崩溃，前功尽弃。</li>
+<li><strong>分类</strong>，实际上就是采用了爬虫集群，分工的形式对某URL 片进行爬取，个体之间可能还需要相互通信，实现更复杂的功能。</li>
+</ul>
+<p>注意，不仅在URL 上可能会有环路问题，在文件系统连接上也会存在环路，在目录层次上可能会进入深度无限的假象。比如一个subdir 的链接链接到上层文件夹，就会让层级无限深入下去。</p>
+<p>而在爬虫和反爬虫的斗争中，网管甚至还会创造一些虚假信息，他们会发布一个看起来是普通的文件，实际上却是网关应用程序，这是很容易的，当爬虫去请求了这个URL，服务器就会捏造一个新的HTML页面和一个新的虚构的URL ，以此让爬虫在这个看似都不同的URL 陷阱里越陷越深。如下图：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14613267668464.jpg" alt=""></p>
+<p>在斗智斗勇的路上，爬虫也会进化：</p>
+<ul>
+<li>规范化URL，以此来避免别名带来的URL 重复</li>
+<li><strong>广度优先</strong>，采用此策略，可以降低环路带来的影响，因为不像深度优先一样爬进一个坑里出不来。</li>
+<li><strong>节流</strong>， 为防止在一个URL 站点里越陷越深，适当的限制重复的页面总数和对服务器访问总数来截至该操作。</li>
+<li>限制URL 大小，某些情况，可能会让URL 无限增长，最简单的办法就是限制一个URL 的长度。一般1kb</li>
+<li>URL 黑名单，建立一个列表，维护那些曾经让机器人陷入回路和陷阱的站点列表，所爬取的时候，就绕过他们。</li>
+<li><strong>模式检测</strong>，造成环路陷阱的一般都会有一定的模式，比如固定模式循环出现，某组件重复出现超过三次等等。</li>
+<li><strong>内容指纹</strong>，这是更加复杂的方法，爬虫爬取某页面，会通过提取部分字节建立指纹，指纹压缩存储起来，爬取新页面的时候，提取其校验和，与指纹库比较，如果以前见过，就不再爬取，这样就避免了仅依靠URL 做判断的方法。</li>
+<li><strong>人工审计</strong>，这是最无奈的方法。</li>
+</ul>
+<h3 id="别名的判断"><strong>别名的判断</strong></h3>
+<p>有些时候，同一地址的URL 可能会不同，叫做别名，比如URL 上添加不添加端口号，比如URL 编码，比如使用标签，服务器文件大小写，默认页面写不写，ip地址和域名地址等。</p>
+<p>所以在别名的判断时候，有时就会对URL 进行规范，比如加上指定端口，把所有的转义字符用等价字符表示，删除#标签。</p>
+<h2 id="爬虫与HTTP">爬虫与HTTP</h2>
+<p>一个良好的爬虫，是受网站欢迎的，比如搜索引擎的爬虫爬取网站的基本信息，提供给人们搜索，可以提高网站访问，所以遵循道德准则的爬虫往往是放行的。而一个爬虫在爬取网页时，它也需要像正常请求一个，使用HTTP 请求，请求页面内容，只是在爬取的阶段中，可以在http 的首部告知自己的身份，也可以在Accept 里写明自己想要爬取什么样的内容，图片，文本等。</p>
+<p>在使用HTTP 发出请求的时候，应当注意一些细节：</p>
+<ul>
+<li>一定要携带Host,如果遇到一个服务器提供两个站点，而发送请求没有携带Host， 服务器可能只会返回默认的那个站点。</li>
+<li>爬虫辛苦爬到的站点，可能随时会改变内容，爬虫应当对时间戳或者是实体标签进行比较，来确认获取的版本是否升级，这方法类似于缓存查看机制。</li>
+<li>对响应做处理，比如状态码，常见状态码，和一些特别的状态码。</li>
+<li>实体部分，有些响应的实体中，可能会包含一些重定向等信息，包含在元标签如 http-equiv 等，<meta></li>
+</ul>
+<p>不良爬虫的特点：</p>
+<ul>
+<li>失控，访问速度太快，造成站点服务器过载，会被当做ddos攻击的爬虫。</li>
+<li>失效URL ，没有更新URL，总是使用失效的URL 向服务器进行访问，也会对服务器的开销造成影响。</li>
+<li>很长又错误的URL，同样造成web服务器性能下降。而且这两个都会让审计日志变得杂乱。</li>
+<li>不小心访问了私有的URL地址。</li>
+<li>保留了一些已经被删除的信息。</li>
+</ul>
+<p>由于有不良爬虫的存在，但是良好的爬虫仍然是有益的，所以人们约定在服务器文档根目录上提供一个可选的文件，robots.txt ，里边包含了对机器人的一些约束，也提供给良好的爬虫，让其更加方便的爬取信息。所以，一个良好的爬虫，首先要做的就是试图去获取站点的robots.txt 资源，并根据响应码做出下一步的反应，比如200，则拿到robots.txt， 就必须进行解析，依照规则爬取；如果404，说明不受限；如果401或403，表示该站完全不欢迎爬虫；如果503，则应稍后重试；如果3xx，则重定向方向去爬取。</p>
+<p>至于robots.txt 的格式，很简单，不再赘述，因为我还没有想做一个站长，而且现在很多成熟的爬虫，会有自动化工具给予采用。而且，现在的站点，为了优化自己让搜索引擎更快的更新站点信息，会提供一个sitemap.txt 的文件，让爬虫直接顺着内容爬取即可，这样双方受益，效率可观。</p>
+<h2 id="搜索引擎">搜索引擎</h2>
+<p>爬虫有很多终极目的，而搜索引擎可以说是最重要的应用之一。搜索引擎相比于爬虫，还要多提供全文索引，本地内容存储的功能。因为为了给用户提供关键词的搜索，搜索引擎必须对它所搜索到的页面建立一个『全文索引』的复杂本地数据库，用户发送查询请求的时候，他应当在自己的数据库中找到所有的包含该关键词的文档。</p>
+<p>更复杂的，搜索引擎还应当对匹配的结果进行排名，这一部分就包含了更多的东西，在这里不是重点了，有机会更深一步的时候，再进行理解。</p>
+<h1 id="HTTP，识别、认证、安全">HTTP，识别、认证、安全</h1>
+<h2 id="cookie_机制">cookie 机制</h2>
+<p>在cookie机制之前，我们还会介绍另外一些识别机制，各有优劣，先列如下：</p>
+<ul>
+<li>HTTP 首部承载用户信息</li>
+<li>客户端 IP地址跟踪，通过IP 进行识别。</li>
+<li>用户登录，根据用户认证识别用户。</li>
+<li>胖URL， 一种在URL 中嵌入识别信息的技术。</li>
+<li>cookie</li>
+</ul>
+<p><strong>HTTP 首部承载信息</strong></p>
+<p>在HTTP 首部中有七个常见可承载信息的首部：</p>
+<ul>
+<li>From 用户Email.</li>
+<li>User-Agent 用户浏览器软件</li>
+<li>Referer 用户是从这个页面上依链接条转过来的。</li>
+<li>Authorization 用户名和密码</li>
+<li>Client-IP 客户端IP。</li>
+<li>X-Forwarded-For 客户端IP地址。</li>
+<li>Cookie 服务器产生的ID 标签。</li>
+</ul>
+<p>实际上其中可用的信息实际上是后三个：</p>
+<p><strong>客户端IP</strong></p>
+<p>首先应说，Client-IP 首部并不一定是存在的，但是我们仍然可以调用诸如 UNIX 下 getpeername 的函数来返回客户端IP ,但是实际上，客户端IP 很难作为识别用户的方式。</p>
+<ul>
+<li>客户端IP描述的是机器，不是用户。</li>
+<li>很多服务商是动态分配IP，每次登陆会得到不同的地址，所以现在利用IP 识别的，也一般仅仅是识别一个IP段，去做某种操作。</li>
+<li>有些防火墙会通过NAT 网络地址转换方式，转换成一个防火墙共享IP 来访问。</li>
+<li>有些会从HTTP 代理或网关出重新发出TCP 连接。</li>
+</ul>
+<p><strong>用户登录</strong><br>如果服务器希望在用户提供对站点访问之前，先行登陆，就会响应一个401 状态码，Login Required，然后显示一个登陆对话框，在随后的请求中会添加Authorization 首部。</p>
+<p>其实这种方法已经不怎么用了，因为安全性太低了，现在也会出现有401钓鱼的行为，用户的登录信息虽然会加密，但是加密信息实在是太好破了，而且如果劫持了用户的信息，还可以放在自己的首部伪装成用户登录。</p>
+<p><strong>胖URL</strong></p>
+<p>有些站点利用对URL 添加特定的URL 版本，来追踪用户身份，比如一些商务网站，通过针对每个用户在URL 后边生成特定的标示符，可以实现对用户浏览的追踪。通过胖URL 可以将Web服务器上的若干个HTTP 事务绑定在一个会话和访问上，用户首次访问某站点，生成一个ID ，服务器通过识别ID 的方式，添加到URL 中去，然后将客户端导向到那个胖URL 上去。不论什么时候，只要服务器收到了胖URL 请求，都可以查找那个用户ID 相关的操作，增量状态等，然后重写输出超链接，让其成为胖URL，维护用户ID。</p>
+<p>但是，这样的操作，我们也很明显看出了其中的问题：</p>
+<ul>
+<li>URL 丑陋，不说了</li>
+<li>URL 无法共享，因为它包含了特定用户的一些信息。仅在部分情况下可以，就比如邀请人链接，刚好是需要这样的识别。</li>
+<li>破坏缓存，每个用户的URL 都生成特定的版本，那么意味着没有公共可访问的URL 需要缓存了。</li>
+<li>服务器负荷，重写HTML 和 生成胖URL。</li>
+<li>逃逸，如果用户逃离了严格修改的URL 链接，就会失去了他所有的进展。</li>
+<li>会话期间非持久，除非用户收藏了特定的URL， 否则用户删除之后，再也找不回来了。</li>
+</ul>
+<p>当然，胖URL 技术还是有很多应用的，这就要应对许多新的场景，展开更丰富的联想，也可以通过加入其它手段来克服其中的缺点，总之，不要放弃任何一种方法，有时候都是会起死回生。</p>
+<p><strong>cookie</strong></p>
+<p>cookie 可以分为两类： <strong>会话cookie 和 持久cookie</strong></p>
+<p>对于会话cookie， 它是一种临时的cookie， 记录了用户访问站点时候的设置和偏好，用户退出浏览器，会话cookie 就会删除掉。而持久cookie 显然是生存周期更久的一种。常见的，如果cookie 设置了Discard 参数，没有设置Expires 或者 Max-Age 参数来说明扩展过期时间，那么一般就是一个会话cookie.</p>
+<p>cookie 包含了一个由名字和值 组成的信息构成，通过Set-Cookie,Set-Cookie2 HTTP响应首部来给用户。下边这只是一个例子，cookie 的格式又服务器决定：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14613325046800.jpg" alt=""></p>
+<p>cookie 罐的概念，就是浏览器在本地管理cookie 信息的形式，浏览器要负责储存这些信息，一般统称为<strong>客户端侧状态</strong>，这种规范叫HTTP状态管理机制。不同的浏览器，会有不同的cookie 的储存机制。储存起来的cookie 包含了一些名称变量过期安全等考量，具体可查看每种浏览器的cookie格式。</p>
+<p>虽然我们说，cookie 只会发给那些之前对应的服务器，但是某些无量的广告商，他们会发送持久cookie ，一些站点会委托同一个广告公司提供服务（比如百度），那么浏览器会将持久的cookie 发过来，广告公司通过将此技术和referer 结合，暗地里构建了一个用户档案和浏览习惯的详尽数据集。</p>
+<p>cookie 将包含一些必要的信息，有些信息是可选的，其中具体的内容，这里不再赘述，具体可参见RFC 2965：</p>
+<ul>
+<li>cookie 域属性，Domain 属性将控制哪些站点可以得到那个cookie.</li>
+<li>cookie 路径属性，cookie 规范允许用户将cookie 与部分 Web站点关联起来。Path 属性来实现功能，在这个属性下列出的URL 前缀下所有的cookie 都是有效的。</li>
+<li>安全属性，可选</li>
+<li>日期属性，可选</li>
+</ul>
+<p>而在cookie 的扩展版本中，引入了Set-Cookie2首部 和Cookie2 首部，做出了一些新的改进，它能够与cookie 互操作。</p>
+<p>而 Set-Cookie2 属性包括有：</p>
+<ul>
+<li>NAME=VALUE 强制</li>
+<li>Version 强制，规范版本。</li>
+<li>Comment 可选，说明服务器如何使用cookie.</li>
+<li>CommentURL  可选，策略文档。</li>
+<li>Discard 可选，客户端程序终止时，指示客户端放弃cookie.</li>
+<li>Domain 可选，域。</li>
+<li>Max-Age 可选，生存期，秒为单位。</li>
+<li>Path 可选，路径。</li>
+<li>Port 可选，可以应用cookie 的端口列表。</li>
+<li>Secure 可选，使用SSL才可以发送的指示。</li>
+</ul>
+<h3 id="cookie_与会话跟踪">cookie 与会话跟踪</h3>
+<p>一张图，讲所有：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14613368816595.jpg" alt=""></p>
+<p>Web 通过一系列的重定向，URL 重写，和cookie 设置来附加标识信息。</p>
+<h3 id="cookie_与缓存">cookie 与缓存</h3>
+<p>目前还不需要用到相关业务，暂且不表。</p>
+<h2 id="认证">认证</h2>
+<p>HTTP 通过一组可定制的控制首部，为不同的认证协议提供一个可扩展的框架。主要分<strong>基本认证和摘要认证</strong></p>
+<ul>
+<li>质询 WWW-Authentiacate，服务器以401状态码拒绝请求，说明需要提供用户名和密码。</li>
+<li>授权 Authorization 客户端重新发送请求，但这一次会负责为一个Authorization 首部，用来说明认证算法，用户名和密码。 属于GET</li>
+<li>成功 Authentication-Info 如果授权书正确，服务器会将文档返回，授权算法在该首部返回一些与授权会话相关的信息。 200 OK。</li>
+</ul>
+<p>下面是相关的流程示意图：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14614015756784.jpg" alt=""></p>
+<p><strong>安全域</strong></p>
+<p>在上边的质询里有一个realm 他就是安全域，也就是你试图访问的安全域，需要哪个授权。</p>
+<h3 id="基本认证">基本认证</h3>
+<p>基本认证就是我们刚刚讲的质询响应，用户请求的资源位于某个安全域中，服务器会返回一个401，质询，并提供安全域。用户只有将用户名密码（base64 处理）后返回，才可以获得正确响应。</p>
+<h3 id="代理认证">代理认证</h3>
+<p>中间的代理服务器也可以实现认证功能，这样我们就可以在代理服务器上对访问策略进行集中管理。代理认证的首部有所不同，对应的返回码也是不同的。</p>
+<ul>
+<li>代理服务器返回 407</li>
+<li>Proxy-Authenticate 对应 WWW-Authenticate</li>
+<li>Proxy-Authorization 对应 Authorization</li>
+<li>Proxy-Authentication-Info 对应 Authentication-Info</li>
+</ul>
+<h3 id="缺陷">缺陷</h3>
+<p>基本认证的缺陷很明显，所以现代的服务器基本不是这样处理了，缺陷有这么几点：</p>
+<ol>
+<li>基本认证通过网络发送用户名和密码，bash-64 没有安全可言。</li>
+<li>即使密码是更难解码的方式加密，第三方用户仍然可以捕获修改过的用户名和密码，重放攻击。</li>
+<li>即使将基本认证用于一些不重要的应用程序，如内部网络访问控制和个性化的访问，但捕获这些密码，可以构建撞库的可能。</li>
+<li>基本认证没有提供任何针对代理和作为中间人的中间节点的防护措施，如果他们不修改认证首部，但是修改了报文的其他部分，仍然是严重的。</li>
+<li>假冒服务器容易骗过基本认证，这也就是401钓鱼。</li>
+</ol>
+<h2 id="摘要认证">摘要认证</h2>
+<p>摘要认证是另一种HTTP 认证协议，修复了一些严重的缺陷，一般有如下改进：</p>
+<ul>
+<li>永远不会以明文方式在网络上发送密码</li>
+<li>可以防止恶意用户捕获并重放认证的握手过程</li>
+<li>可以有选择的防止对报文内容的篡改</li>
+<li>防范集中常见的攻击方式，如重放攻击等。</li>
+</ul>
+<p>单向摘要，实际上就是我们常用的MD5 ，SHA-1 了。<br>而为了防止重放攻击，服务器和客户端使用随机数这样的特殊令牌，客户端在计算摘要前将随机数附加上去，这样每次发送的信息，都会有一个随时间变化的随机数。</p>
+<p>摘要算法的核心是对公共信息，保密信息，和有时限的随机值的摘要。核心是三个组件：</p>
+<ul>
+<li>单向散列函数H(d) 摘要KD(s, d)组成的一对函数。s表示密码，d表示数据。</li>
+<li>包含安全信息的の数据块A1，包括密码。</li>
+<li>包含请求报文中非保密属性的数据块，A2。</li>
+</ul>
+<p>其中A1 的数据块是密码，和受保护信息的产物，包含有用户名，密码，保护域，随机数的内容。一般是MD5.<br>A2 表示的是与报文自身有关的信息，比如URL，请求方法和报文实体部分。A2主要是防止方法，资源，报文被篡改。当qop = 「auth」 只包含HTTP 请求方法和URL。qop=’auth-int’ ，添加了报文的实体主题部分，提供一定程度的报文完整性检测。<br>摘要认证的过程及其内容看起来像是一个弱化版的SSL，所以在这里不再赘述，一个图大约够了。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14614149936666.jpg" alt=""></p>
+<p>稍微补充几个概念：</p>
+<ul>
+<li>预授权，正常来说，如果按照上边的说法，每次的请求，都要做一次质询，但如果我们采用授权模式，如果一次请求授权成功之后，每次服务器会返回一个随机数，客户利用随机数再发出下一次的请求，和授权，这样就节省了很多交互。</li>
+<li>随机数的产生，是一个只有服务器知道的数据。</li>
+<li>不仅可以有单向的认证，还可以采用对称形式的认证。</li>
+</ul>
+<p>下面则是讨论一下这个认证一些重要的实际问题和安全性问题：</p>
+<ol>
+<li>多重质询，因为服务器不知道客户端可以做到哪种能力的认证，所以可以又提供基本认证质询，又提供摘要认证质询。</li>
+<li>差错处理，如果某个指定其值不正确或缺少必要指令，应当返回400 bad request。而且某些时候，连续的差错可能代表了某种攻击行为。</li>
+<li>保护空间，也就是提供授权访问的区域。对于基本认证，考虑URL 之下的所有子路径都是同一保护空间。对于摘要认证，服务器会提供一个URI 的列表。</li>
+<li>缓存，Cache-Control 指令为must-revalidate 和 public 会有不一样的处理。</li>
+</ol>
+<p>安全性的考量：</p>
+<ol>
+<li>首部篡改，这里的认证机制，实际上只是一个首部防篡改系统，对数据并起不到多少的保护作用。</li>
+<li>重放攻击，也是前边一直力图解决的问题，防止中间人利用截获的认证证书用于其他事务。最重要的实际上应当是防止POST 请求和PUT 请求，可能会篡改服务器的内容。上边内容的缺陷在于面对代理集群传输的时候，会遇上麻烦，而且攻击者伪造IP 也是有可能的。而一种完全可以避免重放共及的方式就是为每个事务提供唯一的随机数，发布的随机只对指定的事务有效，而且只在超时区间内有效，这样中间人即使是篡改了报文，但随机数只对某事务有效，它仍然无法成功，当然这会造成服务器的负担。</li>
+<li>多重认证机制，因为服务器支持多重认证，攻击者可能会采用某些方法，让服务器采用最弱的基本认证机制，而基本认证机制会有一些安全上的脆弱，所以，解决办法也只能是不允许降级。其实主动降级攻击这在攻击表里很常见，例如对SSL 的攻击了，就是试图去让SSL 退化到早先的版本，然后利用其中的漏洞进行攻击。</li>
+<li>词典攻击，大部分是针对弱密码，采用复杂密码或者是密码过期策略之外，没有更好的办法。</li>
+<li>中间人，恶意代理。客户端和服务器之间的代理，在处理客户端的报文时，故意降级，采用较弱的认证方式，实现前边所说的攻击。</li>
+<li>选择明文攻击，这里是一个恶意的服务器，伪装成服务器，预先使用一个随机数和一个常见密码变化形式形成一组响应，创建一个词典。一旦有了规模可观的词典，攻击服务器或代理就可以完成对流量的封锁，向客户发送预先确定的随机数。攻击者从客户端得到一个响应时，会搜索生成的字典，寻找匹配项。找到对应的匹配项，就能获取密码了。另外，暴力枚举现在能力也很强大，他不使用预设的字典去匹配了，直接在指定空间内枚举全部可能，直接暴力破解。</li>
+<li>服务器保存了密码文件，用来与用户响应的内容比较，如果密码文件被侵入，那该域中文件就不再安全了。</li>
+</ol>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/03/12/设计模式探索之路（下）/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">设计模式探索之路（下）</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="HTTP再详解" data-title="HTTP再详解" data-url="http://yoursite.com/2016/04/27/HTTP再详解/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"xuelinf"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 临风
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: true
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js" type="text/javascript"></script>
+
+<script src="/js/main.js" type="text/javascript"></script>
+
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

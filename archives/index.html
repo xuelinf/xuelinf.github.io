@@ -116,7 +116,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/C-C/" style="font-size: 13.33px;">C/C++</a><a href="/tags/Diary/" style="font-size: 10.00px;">Diary</a><a href="/tags/Docker/" style="font-size: 10.00px;">Docker</a><a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a><a href="/tags/Linux/" style="font-size: 10.00px;">Linux</a><a href="/tags/PM/" style="font-size: 10.00px;">PM</a><a href="/tags/Python/" style="font-size: 13.33px;">Python</a><a href="/tags/TCP-IP/" style="font-size: 13.33px;">TCP/IP</a><a href="/tags/Unix/" style="font-size: 10.00px;">Unix</a><a href="/tags/design-pattern/" style="font-size: 13.33px;">design pattern</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 13.33px;">life</a><a href="/tags/web/" style="font-size: 10.00px;">web</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 13.33px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
+						<a href="/tags/C-C/" style="font-size: 13.33px;">C/C++</a><a href="/tags/Diary/" style="font-size: 10.00px;">Diary</a><a href="/tags/Docker/" style="font-size: 10.00px;">Docker</a><a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a><a href="/tags/Linux/" style="font-size: 10.00px;">Linux</a><a href="/tags/PM/" style="font-size: 10.00px;">PM</a><a href="/tags/Python/" style="font-size: 13.33px;">Python</a><a href="/tags/TCP-IP/" style="font-size: 16.67px;">TCP/IP</a><a href="/tags/Unix/" style="font-size: 10.00px;">Unix</a><a href="/tags/design-pattern/" style="font-size: 13.33px;">design pattern</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 13.33px;">life</a><a href="/tags/web/" style="font-size: 10.00px;">web</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 13.33px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
 					</div>
 				</section>
 				
@@ -187,6 +187,68 @@
 	</div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-HTTP再详解" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/04/27/HTTP再详解/" class="article-date">
+  	<time datetime="2016-04-27T02:05:51.000Z" itemprop="datePublished">4月 27 2016</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/04/27/HTTP再详解/">HTTP再详解</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>之前对HTTP 的内容做过梳理，如今看来显得太过粗略，很多值得关注的细节都直接被省略，也只是对整个结构感受较为清晰罢了。现在结合《HTTP 权威指南》这本将近七百页的大部头，我对HTTP 重新做了梳理和理解，当然在阅读的过程中，我感觉即使是权威指南，在讲解的时候，仍然是粗略的，有很多内容明显的看起来其中有很多文章。所以，这大约是我第一遍的HTTP 再详解，再后边，我会对HTTP 的更多内容，做已更细节的理解。如HTTP 版本差异，method 的在现实应用场景到底会有哪些安全问题，HTTP头域里隐藏着哪些玄机，编码种种，代理、缓存。<br>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/Study/">Study</a>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a  href="/2016/04/27/HTTP再详解/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
   
     <article id="post-设计模式探索之路（下）" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -661,69 +723,6 @@
 	</div>
 
 
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
-    <article id="post-用Python写一个虚拟解释器" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/11/09/用Python写一个虚拟解释器/" class="article-date">
-  	<time datetime="2015-11-09T13:18:08.000Z" itemprop="datePublished">11月 9 2015</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/11/09/用Python写一个虚拟解释器/">用Python写一个虚拟解释器</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="http://www.jianshu.com/p/28c029de8fb3" target="_blank" rel="external">刀背藏身|简书</a><br>先来看看这篇文章 <a href="http://www.yinwang.org/blog-cn/2012/08/01/interpreter/" target="_blank" rel="external">怎样写一个解释器</a></p>
-<p>所谓虚拟机器，就是一定意义上的堆栈机。<br>解释器能够执行其他计算机语言编写的程序的系统软件，他是一个翻译程序。它的执行方式是一边翻译一边执行，因此其执行效率一般比较低。解释器的实现比较简单，而且编写源程序的高级语言可以使用更加灵活和富于表现力的语法。<br>可参考<a href="https://csl.name/post/vm/" target="_blank" rel="external">本链接</a>，开源项目<a href="https://github.com/cslarsen/crianza" target="_blank" rel="external">Crianza</a>。<br>当然，解释器要从最基础的最简单的语言开始，然后逐步增加语言的复杂度，才能构造出正确的解释器。而最基础的一个解释器，其实就是一个高级的计算器，下面我们一起来创建一个解释器吧。<br>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/Study/">Study</a>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a  href="/2015/11/09/用Python写一个虚拟解释器/#more">more >></a>
-        </p>
       
       <div class="clearfix"></div>
     </div>
