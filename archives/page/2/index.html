@@ -116,7 +116,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/C-C/" style="font-size: 13.33px;">C/C++</a><a href="/tags/Diary/" style="font-size: 10.00px;">Diary</a><a href="/tags/Docker/" style="font-size: 10.00px;">Docker</a><a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a><a href="/tags/Linux/" style="font-size: 10.00px;">Linux</a><a href="/tags/PM/" style="font-size: 10.00px;">PM</a><a href="/tags/Python/" style="font-size: 13.33px;">Python</a><a href="/tags/TCP-IP/" style="font-size: 16.67px;">TCP/IP</a><a href="/tags/Unix/" style="font-size: 10.00px;">Unix</a><a href="/tags/design-pattern/" style="font-size: 13.33px;">design pattern</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 13.33px;">life</a><a href="/tags/web/" style="font-size: 10.00px;">web</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 13.33px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
+						<a href="/tags/C-C/" style="font-size: 12.50px;">C/C++</a><a href="/tags/Diary/" style="font-size: 10.00px;">Diary</a><a href="/tags/Docker/" style="font-size: 10.00px;">Docker</a><a href="/tags/JavaScript/" style="font-size: 15.00px;">JavaScript</a><a href="/tags/Linux/" style="font-size: 10.00px;">Linux</a><a href="/tags/PM/" style="font-size: 10.00px;">PM</a><a href="/tags/Python/" style="font-size: 12.50px;">Python</a><a href="/tags/TCP-IP/" style="font-size: 17.50px;">TCP/IP</a><a href="/tags/Unix/" style="font-size: 10.00px;">Unix</a><a href="/tags/design-pattern/" style="font-size: 12.50px;">design pattern</a><a href="/tags/designer/" style="font-size: 10.00px;">designer</a><a href="/tags/django/" style="font-size: 10.00px;">django</a><a href="/tags/efficiency/" style="font-size: 10.00px;">efficiency</a><a href="/tags/life/" style="font-size: 12.50px;">life</a><a href="/tags/web/" style="font-size: 10.00px;">web</a><a href="/tags/weekly-note/" style="font-size: 20.00px;">weekly note</a><a href="/tags/个人规划/" style="font-size: 10.00px;">个人规划</a><a href="/tags/学习计划-Mac软件/" style="font-size: 10.00px;">学习计划 Mac软件</a><a href="/tags/年终总结/" style="font-size: 12.50px;">年终总结</a><a href="/tags/心理学/" style="font-size: 10.00px;">心理学</a><a href="/tags/正则表达式/" style="font-size: 10.00px;">正则表达式</a><a href="/tags/阶段总结/" style="font-size: 10.00px;">阶段总结</a><a href="/tags/鸡汤/" style="font-size: 10.00px;">鸡汤</a>
 					</div>
 				</section>
 				
@@ -187,6 +187,165 @@
 	</div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-TCP-IP-完全解读1" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/03/09/TCP-IP-完全解读1/" class="article-date">
+  	<time datetime="2016-03-09T09:29:23.000Z" itemprop="datePublished">3月 9 2016</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/03/09/TCP-IP-完全解读1/">TCP/IP 完全解读之传输层协议</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>BY 凯寓</p>
+<h1 id="传输层协议">传输层协议</h1>
+<p>[TOC]</p>
+<h2 id="1_传输层概述">1 传输层概述</h2>
+<p>传输层位于应用层和网络层之间，其关键功能是将网络层在<strong>两个端系统之间</strong>的交付拓展到运行在两个不同端系统上的<strong>应用层进程之间</strong>的交付服务。相比网络层协议为主机之间提供<code>逻辑通信</code>，传输层协议为运行在不同主机上的应用进程之间提供<code>逻辑通信</code>，传输层协议是在端系统中实现，而不是在路由器中实现，传输层传送的是<strong>报文段（segment）</strong>。</p>
+<p><strong>一方面</strong>，传输层协议提供的服务受制于网络层协议的服务模型：即如果网络层协议无法为主机之间发送的传输层报文段提供时延或带宽的保证，则传输层协议也就无法为进程之间发送的应用层报文提供时延或带宽保证。<strong>另一方面</strong>，传输层又可提供网络层协议无法提供的服务，如保密性，可靠性。</p>
+<p>传输层协议将主机间交付扩展到进程间交付的行为称为<strong>传输层多路复用（transport-layer multiplexing）</strong>与<strong>多路分解（demultiplexing）</strong>，最有名的传输层协议是TCP和UDP。他们的行为有着鲜明的`两极化``，<strong>在一个极端</strong>，UDP仅向通信进程提供多路复用/分解的服务，而不提供其他任何服务（因此它非常简单），<strong>在另一个极端</strong>，TCP向通信进程提供可靠交付、时延保证、带宽保证等一些列服务。具体而言，TCP通过使用流量控制、序号、确认和定时器确保数据正确、按序的从发送进程交付给接受进程，即提供<strong>可靠数据传输（reliable data transfer）</strong>，同时TCP还提供<strong>拥塞控制（congestion control）</strong>。<br>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/Study/">Study</a>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a  href="/2016/03/09/TCP-IP-完全解读1/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+    <article id="post-薛定谔的2016" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/01/11/薛定谔的2016/" class="article-date">
+  	<time datetime="2016-01-11T12:37:27.000Z" itemprop="datePublished">1月 11 2016</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/01/11/薛定谔的2016/">薛定谔的2016</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>镇定一下，我要开始总结了。</p>
+<p>2014年的末尾，我没有为自己预想未来的一年我会有怎样的生活，因为每一个转折点，都会扩散出许多种可能，这些可能的叠加，最终会超出我所有预想的结果。</p>
+<p>在2014年年中，有一个大转折点，我将它称之为1.0生活到2.0生活的转变，因为我认识到自己性格里的不成熟和缺陷，认识到大约二十年的无知以及自以为是。这算是一份特别的工作带给我的最大收获。</p>
+<hr>
+<p>回头将自己2015年的日记回看了一遍，就像又走了一遍2015年，看着自己一点一点的变化。看自己从迷茫到坚定，到焦虑，到淡定，到迟疑，到沉默…</p>
+<p>年初的时候，我给自己定下了许多规划，试图去重建自己的生活习惯，比如坚持写日记，硬规定阅读量，坚持为记录时间，完善GTD。我试着去打破过去二十年懒惰的自己，重构出一个不一样的自己，这个过程，艰难，但显得自然而然。</p>
+<p>而到了八月份，回到这个久违的荒岛（当然，现在已经商业开发的不再是荒岛了），度过最初的适应之后，那种期盼中的生活慢慢的展开，时间就真变成了离弦的箭，因为所有想要做的事情都展开了，在这个过程中，过去半年所规划的生活也被我重新调整。当然，在这个过程里，各种好的坏的习惯被改变，有很多过去无法完成的事情成了自然而然的一件小事。</p>
+<p>在这接下来的半年里，从纠结的选择到淡定，从焦虑到从容。每天沉浸在实验室，感觉时间的每个节点，都被放大成了一个波澜不惊的平面，在这些平面上，我可以做许多事情。而且，我更珍惜每一个时间的断面，想要做更多的事情。</p>
+<p>回到15年年初给自己定下的规划：</p>
+<ul>
+<li>关于阅读：一百本书的量基本完成，后半段大量的技术文档和文章可以填补本来的规划。</li>
+<li>关于日记：止步于开学后不久，因为将精力投入到做事中，无暇记录。</li>
+<li>关于知识结构：基本满意。</li>
+<li>关于自控力：提高明显。</li>
+<li>关于时间管理：不满意，使用了数种GTD 方法，均弃。</li>
+<li>关于性格：有进步，但缺点明显，仍未改变。</li>
+<li>关于健身：基本满意，身体素质提高，需坚持。</li>
+<li>关于未来：有了更多的期许。</li>
+</ul>
+<p>所以，实际上，我的2015年看似是我变动最大的一年，也是环境变化最剧烈的一年，但似乎又是理所当然和波澜不惊的，我预想了一整年的状态，也预料到了这些波澜不惊。</p>
+<p>实际上，2015年带给我的最大最大的收获，是我认识到，未来，哪怕是短短的一年两年，都应当是不可预测的。而如果未来是可测的，那人生一定是可悲的，因为那是一条毫无意义的路，你看不到不一样的风景，看不到未知，看不到未知里所藏匿着的壮美。去年，我一篇日志里写，追赶时间最佳的方式只有阅读，因为每本书实际上都是一段时间线的扩展，它可以将二维的时间提升到三维，四维…在更高的维度下，理解世界的方式在变化，认识人生轨迹的方式也在变化。</p>
+<p>对于2016年，我所要面对的生活，将会有更大的变化，我甚至无法预测在未来的某个时间节点，我会在哪里出现，我在做什么。所以，我把我的二零一六称为薛定谔的二零一六，因为所有的可能都存在，在我没有打开盒子的时候，我不会知道我将为自己创造一个怎样的2016。所以，关于规划，我只写期望。</p>
+<ul>
+<li>关于阅读： 因为阅读量代表的是时间的量，我希望时间越长越好，所以仍然会给自己留下一百本的要求，按照2015年经验，平均每月8+本阅读，每本10w+字数，一个月的阅读量100w+ 难度不高。但鉴于书籍的选择我会尽量筛去口水化严重的书，那就需要花费更多的时间反思和内化，所以最后的实际期望在80~100本之间。2015的后半程没有坚持把每一本书都记录和总结出来，在2016年，一定要坚持将每一本书记录下来。</li>
+<li>关于日记：我希望整合进时间管理中去，2015年有一大部分日记是用来思考和反省的，花费了较多时间。而2016年我希望，日记能作为一种行为习惯，与时间规划一起，用来整理人生。所以，选择一个优秀的APP或者自己开发一个应用，回顾事件和时间。日记的另一部分，用极简的话，记录收获。</li>
+<li>关于自控力：自控力就像肌肉，只有锻炼，才能保持，否则只会越来越差。只要记住这句就好了。</li>
+<li>关于时间管理：是2015年的最大遗憾，也是因为糟糕的时间管理能力，让一整年很多事情做起来毫无头绪，并行多线程互抢资源的情况经常发生。所以，新的一年，结合日记和一个合适的GTD方法，管理自己的时间，将是重点关注的事情。</li>
+<li>关于健身：两天一次。</li>
+<li>关于性格：藏拙，克己，平心，助人。</li>
+<li>关于知识结构：结合时间管理，有计划的补充知识点。就技术而言，两向发展，技术内核学习一个方向，实践coding另一个方向。就知识面而言，依兴趣点规划，比如心理学方面把荣格的作品看完。</li>
+<li>关于写作：2015年，其实总结了不少文章，但是因为懒惰，也因为感觉没有时间去整理，就没有挂在博客上。2016年，我还是应当学会用清晰的文字表达自己的学习内容，研究问题，学会表达。</li>
+</ul>
+<p>整个2015年，我认识到的另一件重要事，也是非常浅显的道理：所有的预想和规划，都无法代替真正的经历和体会，只有实践才能给出答案。所有对2016年的规划，都不过是一种期许，在新的一年，也许自己会面对新的挑战，不期而遇的变化，所有的计划都追赶不上变化，而我唯一要做的，就是努力将时光铺陈在所有美好的事物上。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/年终总结/">年终总结</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/个人总结/">个人总结</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
   
     <article id="post-用Python写一个虚拟解释器" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -598,172 +757,9 @@
 
 
   
-    <article id="post-平淡日子里的刺" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/09/27/平淡日子里的刺/" class="article-date">
-  	<time datetime="2015-09-27T13:54:20.000Z" itemprop="datePublished">9月 27 2015</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/09/27/平淡日子里的刺/">平淡日子里的刺</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>很多人二十五岁已经死了，七十五岁才埋葬。    ——叔本华</strong></p>
-<hr>
-<p>八月十五，中秋，一个人。</p>
-<p>之前的两年时间，都在期待着新生活，而转眼间也在这里过去了一个月，生活平淡，美好。终于开始思考眼前的生活，思考无论有意义还是无意义都不会烦躁的问题。</p>
-<p>一句不恰当的比喻，自己就像从一段漫长的噩梦里苏醒，发现阳光亘古未变的打在脸上，痒痒的，真实的感觉。叔本华说，很多人二十五岁已经死了，七十五岁才埋葬，而我感觉自己好像刚刚复活，扑一扑身上的尘土，重新走入生活。课堂，健身，实验室，聚餐，电影，当下，以及梦想。</p>
-<p>生活以痛吻我，后又赐我以希望。所以，面对那些浮动的喧嚣，又有一种新的心境去审视和面对。前后的时光重叠在眼前的生活里，但对我来说，一切都是新的，都是从头来过。简桢常说的一句话，不为浮华所惑，在认定的道路上努力追求单纯的梦想，随之而来的将是丰厚的人生。所以，这些年生活带给我的痛和希望，都是于我的恩赐，给了我更多的自省和淡定。</p>
-<p>好了，回到正题。中秋结束，九月份基本宣告结束，2015年也就完成了三分之二，审视自己在年初定下的目标，有些惭愧，因为发现有很多习惯仍然没有养成。关于读书，没有做详细的统计，在三月份时候做的统计是二十本，而后到七月份的时候大约有五十本，稍慢于节奏。而后入学一个月的时间里，阅读量下降，主要精力放在了课程，刷题，和填坑。</p>
-<p>虽说我可以通过填充一些小篇幅的书籍来补回阅读量，但是这样无意义的阅读反而是有害的，有一些编写的并不好的书读起来的价值反而不如重看几遍经典书籍，所以今年的百本计划可能完不成了，不过因为开学之后又给自己设定了其他新的目标，所以通过完成几个目标，也算是可以填补这个目标的遗憾吧。</p>
-<p>这个博客的上一篇日志发于三月份，而后的六个月是长长的空白，这说明在一个孤独的、而且操作不便的环境里学习，很快就会遇到瓶颈，天花板让我满怀斗志的原地踏步，毫无寸进。日志依然保持持续更新（从八月份到现在，因为入学相关事宜，日记时断时续），文章依然在写，却感觉没有太多新的思考可供我写，大多数的阅读又都与我过去的思考重复，许多阅读收获我放在里简书的账号里。</p>
-<p>现在入学一个月有余，度过了适应阶段，我又有新的东西可以思考了，也有了新的目标可以期待，所以，这个博客我可以继续下去了，年初的时候我写文章说，自己在两年里完成了一次从 1.0 到 2.0 的成长，那么，现在就是刺激自己从 2.0 向 3.0 成长的过程吧。</p>
-<p>宋冬野有首歌叫《平淡日子里的刺》，韩寒写的词，其实是讲平淡生活里那些猝不及防的无奈，随时会刺痛你，会瞬间刺破幻境，所以他说，生活是这样子，不如诗。</p>
-<p>可是，我需要一把刺，我觉得更像一把锥，时刻让我认真感知生活，努力追逐。我需要这根刺，让我时刻保持清醒。张爱玲说，对于三十岁的人来说，十年八年不过是指缝间的事。她说的是爱情，但在我看来，生活也是如此，如果没有一把刺，三五年转瞬老去，大约要真的像叔本华所说的那样，我们都已死去，却等到七十五岁才埋葬。</p>
-<p>最后，再用《倾城之恋》里的一段话刺痛一下自己（为什么我总把爱情的思考看成人生的思索，我好想忽然明白了什么人生道理）。</p>
-<p><strong>你年轻么？不要紧，过两年就老了。</strong></p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Diary/">Diary</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/随笔/">随笔</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
-    <article id="post-Docker学习笔记-一" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/09/25/Docker学习笔记-一/" class="article-date">
-  	<time datetime="2015-09-25T07:27:44.000Z" itemprop="datePublished">9月 25 2015</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/09/25/Docker学习笔记-一/">Docker学习笔记(一)</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>来自：<a href="https://www.gitbook.com/book/yeasy/docker_practice/details" target="_blank" rel="external">Docker 从入门到实战 Gitbook</a></p>
-<h2 id="什么是Docker">什么是Docker</h2>
-<hr>
-<p>Docker 是一个开源的项目，于2013年诞生，基于Go语言实现，代码在<a href="https://github.com/docker/docker" target="_blank" rel="external">Github</a>上维护。</p>
-<p><strong>Docker 项目的目标是实现轻量级的操作系统虚拟化解决方案</strong>，Docker 的基础是Linux 容器等技术。</p>
-<p>在 LXC 的基础上 Docker 进行了进一步的封装，让用户不需要去关心容器的管理，使得操作更为简便。用户操作 Docker 的容器就像操作一个快速轻量级的虚拟机一样简单。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/30117-b2fb8aee9f40c436.png?imageMogr2/auto-orient/strip%7CimageView2/2" alt="Alt text"></p>
-<p>与传统虚拟机相比，Docker 容器是在操作系统层面实现了虚拟化，直接复用本地主机的操作系统，传统的方式仅在硬件层面上实现。</p>
-<h2 id="Docker优点">Docker优点</h2>
-<hr>
-<p>秒级实现，资源利用率高，除运行应用外，基本不消耗额外系统资源，使应用性能很高，开销更小。</p>
-<h3 id="更快的交付和部署">更快的交付和部署</h3>
-<p>开发者使用标准镜像构建一套开发容器，完成后，运维可以直接使用容器来部署代码。Docker可以快速创建，快速迭代，全程可见。</p>
-<h3 id="更高效的虚拟化">更高效的虚拟化</h3>
-<p>内核级的虚拟化，不需要额外的hypervisor支持。</p>
-<h3 id="更轻松的迁移和扩展">更轻松的迁移和扩展</h3>
-<p>可在任意平台运行，更好的实现迁移。</p>
-<h3 id="更简单的管理">更简单的管理</h3>
-<p>简单修改，以增量的方式分发和更新，实现自动化和高效管理。</p>
-<h2 id="基本概念">基本概念</h2>
-<hr>
-<h3 id="镜像（Image）">镜像（Image）</h3>
-<p>Docker镜像就是一个只读模板。<strong>例如：一个镜像可以包含一个完整的 ubuntu 操作系统环境，里面仅安装了 Apache 或用户需要的其它应用程序。</strong></p>
-<p>用户通过简单的机制创建或者更新现有的镜像。</p>
-<h3 id="容器（Container）">容器（Container）</h3>
-<p>Docker利用容器运行应用。容器是从镜像创建的运行实例。它可以被启动、开始、停止、删除。<strong>每个容器都是相互隔离的、保证安全的平台</strong>。</p>
-<h3 id="仓库（Repository）">仓库（Repository）</h3>
-<p>仓库是集中存放镜像文件的场所。概念与Git相似，注册服务器可以理解为Github这样的托管服务。所以Docker也有仓库和仓库注册服务器的概念。</p>
-<p>仓库分为公开仓库（Public）和私有仓库（Private）两种形式。最大的公开仓库是 <a href="https://hub.docker.com/" target="_blank" rel="external">Docker Hub</a>，存放了数量庞大的镜像供用户下载。 国内的公开仓库包括 <a href="http://dockerpool.com/" target="_blank" rel="external">Docker Pool</a> 等，可以提供大陆用户更稳定快速的访问。</p>
-<p>用户也可以自己创建一个私有仓库，通过<code>push</code>命令上传，通过<code>pull</code>命令下载。</p>
-<h2 id="安装">安装</h2>
-<hr>
-<p>官方网站上有各种环境下的 <a href="https://docs.docker.com/installation/#installation" target="_blank" rel="external">安装指南</a> ， 不再赘述。</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/Docker/">Docker</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/">&laquo; Prev</a><a class="page-number" href="/archives/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/page/3/">3</a><a class="page-number" href="/archives/page/4/">4</a><a class="page-number" href="/archives/page/5/">5</a><a class="extend next" rel="next" href="/archives/page/3/">Next &raquo;</a>
+      <a class="extend prev" rel="prev" href="/archives/">&laquo; Prev</a><a class="page-number" href="/archives/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/page/3/">3</a><a class="page-number" href="/archives/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/archives/page/6/">6</a><a class="extend next" rel="next" href="/archives/page/3/">Next &raquo;</a>
     </nav>
   
 </div>
