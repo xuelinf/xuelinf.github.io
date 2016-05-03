@@ -1,0 +1,87 @@
+<html>
+<head>
+	
+	<title>(level 1)无过滤规则的XSS -- XSS升级之路</title>
+	<meta name="keywords" content="Just do, Just for fun" />
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--<link rel="stylesheet" href="/css/main.css" type="text/css">
+-->
+	<link href="/css/main.css?v=2" rel="stylesheet" type="text/css" />
+    <!--<link rel="stylesheet" href="/css/style.css" type="text/css">
+-->
+    
+
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+
+    
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2"/>
+    
+
+</head>
+
+<body>
+
+<h1 id="XSSer_升级之路">XSSer 升级之路</h1>
+<p>之前积累了XSS 有一段时间，因为目前开始了一件有趣的工程，需要整合非常多的知识，其中Web 安全这一块出现最多的，应该就是XSS，SQL注入了，再加上乌云泡着看别人的文章，看各家大网站的漏洞，决定把这一块知识聚拢一下，写成一篇文章。想了想，从简单到难，那就是一条打怪升级之路，所以就从最简单的反射型漏洞开始，一点一点提高，直到把大部分XSS 的形式找出来。</p>
+<h1 id="level_1_无过滤规则的XSS">level 1 无过滤规则的XSS</h1>
+<p>最简单的跨站，也就是我们说的反射型跨站，也叫作非持久型，参数型跨站脚本。这种类型的脚本出现的面非常的广，互联网上这样的漏洞非常多，一般出没在各路小站点，大站点很少出现。乌云的漏洞列表里，海量的XSS 漏洞都来自互联网上访问量不高的小站，被辛苦挖洞的XSSer 们发掘出来的。</p>
+<p>站在新手村我们的，需要一个最简单的野怪刷一下，这个野怪上下无任何装备，没有一点防御。也就是说，这个XSS 漏洞对于用户的输入，不做任何过滤行为。</p>
+<p>一般来说，XSS 存在的地方，一定是需要有输入和输出概念的，一般的过滤规则，也是出现在输入阶段或者是输出阶段，如果两个都没有过滤，那么很轻松的就造成了漏洞。通常来说，这种洞非常好刷，比较自动化的方式是，建立一个爬虫系统，预设一些URL，爬虫爬取网页，在网页源码中寻找用户可以输入的地方，然后在可以输入的地方，将构造好的XSS 代码以输入形式，构造成请求，然后观察响应，是否对我们的输入做了过滤策略。如果是原本的返回，那么我们就说可能存在有xss漏洞。</p>
+<p>同时，有另一种更为简单的漏洞，是直接在URL 中，如果有直接赋值参数的行为，也相当于一个可输入的位置，我们直接在URL 中将XSS 代码构造在URL 中，观察返回是否做了过滤处理，如果没有，那么就是一个最简单的野怪诞生。</p>
+<p>在乌云中，有不少这样的漏洞，小站很多，大站很少，因为大站一般都有完备的过滤规则，很难在这些小问题上有任何闪失，再加上如今浏览器基本上都有安全策略对此类型进行防御，所以这种威力相对较小。</p>
+<p>之前在HTTP 的文章里，有详细讲过 URL的格式，其基本格式如此：</p>
+<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-03-14622667602815.jpg" alt=""></p>
+<p>每个结构对应的含义如下：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-04-27-14609000091165.jpg" alt=""></p>
+<p>通常的注入发生在query 这一块，而一般一个安全的行为，就是对query 中的字符进行过滤，以防止xss。以百度的URL 为例，一个通常的URL 查询之后的造型是下面这样的：</p>
+<p><a href="http://www.baidu.com/s?wd=%E6%A0%87%E7%82%B9%E7%AC%A6&amp;rsv_spt=1&amp;issp=1&amp;rsv_bp=0&amp;ie=utf-8&amp;tn=baiduhome_pg&amp;inputT=2969" target="_blank" rel="external">http://www.baidu.com/s?wd=%E6%A0%87%E7%82%B9%E7%AC%A6&amp;rsv_spt=1&amp;issp=1&amp;rsv_bp=0&amp;ie=utf-8&amp;tn=baiduhome_pg&amp;inputT=2969</a></p>
+<p>问号之后有一大堆参数，&amp;用来分割参数，他们对应的是什么意思不是本文关注的重点，可以参见这一篇文章<a href="http://www.biaodianfu.com/baidu-url-secret.html" target="_blank" rel="external">百度搜索URL 参数解析</a>。</p>
+<p>其中wd 就是我们所说的搜索关键词，也就是我们的输入，如果我们将此字符改成</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;script&gt;alert(<span class="regexp">/xss/</span>)&lt;<span class="regexp">/script&gt;</span></div></pre></td></tr></table></figure>
+
+<p>在输出时我们看到，URL 变成了如下，可疑的部分被转义了。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https:<span class="comment">//www.baidu.com/s?wd=%22%3Cscript%3Ealert(%27xss%27)%3C%2Fscript%3E&rsv_spt=1&rsv_iqid=0xb3f5d3380002c15f&issp=1&f=3&rsv_bp=1&rsv_idx=2&ie=utf-8&tn=baiduhome_pg&rsv_enter=1&oq=%26lt%3Bscript%26gt%3Balert(%26%2339%3Bxss%26%2339%3B)%26lt%3B%2Fscript%26gt%3B&rsv_t=455e8xS9GVGwfM%2BTxjkNH6uUohEOPZHQFWlqocmOh9s1caJr5IHzVrPJJKJ1OwdTglc3&inputT=5478&rsv_sug3=27&rsv_sug1=21&rsv_sug7=100&rsv_pq=cce2beda0002a800&rsv_sug2=0&rsv_sug4=6278</span></div></pre></td></tr></table></figure>
+
+<p>在这里举一个大站腾讯的简单的xss，是乌云上某马甲提交的，作为一个最简单的XSS 挖给大家学习。网站的网址是这样的：<br><strong><a href="http://app.data.qq.com/?umod=commentsoutlet&amp;act=count&amp;siteid=3&amp;libid=9&amp;dataid=1480&amp;score=1&amp;func=haoping&amp;_=1353475261886" target="_blank" rel="external">http://app.data.qq.com/?umod=commentsoutlet&amp;act=count&amp;siteid=3&amp;libid=9&amp;dataid=1480&amp;score=1&amp;func=haoping&amp;_=1353475261886</a></strong></p>
+<p>如果我们在这个URL 里尝试修改参数，将score 参数改成</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;img src=<span class="number">1</span>&gt;</div></pre></td></tr></table></figure>
+
+<p>而输出的源码并没有发生变化：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-03-14622673299696.jpg" alt=""></p>
+<p>在网易中看到的结果就变成了这样：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-03-14622673544485.jpg" alt=""></p>
+<p>这很显然，就是一个xss漏洞了，将经典的xss 代码插入进去即可：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">score=<span class="xml"><span class="tag">&lt;<span class="title">img</span> <span class="attribute">src</span>=<span class="value">1</span> <span class="attribute">onerror</span>=<span class="value">alert(1);</span>&gt;</span></span></div></pre></td></tr></table></figure>
+
+<p>效果如下：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-03-14622674130351.jpg" alt=""></p>
+<p>这就是一个最无防御的XSS 存在，很明显的，它简单，暴力，当然也是极容易防御的，所以在一个较高级的攻防对抗，或者是大站漏洞中，基本上不会出现这样的漏洞（然而腾讯还是有这样的问题~~）。</p>
+
+
+<!--<a href="http://yoursite.com/2016/05/03/-level-1-无过滤规则的XSS-XSS升级之路/#disqus_thread" class="article-comment-link">Comments</a>-->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'null'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+<div style="display:none">
+<script src="http://s4.cnzz.com/stat.php?id=undefined&web_id=undefined" language="JavaScript"></script>script>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>
