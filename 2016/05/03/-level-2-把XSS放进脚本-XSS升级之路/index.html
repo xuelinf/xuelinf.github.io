@@ -1,0 +1,86 @@
+<html>
+<head>
+	
+	<title>(level 2)把XSS放进脚本 -- XSS升级之路</title>
+	<meta name="keywords" content="Just do, Just for fun" />
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--<link rel="stylesheet" href="/css/main.css" type="text/css">
+-->
+	<link href="/css/main.css?v=2" rel="stylesheet" type="text/css" />
+    <!--<link rel="stylesheet" href="/css/style.css" type="text/css">
+-->
+    
+
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+
+    
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2"/>
+    
+
+</head>
+
+<body>
+
+<h1 id="level_2_包装进script">level 2 包装进script</h1>
+<p>上一等级里，我们的xss 构造格式是在img 中,然后直接通过URL 参数提交，通常反射型的XSS 比较广泛，但是伤害一般来说没有太高，而且比较容易防范。除了img 元素，还有诸如input, iframe，a href, 主要利用的是href 或者 src 可以使用javascript, 或者是使用onerror，表示当前图片无法显示时候可以调用的脚本。更多的内容，接下来详析。</p>
+<p>接下来，我们针对的还是反射型的XSS，仍然是在参数中，作为目标文件中的参数，通过URL 传递给它，但是没有对该参数进行详细的过滤，造成了有机可趁，继续放出腾讯家以前的一个例子，也是乌云上的，网址如下：</p>
+<p><a href="http://activity.soso.com/common/setParentsInfo.php?callback=aaaaaaaaa" target="_blank" rel="external">http://activity.soso.com/common/setParentsInfo.php?callback=aaaaaaaaa</a></p>
+<p>此处的callback 参数，如果没有过滤的话，得到的网页源码里，我们就会看出来，如下：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-03-14622798034256.jpg" alt=""></p>
+<p>拿出这一块的上下文代码，大约构造是这样的：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;script type=<span class="string">'text/javascript'</span>&gt;<span class="built_in">document</span>.domain=<span class="string">'soso.com'</span>;_ret={<span class="string">"_res"</span>:<span class="number">2</span>};<span class="keyword">try</span>{parent.aaaaaa(_ret);}<span class="keyword">catch</span>(err){aaaaaa(_ret);}&lt;<span class="regexp">/script&gt;</span></div></pre></td></tr></table></figure>
+
+<p>aaaaaa如果我们替换成</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;script&gt;alert(<span class="regexp">/xss/</span>)&lt;<span class="regexp">/script&gt;</span></div></pre></td></tr></table></figure>
+
+<p>当然，我们注意到，上边的script 还没有闭合，为了让代码提前跳出前一个script ，我们应该在前边吧sciprt 闭合，这样：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;<span class="regexp">/script&gt;&lt;script&gt;alert(/</span>xss/)&lt;<span class="regexp">/script&gt;</span></div></pre></td></tr></table></figure>
+
+<p>这样，很明显，就会继续发起了XSS 弹窗。但是，如果我们不允许输入破折号呢，上边所说的就没有办法了，但是，这并不代表毫无办法，还有一些具有威胁的函数，比如eval, String.fromCharCode, execute，这些都会造成XSS，也要过滤。如下，我们使用eval() 来构造攻击：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http:<span class="comment">//activity.soso.com/common/setParentsInfo.php?callback=eval('alert(1)');void</span></div></pre></td></tr></table></figure>
+
+<p>callback=eval(‘alert(1)’);void 仍然令我们的源代码语法正确，能够正确执行。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-03-14622803866844.jpg" alt=""></p>
+<p>但是像这样构造出来的情况，其实非常的少见，因为正常传第一个参数进去，开发者都会将 “ 过滤掉，这样构造就失败了。 </p>
+<p>我们知道，XSSer 和 防御者之间的斗争从来就是道高一尺，魔高一丈的过程，防御者绞尽脑汁去过滤所有可能出现的情况，去处理所有可能的奇葩诡异编码情况，而XSSer 又会绞尽脑汁的去挖掘茫茫网络中漏洞，努力用各种奇技淫巧构造出五花八门的形态，看起来诡异无比，然而偏偏又能让javascript 语法正确，正常运行。</p>
+<p>然而xss 却又一直是热门，但并不是很受重视的攻击手法，原因大概是这样的：</p>
+<ol>
+<li>挖洞太麻烦，很耗时间，看上边两个漏洞，其中一个甚至是在某个获取QQ 应用宝上某个app 数据的URL 里发现的，而这种页面甚至很难被发现，所以他的伤害比较低，找到它却又要花费大量时间，而且还有很多构造方法不能成功，需要尝试各种模式。</li>
+<li>这种伤害不是很大的反射型攻击，尚且还有机会通过爬虫自动化的挖掘到漏洞存在的可能，有很多复杂的存储型和DOM 型漏洞，更难通过爬虫挖到。</li>
+<li>需要有良好的HTML，JS 功底，但是呢，如果功底好的话，直接就跑去做前端了，前端业务现在那么缺高级工程师。更多的，还需要有PHP，JSP 功底。</li>
+<li>而Website 设置http-only,crossdomain.xml 时候，很多模式化的xss就失去力量了。</li>
+<li>然而为什么热门呢，因为HTTP 世界的混乱，之前在写Web之困读书笔记的时候，作者也是强力吐槽了这个混乱的HTTP 世界，所以造成了XSS 几乎无处不在，而如果一个利用好的XSS，或者CSRF漏洞，会在某些情况下，造成难以弥补的伤害。</li>
+<li>本质上将，SQL注入和XSS 都是由于代码上相似的漏洞造成的，而SQL 注入的危害要比XSS 看起来危险很多，很多人在挖SQL 注入漏洞的时候，顺手就挖几个XSS，也是很正常的。</li>
+<li>XSS 虽然看起来比较温柔，但是配上社工手段，可造成的影响仍然是不可小觑的，所以XSS 会火下去。</li>
+</ol>
+
+
+<!--<a href="http://yoursite.com/2016/05/03/-level-2-把XSS放进脚本-XSS升级之路/#disqus_thread" class="article-comment-link">Comments</a>-->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'null'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+<div style="display:none">
+<script src="http://s4.cnzz.com/stat.php?id=undefined&web_id=undefined" language="JavaScript"></script>script>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>

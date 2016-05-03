@@ -4,7 +4,7 @@
   <subtitle><![CDATA[代码是一棱刀背，幸好，有此藏身。]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2016-05-03T13:28:22.614Z</updated>
+  <updated>2016-05-03T13:29:57.121Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,54 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[(level 2)把XSS放进脚本 -- XSS升级之路]]></title>
+    <link href="http://yoursite.com/2016/05/03/-level-2-%E6%8A%8AXSS%E6%94%BE%E8%BF%9B%E8%84%9A%E6%9C%AC-XSS%E5%8D%87%E7%BA%A7%E4%B9%8B%E8%B7%AF/"/>
+    <id>http://yoursite.com/2016/05/03/-level-2-把XSS放进脚本-XSS升级之路/</id>
+    <published>2016-05-03T13:29:18.000Z</published>
+    <updated>2016-05-03T13:29:50.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="level_2_包装进script">level 2 包装进script</h1>
+<p>上一等级里，我们的xss 构造格式是在img 中,然后直接通过URL 参数提交，通常反射型的XSS 比较广泛，但是伤害一般来说没有太高，而且比较容易防范。除了img 元素，还有诸如input, iframe，a href, 主要利用的是href 或者 src 可以使用javascript, 或者是使用onerror，表示当前图片无法显示时候可以调用的脚本。更多的内容，接下来详析。</p>
+<p>接下来，我们针对的还是反射型的XSS，仍然是在参数中，作为目标文件中的参数，通过URL 传递给它，但是没有对该参数进行详细的过滤，造成了有机可趁，继续放出腾讯家以前的一个例子，也是乌云上的，网址如下：</p>
+<p><a href="http://activity.soso.com/common/setParentsInfo.php?callback=aaaaaaaaa" target="_blank" rel="external">http://activity.soso.com/common/setParentsInfo.php?callback=aaaaaaaaa</a></p>
+<p>此处的callback 参数，如果没有过滤的话，得到的网页源码里，我们就会看出来，如下：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-03-14622798034256.jpg" alt=""></p>
+<p>拿出这一块的上下文代码，大约构造是这样的：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;script type=<span class="string">'text/javascript'</span>&gt;<span class="built_in">document</span>.domain=<span class="string">'soso.com'</span>;_ret={<span class="string">"_res"</span>:<span class="number">2</span>};<span class="keyword">try</span>{parent.aaaaaa(_ret);}<span class="keyword">catch</span>(err){aaaaaa(_ret);}&lt;<span class="regexp">/script&gt;</span></div></pre></td></tr></table></figure>
+
+<p>aaaaaa如果我们替换成</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;script&gt;alert(<span class="regexp">/xss/</span>)&lt;<span class="regexp">/script&gt;</span></div></pre></td></tr></table></figure>
+
+<p>当然，我们注意到，上边的script 还没有闭合，为了让代码提前跳出前一个script ，我们应该在前边吧sciprt 闭合，这样：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;<span class="regexp">/script&gt;&lt;script&gt;alert(/</span>xss/)&lt;<span class="regexp">/script&gt;</span></div></pre></td></tr></table></figure>
+
+<p>这样，很明显，就会继续发起了XSS 弹窗。但是，如果我们不允许输入破折号呢，上边所说的就没有办法了，但是，这并不代表毫无办法，还有一些具有威胁的函数，比如eval, String.fromCharCode, execute，这些都会造成XSS，也要过滤。如下，我们使用eval() 来构造攻击：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http:<span class="comment">//activity.soso.com/common/setParentsInfo.php?callback=eval('alert(1)');void</span></div></pre></td></tr></table></figure>
+
+<p>callback=eval(‘alert(1)’);void 仍然令我们的源代码语法正确，能够正确执行。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-03-14622803866844.jpg" alt=""></p>
+<p>但是像这样构造出来的情况，其实非常的少见，因为正常传第一个参数进去，开发者都会将 “ 过滤掉，这样构造就失败了。 </p>
+<p>我们知道，XSSer 和 防御者之间的斗争从来就是道高一尺，魔高一丈的过程，防御者绞尽脑汁去过滤所有可能出现的情况，去处理所有可能的奇葩诡异编码情况，而XSSer 又会绞尽脑汁的去挖掘茫茫网络中漏洞，努力用各种奇技淫巧构造出五花八门的形态，看起来诡异无比，然而偏偏又能让javascript 语法正确，正常运行。</p>
+<p>然而xss 却又一直是热门，但并不是很受重视的攻击手法，原因大概是这样的：</p>
+<ol>
+<li>挖洞太麻烦，很耗时间，看上边两个漏洞，其中一个甚至是在某个获取QQ 应用宝上某个app 数据的URL 里发现的，而这种页面甚至很难被发现，所以他的伤害比较低，找到它却又要花费大量时间，而且还有很多构造方法不能成功，需要尝试各种模式。</li>
+<li>这种伤害不是很大的反射型攻击，尚且还有机会通过爬虫自动化的挖掘到漏洞存在的可能，有很多复杂的存储型和DOM 型漏洞，更难通过爬虫挖到。</li>
+<li>需要有良好的HTML，JS 功底，但是呢，如果功底好的话，直接就跑去做前端了，前端业务现在那么缺高级工程师。更多的，还需要有PHP，JSP 功底。</li>
+<li>而Website 设置http-only,crossdomain.xml 时候，很多模式化的xss就失去力量了。</li>
+<li>然而为什么热门呢，因为HTTP 世界的混乱，之前在写Web之困读书笔记的时候，作者也是强力吐槽了这个混乱的HTTP 世界，所以造成了XSS 几乎无处不在，而如果一个利用好的XSS，或者CSRF漏洞，会在某些情况下，造成难以弥补的伤害。</li>
+<li>本质上将，SQL注入和XSS 都是由于代码上相似的漏洞造成的，而SQL 注入的危害要比XSS 看起来危险很多，很多人在挖SQL 注入漏洞的时候，顺手就挖几个XSS，也是很正常的。</li>
+<li>XSS 虽然看起来比较温柔，但是配上社工手段，可造成的影响仍然是不可小觑的，所以XSS 会火下去。</li>
+</ol>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="level_2_包装进script">level 2 包装进script</h1>
+<p>上一等级里，我们的xss 构造格式是在img 中,然后直接通过URL 参数提交，通常反射型的XSS 比较广泛，但是伤害一般来说没有太高，而且比较容易防范。除了img 元素，还]]>
+    </summary>
+    
+      <category term="security" scheme="http://yoursite.com/tags/security/"/>
+    
+      <category term="Study" scheme="http://yoursite.com/categories/Study/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[(level 1)无过滤规则的XSS -- XSS升级之路]]></title>
@@ -2660,57 +2708,6 @@
       <category term="Diary" scheme="http://yoursite.com/tags/Diary/"/>
     
       <category term="随笔" scheme="http://yoursite.com/categories/%E9%9A%8F%E7%AC%94/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[Docker学习笔记(一)]]></title>
-    <link href="http://yoursite.com/2015/09/25/Docker%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E4%B8%80/"/>
-    <id>http://yoursite.com/2015/09/25/Docker学习笔记-一/</id>
-    <published>2015-09-25T07:27:44.000Z</published>
-    <updated>2015-09-25T07:41:44.000Z</updated>
-    <content type="html"><![CDATA[<p>来自：<a href="https://www.gitbook.com/book/yeasy/docker_practice/details" target="_blank" rel="external">Docker 从入门到实战 Gitbook</a></p>
-<h2 id="什么是Docker">什么是Docker</h2>
-<hr>
-<p>Docker 是一个开源的项目，于2013年诞生，基于Go语言实现，代码在<a href="https://github.com/docker/docker" target="_blank" rel="external">Github</a>上维护。</p>
-<p><strong>Docker 项目的目标是实现轻量级的操作系统虚拟化解决方案</strong>，Docker 的基础是Linux 容器等技术。</p>
-<p>在 LXC 的基础上 Docker 进行了进一步的封装，让用户不需要去关心容器的管理，使得操作更为简便。用户操作 Docker 的容器就像操作一个快速轻量级的虚拟机一样简单。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/30117-b2fb8aee9f40c436.png?imageMogr2/auto-orient/strip%7CimageView2/2" alt="Alt text"></p>
-<p>与传统虚拟机相比，Docker 容器是在操作系统层面实现了虚拟化，直接复用本地主机的操作系统，传统的方式仅在硬件层面上实现。</p>
-<h2 id="Docker优点">Docker优点</h2>
-<hr>
-<p>秒级实现，资源利用率高，除运行应用外，基本不消耗额外系统资源，使应用性能很高，开销更小。</p>
-<h3 id="更快的交付和部署">更快的交付和部署</h3>
-<p>开发者使用标准镜像构建一套开发容器，完成后，运维可以直接使用容器来部署代码。Docker可以快速创建，快速迭代，全程可见。</p>
-<h3 id="更高效的虚拟化">更高效的虚拟化</h3>
-<p>内核级的虚拟化，不需要额外的hypervisor支持。</p>
-<h3 id="更轻松的迁移和扩展">更轻松的迁移和扩展</h3>
-<p>可在任意平台运行，更好的实现迁移。</p>
-<h3 id="更简单的管理">更简单的管理</h3>
-<p>简单修改，以增量的方式分发和更新，实现自动化和高效管理。</p>
-<h2 id="基本概念">基本概念</h2>
-<hr>
-<h3 id="镜像（Image）">镜像（Image）</h3>
-<p>Docker镜像就是一个只读模板。<strong>例如：一个镜像可以包含一个完整的 ubuntu 操作系统环境，里面仅安装了 Apache 或用户需要的其它应用程序。</strong></p>
-<p>用户通过简单的机制创建或者更新现有的镜像。</p>
-<h3 id="容器（Container）">容器（Container）</h3>
-<p>Docker利用容器运行应用。容器是从镜像创建的运行实例。它可以被启动、开始、停止、删除。<strong>每个容器都是相互隔离的、保证安全的平台</strong>。</p>
-<h3 id="仓库（Repository）">仓库（Repository）</h3>
-<p>仓库是集中存放镜像文件的场所。概念与Git相似，注册服务器可以理解为Github这样的托管服务。所以Docker也有仓库和仓库注册服务器的概念。</p>
-<p>仓库分为公开仓库（Public）和私有仓库（Private）两种形式。最大的公开仓库是 <a href="https://hub.docker.com/" target="_blank" rel="external">Docker Hub</a>，存放了数量庞大的镜像供用户下载。 国内的公开仓库包括 <a href="http://dockerpool.com/" target="_blank" rel="external">Docker Pool</a> 等，可以提供大陆用户更稳定快速的访问。</p>
-<p>用户也可以自己创建一个私有仓库，通过<code>push</code>命令上传，通过<code>pull</code>命令下载。</p>
-<h2 id="安装">安装</h2>
-<hr>
-<p>官方网站上有各种环境下的 <a href="https://docs.docker.com/installation/#installation" target="_blank" rel="external">安装指南</a> ， 不再赘述。</p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<p>来自：<a href="https://www.gitbook.com/book/yeasy/docker_practice/details" target="_blank" rel="external">Docker 从入门到实战 Gitbook</a></p>
-<h2 ]]>
-    </summary>
-    
-      <category term="Docker" scheme="http://yoursite.com/tags/Docker/"/>
-    
-      <category term="Docker" scheme="http://yoursite.com/categories/Docker/"/>
     
   </entry>
   
