@@ -4,7 +4,7 @@
   <subtitle><![CDATA[代码是一棱刀背，幸好，有此藏身。]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2016-05-03T13:29:57.121Z</updated>
+  <updated>2016-05-04T03:32:44.413Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,120 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[HTML的纷争 -- 《The Tangled Web》]]></title>
+    <link href="http://yoursite.com/2016/05/04/HTML%E7%9A%84%E7%BA%B7%E4%BA%89-%E3%80%8AThe-Tangled-Web%E3%80%8B/"/>
+    <id>http://yoursite.com/2016/05/04/HTML的纷争-《The-Tangled-Web》/</id>
+    <published>2016-05-04T03:31:30.000Z</published>
+    <updated>2016-05-04T03:32:34.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="HTML_的纷争">HTML 的纷争</h1>
+<p>HTML 语言的混乱主要源于四种主要解析引擎各自为政，IE 的Trident引擎，Firefox 的Gecko ,Safari 和Chrome 的Webkit,Opera 的Presto. </p>
+<h2 id="HTML_文档的基本概念">HTML 文档的基本概念</h2>
+<p><strong>语法</strong></p>
+<p>HTML 是标签组成的层级结构，文本穿插其中，而主要是使用无个字符进行约束和限制，<strong>左右尖括号，单引号，双引号，&amp;</strong>，所以说，HTML 里会有一些针对这些字符的规则：</p>
+<ul>
+<li>HTML 文档的绝大部分区域不应该出现单个「&amp;」符号。</li>
+<li>HTML 标签内部不应该出现左右尖括号。</li>
+<li>文本节点的左尖括号是危险的。</li>
+<li>标签中出现引号字符串可能导致意想不到的效果。</li>
+</ul>
+<p>以上几条规劝，实际上就是在告诫这样书写的代码，随时会被攻击者抓住，利用代码的缺陷，构造XSS 或者是SQL注入。</p>
+<p><strong>文档解析模式</strong></p>
+<p>对于传统的HTML，解析器会修复大部分语法上的不合规，同时不区分大小写，参数值不一定要用括号括起来，某些标签可以隐式闭合，而对于XML 来说，标签必须严格匹配，区分大小写，可以整合其他兼容格式内容。</p>
+<p>值得一提的是，对于HTML ，碰到某些标签后，会落入特殊模式，直到出现特定的终止字符才会退出状态。如style, script, textarea, xmp 直到出现反斜杠匹配，才会退出。</p>
+<p>而对于XML，禁止出现单个「&lt;」和「&amp;」，还有一个特殊的语法，只要一”&lt;![CDATA[“字符串开头，以”]])”结束的，中间短路可以封装含有人以标签的任意原始文本数据。</p>
+<p><strong>语义之争</strong>：Tim Berners-Lee 的语义网梦想，这里还是比较遥远，不做进一步探讨。</p>
+<h2 id="HTML_解析器的行为"><strong>HTML 解析器的行为</strong></h2>
+<p>对于XML 来说，不需要担心，因为解析器的错误几乎零容忍。但是，对于HTML 来说，简直就是灾难，为了最大程度的解析，HTML 会以各种让人摸不着头脑的大胆的方式猜测网页作者的用途。以下边这个标签为例：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-04-14623256480455.jpg" alt=""></p>
+<p>先不考虑它没有闭合仍然正常被解析这件事，看各家解析器做出的各种支持：</p>
+<ul>
+<li>IE 浏览器允许吧空字节NUL（0x00） 插入到1位置</li>
+<li>2，4的空白位置可以使用垂直制表符(0x0b)或者进纸换页符(0x0c)替换，令人惊奇的是FireFox 允许在2 用单个普通的正斜杠代替。</li>
+<li>3，曾经WebKit 甚至允许此处有正斜杠使用。</li>
+<li>位置5，在IE还能接受反引号。</li>
+<li>被引号括起来的参数，后边实际上隐式的跟着一个空格符，所以位置6空格可以去掉。</li>
+</ul>
+<p>一个常见的攻击手段就是xss，此处借助title,我们将 hello world 替换成 hello world” onerror=”alert(1) 于是，对于原标签就变成了：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;img src=image.jpg tile=<span class="string">"hello world"</span>onerror=<span class="string">"alert(1)"</span> <span class="keyword">class</span>=example&gt;</div></pre></td></tr></table></figure>
+
+<p>很自然的一个脚本被我们植入进去了，一个xss 就被触发了。</p>
+<p><strong>多重标签的交互</strong></p>
+<p>在不正常的HTML 里，还会出现多个HTML 标签堆叠在一起，看起来就让人头疼，而浏览器在解析的时候，也会有区别，比如:</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;i &lt;b&gt;</div></pre></td></tr></table></figure>
+
+<p>大多数浏览器会先解析成<strong>‘&lt; i &gt;’</strong> ，而把&lt; b 视为无效的标签参数。</p>
+<p>另外，整个文档结束时候标签未闭合的情况也让人摸不清头脑。比如：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;i foo=<span class="string">"&lt;b&gt;"</span> [EOF]</div></pre></td></tr></table></figure>
+
+<p>大多数浏览器解析为i 的标签，或者是整个忽略掉，但对于IE 和 Opera 却从后往前处理，把这一串理解成 b 的标签。</p>
+<p>所以假如攻击者，可以阶段加载的页面，就可以通过构造手段，让浏览器解析成完全不同的内容。</p>
+<h2 id="HTML_实体编码">HTML 实体编码</h2>
+<p>（由于MarkDown语言里，自动把这些编码识别出来了，包括尖括号，只好中间加空格或这种方式来书写。）</p>
+<p>hTML 的实体编码格式是以&amp;开头，以分号结尾，在HTML 规范里，散步着无数这样的命名实体，比如&amp; lt; 插入左尖括号，&amp; gt;用于插入右尖括号，&amp; amp; 替换 &amp;符号自身。&amp; rarr; 代表一个Unicode箭头等等。</p>
+<p>除了命名实体，还可以插入任意十进制ASCII 或者 Unicode 字符编码，样式是 &amp;#数字；<br>例如 &amp;# 60; 被识别成左尖括号，&amp;# 62; 别识别为右尖括号。而十六进制的标记符在这在编码前边加一个x,所以 &amp;# x3c; 仍然是一个左尖括号。</p>
+<p>对于HTML 来说，解析器能识别在文本节点和参数值里边的实体编码，在创建文档树的时候，透明的对这些编码进行解码。</p>
+<p>但是有一点疑惑的是，在识别和解析HTML 实体任务重，有一些奇怪的解析，比如传统解析中，只要实体名称后边跟着的字符不是字母数字，即使是少了分号，实体名还是被接受了。对于数字型的实体，后边可以跟任意多个0，导致一个超长的数字串，会造成出错。</p>
+<h2 id="HTTP/HTML_交互语义">HTTP/HTML 交互语义</h2>
+<p>一般来说，我们会在HTTP 的头域指定内容的一些信息，比如Content-Type, Content-Disposition, Transfer-Encoding等等，然而考虑如果我们不适用HTTP 传输HTML，甚至是直接从本地加载HTML，就不能依靠HTTP 的头域来确定编码等信息了。如果缺了像 MIME type 或者字符集这样关键参数，就会破事浏览器随意处置文档的编码解析问题。</p>
+<p>解决办法就是文档开头声明&lt; meta http-equiv=…&gt; 指令进行编码设定，一个典型的指定是这样的：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">meta</span> <span class="attribute">http-equiv</span>=<span class="value">"Content-Type"</span> <span class="attribute">content</span>=<span class="value">"text/html;charset=utf-8"</span>&gt;</span></div></pre></td></tr></table></figure>
+
+
+
+<p>如果多个http-equiv冲突，或者从服务器端返回HTTP 头域有冲突的话，浏览器表现就会很不一致，一般优先支持hTTP 响应头，然后支持第一个出现的charset。</p>
+<h2 id="超链接与内容包含">超链接与内容包含</h2>
+<p>这一块是XSS 的重灾区。</p>
+<p>一个单纯的HTML 链接写法是这样的：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"http://www.example.com/"</span>&gt;</span>click me!<span class="tag">&lt;/<span class="title">a</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>对于这个超链接，它支持指向浏览器支持的所有协议，包括伪URL，如data: javascript:。</p>
+<p>同时，该语法可选的target参数有四种，<strong>_blank</strong>总是打开新窗口；<strong>_parent</strong> 转到包含发出当前链接文档的上一级视图；<strong>_top</strong> 转到浏览器最顶级窗口。<strong>_self</strong> 和没有设置这个值一样。</p>
+<p><strong>表单和表单触发的请求</strong></p>
+<p>XSS 重灾区。</p>
+<p>一个典型的表单写法如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">form</span> <span class="attribute">method</span>=<span class="value">GET</span> <span class="attribute">action</span>=<span class="value">"/process_form.cgi"</span>&gt;</span></div><div class="line">名字：<span class="tag">&lt;<span class="title">input</span> <span class="attribute">type</span>=<span class="value">text</span> <span class="attribute">name</span>=<span class="value">given</span>&gt;</span></div><div class="line">姓氏：<span class="tag">&lt;<span class="title">input</span> <span class="attribute">type</span>=<span class="value">text</span> <span class="attribute">name</span>=<span class="value">family</span>&gt;</span></div><div class="line">...</div><div class="line"><span class="tag">&lt;<span class="title">input</span> <span class="attribute">type</span>=<span class="value">submit</span> <span class="attribute">value</span>=<span class="value">"完成后提交"</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">form</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>值得注意的是，form 彼此不能嵌套，如果嵌套了，只有最外层的有效。</p>
+<p>如果method 为GET，那么包含的字段名称和他们的值，会以百分号编码机制转义，但其中空格(0x20) 会被以加号代替而非%20,而所有的加号被编码成%2b 。经过编码的「名称=值」数据对用&amp; 连接付分割，组成完整的字符串。</p>
+<p>如果method 是POST，分几种情况：</p>
+<ul>
+<li>默认情况下，application/x-www-form-urlencoded 编码方式，信息组成方式与GET 方式相同，不同的是数据会放在请求头的数据体部分提交，目标URL 查询字符串和其他部分保持不变。<strong>潜在的问题，如果查询字符串和POST 数据体参数相同，冲突，可能会造成HTTP 参数污染</strong></li>
+<li>额外的把form 标签中的编码设置为enctype = “text/plain”。而采用这种做法，字段的名称和值不会以百分号编码方式进行编码，某些浏览器可能会把空格替换成加号，而原来用于分割的&amp; 以换行符替换。因此，这样格式的数据，无法明确的对赎金进行解析，因为无法完全区分换行符和等号是表单带进来的，还是浏览器加入的。</li>
+<li>entype = “multipart/form-data”，通过表单提交用户选择的文件时候，要用这种模式，会产生一系列较短的MIME 消息，对应于提交的每个字段。然后每个字段会有一个由哭护短选择的特定符号分割。</li>
+</ul>
+<p><strong>Frame 框架</strong></p>
+<p>其作用是使HTML 文档内嵌和显示另一个页面中，有独立的文档视图，甚至独立的JS 环境。对于src 值的限定，与其他链接的规则基本相同， 所以 iframe 也是一个安全隐含。</p>
+<p><strong>其他特定的内容</strong></p>
+<p>包括图片，层级样式表，客户端脚本，插件内容等等，这些不再赘述，他们都有XSS 的风险。</p>
+<h2 id="安全工程">安全工程</h2>
+<ul>
+<li>良好的规范，良好的规范，良好的规范，毫无疑问要确保输出统一的、有效的、浏览器支持的Content-type 响应头和 charset 字符集信息，以免文档不能按照原有意思解析。</li>
+<li>文档包括可被控制的信息时，应当充分考虑到漏洞的可能。<ul>
+<li>针对文本部分里用户提供内容：应当以实体编码方式处理左右尖括号和&amp; ， 以及其他的各种ASCII等编码问题。同时，某些Unicode 元字符 U+202E 可能会改变之后文本的显示方向和顺序，<strong>是不是想起了微信</strong>。</li>
+<li>针对style 和 on* 标签参数，要做多重编码转义处理，但这种处理往往又有可能出错，所以处处小心。</li>
+<li>其他的HTML 参数值，对攻击者能够控制的输入，总是用引号来括起来，对左右尖括号和&amp; 以及任何<strong>单独出现的引号</strong>都要进行实体编码。同时，不要对URL 或其他参数有问题的值做黑名单验证，反而会造成脚本执行漏洞。</li>
+<li>特殊的解析模式下，如script, style 区块里的内容，仍然是仔细处理引号字符串，左右尖括号，所有非打印字符都应做好合适的转义处理。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>HTML 部分写完，但是要想完全搞清楚HTML 编码部分的问题，简直是一件不可能完成的任务，曾经有本书叫《Web Application Obfuscation》，它企图创建出能拦截所有已知的危险模式的过滤器，同时又不会影响到其他段落的正常功能，而实际上，这是不可能完成的任务。</p>
+<p>一个良好的方法是用一个解析器，把输入的文档翻译成放在内存里的层级文档树，然后去除掉那些无法识别的参数和标签，和所有不需要的标签、参数、参数值。然后在对文档树进行良好的排序和转义，这样看起来要方便和清晰许多。</p>
+<p>另外，HTML 中存在问题，造成最大的影响就是XSS 和CSRF 这两个攻击手段，攻击者会绞尽脑汁的绕过开发者设置的层层障碍，他们的最终目的无论如何，都是试图通过各种混淆的代码，让解析器理解成其他意思，达成攻击效果。而XSS 的三种攻击模式，反射型，储存型，DOM 型，都是在这些修修补补的篱笆上找一个足以穿越过去的漏洞。</p>
+<p>在配合上HTTP 的问题，可以创造一切可能，对于XSS 的世界，脑洞有多大，可能有多大。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="HTML_的纷争">HTML 的纷争</h1>
+<p>HTML 语言的混乱主要源于四种主要解析引擎各自为政，IE 的Trident引擎，Firefox 的Gecko ,Safari 和Chrome 的Webkit,Opera 的Presto. </p>
+<h2 i]]>
+    </summary>
+    
+      <category term="TCP/IP" scheme="http://yoursite.com/tags/TCP-IP/"/>
+    
+      <category term="Study" scheme="http://yoursite.com/categories/Study/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[(level 2)把XSS放进脚本 -- XSS升级之路]]></title>
@@ -2674,40 +2788,6 @@
       <category term="PM" scheme="http://yoursite.com/tags/PM/"/>
     
       <category term="读书笔记" scheme="http://yoursite.com/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[平淡日子里的刺]]></title>
-    <link href="http://yoursite.com/2015/09/27/%E5%B9%B3%E6%B7%A1%E6%97%A5%E5%AD%90%E9%87%8C%E7%9A%84%E5%88%BA/"/>
-    <id>http://yoursite.com/2015/09/27/平淡日子里的刺/</id>
-    <published>2015-09-27T13:54:20.000Z</published>
-    <updated>2015-09-27T13:58:59.000Z</updated>
-    <content type="html"><![CDATA[<p><strong>很多人二十五岁已经死了，七十五岁才埋葬。    ——叔本华</strong></p>
-<hr>
-<p>八月十五，中秋，一个人。</p>
-<p>之前的两年时间，都在期待着新生活，而转眼间也在这里过去了一个月，生活平淡，美好。终于开始思考眼前的生活，思考无论有意义还是无意义都不会烦躁的问题。</p>
-<p>一句不恰当的比喻，自己就像从一段漫长的噩梦里苏醒，发现阳光亘古未变的打在脸上，痒痒的，真实的感觉。叔本华说，很多人二十五岁已经死了，七十五岁才埋葬，而我感觉自己好像刚刚复活，扑一扑身上的尘土，重新走入生活。课堂，健身，实验室，聚餐，电影，当下，以及梦想。</p>
-<p>生活以痛吻我，后又赐我以希望。所以，面对那些浮动的喧嚣，又有一种新的心境去审视和面对。前后的时光重叠在眼前的生活里，但对我来说，一切都是新的，都是从头来过。简桢常说的一句话，不为浮华所惑，在认定的道路上努力追求单纯的梦想，随之而来的将是丰厚的人生。所以，这些年生活带给我的痛和希望，都是于我的恩赐，给了我更多的自省和淡定。</p>
-<p>好了，回到正题。中秋结束，九月份基本宣告结束，2015年也就完成了三分之二，审视自己在年初定下的目标，有些惭愧，因为发现有很多习惯仍然没有养成。关于读书，没有做详细的统计，在三月份时候做的统计是二十本，而后到七月份的时候大约有五十本，稍慢于节奏。而后入学一个月的时间里，阅读量下降，主要精力放在了课程，刷题，和填坑。</p>
-<p>虽说我可以通过填充一些小篇幅的书籍来补回阅读量，但是这样无意义的阅读反而是有害的，有一些编写的并不好的书读起来的价值反而不如重看几遍经典书籍，所以今年的百本计划可能完不成了，不过因为开学之后又给自己设定了其他新的目标，所以通过完成几个目标，也算是可以填补这个目标的遗憾吧。</p>
-<p>这个博客的上一篇日志发于三月份，而后的六个月是长长的空白，这说明在一个孤独的、而且操作不便的环境里学习，很快就会遇到瓶颈，天花板让我满怀斗志的原地踏步，毫无寸进。日志依然保持持续更新（从八月份到现在，因为入学相关事宜，日记时断时续），文章依然在写，却感觉没有太多新的思考可供我写，大多数的阅读又都与我过去的思考重复，许多阅读收获我放在里简书的账号里。</p>
-<p>现在入学一个月有余，度过了适应阶段，我又有新的东西可以思考了，也有了新的目标可以期待，所以，这个博客我可以继续下去了，年初的时候我写文章说，自己在两年里完成了一次从 1.0 到 2.0 的成长，那么，现在就是刺激自己从 2.0 向 3.0 成长的过程吧。</p>
-<p>宋冬野有首歌叫《平淡日子里的刺》，韩寒写的词，其实是讲平淡生活里那些猝不及防的无奈，随时会刺痛你，会瞬间刺破幻境，所以他说，生活是这样子，不如诗。</p>
-<p>可是，我需要一把刺，我觉得更像一把锥，时刻让我认真感知生活，努力追逐。我需要这根刺，让我时刻保持清醒。张爱玲说，对于三十岁的人来说，十年八年不过是指缝间的事。她说的是爱情，但在我看来，生活也是如此，如果没有一把刺，三五年转瞬老去，大约要真的像叔本华所说的那样，我们都已死去，却等到七十五岁才埋葬。</p>
-<p>最后，再用《倾城之恋》里的一段话刺痛一下自己（为什么我总把爱情的思考看成人生的思索，我好想忽然明白了什么人生道理）。</p>
-<p><strong>你年轻么？不要紧，过两年就老了。</strong></p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<p><strong>很多人二十五岁已经死了，七十五岁才埋葬。    ——叔本华</strong></p>
-<hr>
-<p>八月十五，中秋，一个人。</p>
-<p>之前的两年时间，都在期待着新生活，而转眼间也在这里过去了一个月，生活平淡，美好。终于开始思考眼前的生活，思考无论有意]]>
-    </summary>
-    
-      <category term="Diary" scheme="http://yoursite.com/tags/Diary/"/>
-    
-      <category term="随笔" scheme="http://yoursite.com/categories/%E9%9A%8F%E7%AC%94/"/>
     
   </entry>
   
