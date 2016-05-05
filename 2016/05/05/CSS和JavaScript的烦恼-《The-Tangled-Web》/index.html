@@ -1,0 +1,251 @@
+<html>
+<head>
+	
+	<title>CSS和JavaScript的烦恼 -- 《The Tangled Web》</title>
+	<meta name="keywords" content="Just do, Just for fun" />
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--<link rel="stylesheet" href="/css/main.css" type="text/css">
+-->
+	<link href="/css/main.css?v=2" rel="stylesheet" type="text/css" />
+    <!--<link rel="stylesheet" href="/css/style.css" type="text/css">
+-->
+    
+
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+
+    
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2"/>
+    
+
+</head>
+
+<body>
+
+<h1 id="CSS和JavaScript的烦恼">CSS和JavaScript的烦恼</h1>
+<h2 id="CSS">CSS</h2>
+<p>CSS 是能够做到网页表现和内容分离的样式设计语言，有人爱之深切，有人恨之入骨。由于CSS 的存在，让HTML 在语义学上越来越不重要，你随便打开一个网页，翻看一下源码，就会发现，满屏幕的div, 只起到了结构的作用，Tim Berners-Lee 的语义网梦想被CSS 阻挡，因为即使全屏的div，css 仍然能通过他五花八门的指令，伪类选择器，伪函数等等实现一个美观的网页。</p>
+<p>当然，这里谈CSS， 并不是讲切图的，而是在CSS 里，同样存在着种种漏洞，主要是以XSS 为主的漏洞，所以对CSS 的探讨也在所难免。</p>
+<h3 id="基本语法">基本语法</h3>
+<p>一般使用方法有直接在&lt; style &gt;中使用，能够全局生效。或者通过&lt; link rel=stylesheet &gt; 引入外部的css 文件。或者是直接为某个标签赋予style参数。</p>
+<p>选择器，包括复杂点的伪类选择器这里就不说了，只要稍微用过的人都知道，或者去W3C shcool也能看到详细的介绍。在CSS 的规则里，属性值是其最重要的东西，大约格式有三种：</p>
+<ul>
+<li><strong>原始文本</strong>：主要是用于设定一些数值型的值，RGB 向量，或者名字代指的原色等，以及一些预定好的关键词，比如 absolute, left, center等等</li>
+<li><strong>引号括起来的字符串</strong> ： 当CSS 属性的值不是固定的关键词时，两边用单引号括起来，但是这条规则并不总是如此，比如设置字体，或者某些URL 时候，并不需要引号，而content 属性则需要。</li>
+<li><strong>函数表示法</strong>： 有一些设计参数的伪函数，比如讲独立的のRGB 颜色转换成RGB代码的 rgb() , 以及一个大多数人都能用到的url(),同时还有一些比如scale(), rotate(), skew() 等等。<strong>特别的，IE浏览器中有一个函数expression(),可以在css 中嵌入JavaScript语句，这个函数一旦被黑客控制，后果可想而知。</strong></li>
+</ul>
+<p><strong>@指令和 XBL绑定</strong></p>
+<p>除了上边所说的选择器，属性功能，CSS 还支持一种以@ 开头的格式，允许导入独立样式，同时能够改变样式表各种设定，比如指定命名空间，设定不同的显示媒体使用的不同的样式表（如今的跨设备就是如此)。</p>
+<p>有两个重要的指令：</p>
+<ul>
+<li>@charset 用于设置当前CSS 区块的字符集格式</li>
+<li>@import 在样式表中插入一个外部文件，@import “foo.css”; @import url(‘foo.css’); @import ‘foo.css’; 这几种表示格式是一样的。</li>
+</ul>
+<p>关于XBL 绑定，全称叫XML Binding Language，参见<a href="https://zh.wikipedia.org/wiki/XBL" target="_blank" rel="external">XBL维基百科</a>用于描述如何将其他文档中的元素（如XPCOM的功能）绑定到部件（如XUL部件）。可以使用级联样式表（CSS）或文档对象模型（DOM）两种方式绑定，绑定可为部件创建新的行为。绑定可以包含已注册到“被绑定元素”的事件处理程序，实现对“被绑定元素”的新的方法和属性访问，包括“被绑定元素”内的“匿名内容”。</p>
+<p>该语言现在算是Mozilla 专有，FireFox 中的一个特性，利用 -moz-binding ，可以从外部源载入外部内容指令，可包括一些JavaScript代码。目前该使用方式并不明朗，当然看起来其中也有着不小的XSS 风险。</p>
+<p>值得注意的是，上边提到的@import, url() 都存在有引入伪URL 的安全隐患，大多数浏览器都不接受CSS 的上下文环境使用脚本，但是IE 6 却支持，可以想象，IE6 还存在有大量漏洞，而在中国这片国土，IE 6仍然有不小的占有量。</p>
+<p><strong>交互过程</strong></p>
+<p>之前说，CSS 和HTML 是各自独立的，也就是说在执行过程中，会先解析HTML，然后解析CSS，但是，如果在CSS 属性里包含了某些HTML 语法，就会造成问题，比如：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">style</span>&gt;</span><span class="css"></span></div><div class="line"><span class="tag">some_descriptor</span> <span class="rules">{</span></div><div class="line">    <span class="rule"><span class="attribute">background</span>:<span class="value"> <span class="function">url</span>(<span class="string">'http://www.example.com/</span></span></span><span class="tag">&lt;/<span class="title">style</span>&gt;</span><span class="tag">&lt;<span class="title">h1</span>&gt;</span>hi!');</div><div class="line">    }</div><div class="line"><span class="tag">&lt;/<span class="title">style</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>如此这般，即使是放在了引号里，html对style 的解析也会提前结束，造成问题。</p>
+<h3 id="重新同步的风险">重新同步的风险</h3>
+<p>很明显的CSS 的发展之路，深受HTML 的影响，所以在CSS 的解析上，和HTML 一样存在着许多让人摸不清头脑的问题，比如，<strong>解析器碰到错误时，仍会继续工作直到碰到下一对匹配的尖括号或大括号括号恢复正常解析</strong>，比如：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">a {</div><div class="line">  fklj@#$%@$@!</div><div class="line">}</div><div class="line">img {</div><div class="line">  border: 1px solid red;</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>尽管img 前边的解析的是错误的，仍然会正常解析img。利用这种特性，我们很容器就能想起一些攻击方式，比如对对某些浏览器输入一些有效的输入，对另一些浏览器，却能造成CSS 错误，利用CSS 解析器对出错CSS 的重新同步处理，到能导致一些特别的攻击行为诞生。</p>
+<p>举个栗子，比如IE 的浏览器对CSS多行字符串文本支持，所以如果用户提供的CSS 字符串里边包含CR和LF 换行符的话，IE 是OK 的，所以网站开发者，不会对此进行过滤，但是对其他浏览器确实错误的，于是就导致了前边解析错误，只能解析后边恶意植入的代码：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">some_selector {</div><div class="line">   content: 'Attacker-controller text...</div><div class="line">            } evil_rule {margin-left: -1000px;}';</div><div class="line">             }</div></pre></td></tr></table></figure>
+
+<p>对于其他浏览器，由于前边的解析错误，css 会跳到恶意代码那里判定为正常代码执行。最简单的解决办法就是禁止它，不要对IE 姑息。</p>
+<p>另外一些存在的问题是，CSS 之间兼容的we附体，比如一些老版本的解析不明白新版本的内容，比如CSS3 里的中括号，不过现在好像CSS3以前的版本已经绝迹，在此就不再赘述了。</p>
+<h3 id="又见字符编码">又见字符编码</h3>
+<p>字符编码似乎是围绕了整个Web 的问题，毕竟Web 是一个以内容交流为主要功能的平台，各种编码在所难免，问题也在所难免。</p>
+<p>在CSS 中，为了在CSS字符串中使用一些保留字符或者有问题的字符，CSS 提僧了不太正统的策略。<strong>它使用反斜杠\ 后边跟1~6位十六进制数字</strong>的方式，再这样的策略下，比如字母e, 可以编辑成\65,\065,\000065, 一般来说，只有最后一种方法才不会产生歧义，比如说teak,编码成 t\65ak，就会转义成\65a。而css 避免这种情况的方法，不过是在每个转义序列后边加上空格。</p>
+<p>存在安全问题是，很多CSS 解析器 竟然能够接受<strong>未被引号括起来的字符串里的任意转义序列</strong>，特别的在IE 中，转义的优先级还要高于伪函数语法解析，下边这样的结果是一样的：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="tag">color</span>: <span class="tag">expression</span>(<span class="tag">alert</span>(1))</div><div class="line"><span class="tag">color</span>: <span class="tag">express</span>\028 <span class="tag">alert</span> \028 1 \029 \029</div></pre></td></tr></table></figure>
+
+<p>甚至在IE 中，url() 中的反斜杠并不会解析成转义符，这仅仅是照顾那些URL 中输错了斜杠的用户的的感情~~~</p>
+<h3 id="CSS_安全工程">CSS 安全工程</h3>
+<ul>
+<li>加载远程样式表时<ul>
+<li>如果不做安全处理，就是将自身的安全性和远程样式表的域名绑在一起了，即使在样式表上下文禁止JavaScript，黑客仍然可以使用一些TCL键选择器，或者是引用url()，仍能窃取信息，尽管危险稍小。</li>
+<li>如果感受到危险，宁愿去本地保存一份副本。</li>
+<li>HTTPS 站点里，引用样式表也要使用HTTPS 协议。</li>
+</ul>
+</li>
+<li>CSS 里包含有攻击者能够控制的信息<ul>
+<li><strong>独立区块里的字符串和URL</strong>：请用引号括起来，对控制字符(0x00~0x1f)，以及斜杠尖括号中括号单双引号这些符号，尽量使用数字编码转义。</li>
+<li><strong>在style 参数中的字符串。</strong>允许用户设置本身就是高度危险的，尽量不要这么做，即使做，也要按照上一条，做好转义。</li>
+<li><strong>非字符串属性</strong>，直接使用白名单，只接受有限的输入。</li>
+</ul>
+</li>
+<li>过滤用户提供的CSS<ul>
+<li>不要保存或者产生可以用户控制的注释区，@ 指令等等。</li>
+<li>验证选择器语法，不应该出现<strong>数字，字母，下划线，空格以外的字符</strong>；{ 之前的冒号，点号，都好位置要准确，否则就会引起css 解析混乱，黑客趁虚而入。或者是<strong>直接禁止复杂的选择器。</strong></li>
+<li>解析和校验{…} 区块内的每个规则，可以的话，设置一个白名单，只允许你认为合法有效的规则进入。</li>
+<li>如果不信任用户的输入，那最好只将他们限制在一个单独的框架里。</li>
+</ul>
+</li>
+<li>HTML 标记里允许用户设置Class  值时，应当确保用户的CSS 设置不会和网站用到的Class 重名，或者是可以使用独立的命名空间前缀。</li>
+</ul>
+<hr>
+<p>CSS 可以说完全吸取了 HTML 的混乱风格，在整个CSS 发展之路上，充满了风险。当然，CSS 所能造成的灾难在明面上看起来，相比于HTML 少很多，但是仍然不能小觑，因为配合着社工，黑客仍然能够建立起一次可怕的入侵。</p>
+<h2 id="浏览器脚本">浏览器脚本</h2>
+<h3 id="JavaScript_基本特点">JavaScript 基本特点</h3>
+<p>JavaScript 的发展之路也是充满了崎岖，不再赘述，JavaScript 本身是一门相当简单的运行时解释语言，它的语法受到C 的影响，没有类的概念，有自动垃圾回收，有弱数据类型和动态类型的特点。 </p>
+<p><strong>脚本处理模型</strong></p>
+<p>前边也说了，对于JavaScript执行环境来说，就像一个沙箱，对每个在浏览器中的HTML 文档，都被赋予了独立的JavaScript 执行环境这些加载脚本的所有全局变量和函数都有一个独立的命名空间。</p>
+<p>当然，看起来脚本隔离的规则非常的严格，跨文档的交互也必须非常显式的方式进行，和操作系统的进程隔离非常相似，不过其设计的范围还是远比进程隔离小，所以仍然会存在有一些可以利用的漏洞。</p>
+<h4 id="模型的处理流程"><strong>模型的处理流程</strong></h4>
+<p><strong>源码处理</strong></p>
+<p>主要是检查脚本代码块里的语法，转换成中间层的二进制映像。在完成这一步骤之前，这些二进制代码不会对全局才造成影响，如果该阶段出错，那么整段问题代码都会被抛弃，继续解析下一段代码块。注意代码块之间除非正常解析，才会拼接在一起。</p>
+<p><strong>函数解析</strong><br>完成了源代码处理的流程，解析器会对当前代码块里的所有具名的全局函数进行识别并注册。该阶段完成后，函数才会被执行代码调用。</p>
+<p>注意每段独立的代码块并不是同时处理的，而是根据JavaScript 引擎读取代码块的先后顺序决定的，所以下边这样的写法是失败的：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">script</span>&gt;</span><span class="javascript"></span></div><div class="line">hello();</div><div class="line"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">script</span>&gt;</span><span class="javascript"></span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span><span class="params">()</span> </span>{</div><div class="line">   alert(<span class="string">"hello"</span>);</div><div class="line">   }</div><div class="line"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>而下边这个写法是能够成功执行的，因为对hello() 的注册要先于第一行代码。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">script</span>&gt;</span><span class="javascript"></span></div><div class="line">hello();</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span><span class="params">()</span> </span>{</div><div class="line">   alert(<span class="string">"hello"</span>);</div><div class="line">   }</div><div class="line"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>然而这样的全局名称解析模型只对函数有效，对变量却并非如此，和其他脚本语言类似，变量是按照执行出现的顺序注册的，所以下面的例子是错误的：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">script</span>&gt;</span><span class="javascript"></span></div><div class="line">hello();</div><div class="line"></div><div class="line"><span class="keyword">var</span> hello = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{</div><div class="line">   alert(<span class="string">"hello"</span>);</div><div class="line">   }</div><div class="line"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p><strong>代码执行</strong></p>
+<p>由于JavaScript的异步性，在执行过程中，如果碰到错误，那些已经被正确解析的函数仍然能被调用，而且已经执行的代码产生的结果，对上下文仍然有效。</p>
+<h4 id="执行顺序的控制">执行顺序的控制</h4>
+<p>在同一个执行环境里，JavaScript 是按照时间顺序执行的，外部事件无法中断代码的运行，也不支持线程对任何共享内存的修改。大多数情况下，JavaScript执行时，整个浏览器至少HTML 渲染器部分基本处于不响应状态。</p>
+<p>更进一步的说，JavaScript本身没有sleep(),或者pause() 这种暂停功能来释放CPU，如果希望延迟执行，需要注册一个定时器来延迟。而定时器里，也可以写一些内嵌的JavaScript代码。</p>
+<p>任何死循环都会被中断退出，等价于一个未处理的异常。循环退出，引擎恢复到闲置状态，引起问题的代码仍然可以被调用，所有的计时器和事件句柄也会保持原样。</p>
+<h4 id="代码和对象检视功能">代码和对象检视功能</h4>
+<p><strong>检视功能</strong></p>
+<p>对代码来说，对于非内置函数，可以通过toString() 和 toSource() 方法可以查看反编译后的源码。</p>
+<p>对于程序运行流来说，没有多好的办法能够查看，勉强搜索本页的script代码等，但一般无法知道运行到或者是将执行到哪，在此推荐调试利器Firebug。</p>
+<p><strong>eval()</strong></p>
+<p>对于eval 中的文本语法错误或执行异常都会传递给调用eval 的函数。也就是说，语法解析无误后，执行过程中产生的未处理异常也会传递到调用 eval 的函数。如果没有问题，最后一行代码的执行结果将是eval 的返回值。</p>
+<p><strong>延迟执行</strong></p>
+<p>有多种机制可以实现延迟执行，包括定时器：setTimeout, setInterval；事件处理器: onclick, onload；HTML解析器自身的若干接口:innerHTML , document.write等。</p>
+<p><strong>自省</strong></p>
+<p>JavaScript的自省相对完备，可以使用常见的迭代器方式，也可以通过typeof, instanceof 或者全等符 === 或者length这样的属性获得额外信息。</p>
+<h4 id="修改运行环境">修改运行环境</h4>
+<p><strong>重写内置函数</strong><br>如果任由流氓脚本发挥，可做的坏事很多，删除，重写，或者屏蔽大部分JavaScript内置函数和所有浏览器的提供的I/O 方法。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">eval</span> = alert;</div><div class="line"><span class="built_in">eval</span>(<span class="string">"hi"</span>);</div></pre></td></tr></table></figure>
+
+<p>这样的代码是没有问题的，但是在执行之后，Chrome,Safari，Opera 都会通过delete 操作符，删掉整个eval()函数，因为你已经重写了内置函数。</p>
+<p>从此延伸开去，几乎所有的对象，包括内置对象，String，Array，都有一个能被任意修改的原型。这个原型是个master 对象，已产生的全体对象实例甚至包括还未产生的实例，方法和属性都衍生自这个主题。（此处是需要进一步学习的点）</p>
+<p><strong>Setter Getter</strong><br>尽管他们不如C++ 里的运算符重载那么强大，但是这两个对象足以使得已有对象或者对象原型的行为变得困惑。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> evil_object = {</div><div class="line">    set foo() { alert(<span class="string">"hi"</span>); },</div><div class="line">    get foo() { <span class="keyword">return</span> <span class="number">2</span>; }</div><div class="line">    };</div><div class="line">    <span class="comment">/* 执行以下代码只会显示 hi.*/</span></div><div class="line">evil_object.foo = <span class="number">1</span>;</div><div class="line"><span class="comment">/* 而此时，foo 并不等于1 */</span></div></pre></td></tr></table></figure>
+
+<p>JavaScript 存在的潜在风险是，在特定的上下文环境里执行脚本，一旦受到了非新人内容的干扰，就没有可靠办法来检查其运行环境是否正确了。比如如果盲目信任了 location 对象，就可能导致一系列的漏洞。</p>
+<p><strong>JSON</strong></p>
+<p>关于JSON的话题很多,JSON 是对大括号的含义进行了重载，意味着JSON 区块里的内容不能按照独立的代码语句来执行。这样就可以防止&lt; script src=… &gt; 这样的方式进行跨站引用。</p>
+<p>但是JSON 还是存在有注入风险，其中一个风险来自于eval, 有些开发者往往直接使用eval 直接来吧json 转换成js 对象，如果此时JSON 数据包中注入了恶意的数据，则直接就获得了执行。所以，正确的做法是应当<strong>分割出JSON 里包含的特殊字符，然后再解析为对象</strong>，比如下面，json2.js里的：</p>
+<figure class="highlight javaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// We split the second stage into 4 regexp operations in order to work around</span></div><div class="line"><span class="comment">// crippling inefficiencies in IE's and Safari's regexp engines. First we</span></div><div class="line"><span class="comment">// replace the JSON backslash pairs with '@' (a non-JSON character). Second, we</span></div><div class="line"><span class="comment">// replace all simple value tokens with ']' characters. Third, we delete all</span></div><div class="line"><span class="comment">// open brackets that follow a colon or comma or that begin the text. Finally,</span></div><div class="line"><span class="comment">// we look to see that the remaining characters are only whitespace or ']' or</span></div><div class="line"><span class="comment">// ',' or ':' or '{' or '}'. If that is so, then the text is safe for eval.</span></div><div class="line"></div><div class="line">            <span class="keyword">if</span> (<span class="regexp">/^[\],:{}\s]*$/</span>.</div><div class="line">test(text.replace(<span class="regexp">/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g</span>, <span class="string">'@'</span>).</div><div class="line">replace(<span class="regexp">/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g</span>, <span class="string">']'</span>).</div><div class="line">replace(<span class="regexp">/(?:^|:|,)(?:\s*\[)+/g</span>, <span class="string">''</span>))) {</div><div class="line"></div><div class="line"><span class="comment">// In the third stage we use the eval function to compile the text into a</span></div><div class="line"><span class="comment">// JavaScript structure. The '{' operator is subject to a syntactic ambiguity</span></div><div class="line"><span class="comment">// in JavaScript: it can begin a block or an object literal. We wrap the text</span></div><div class="line"><span class="comment">// in parens to eliminate the ambiguity.</span></div><div class="line"></div><div class="line">                j = <span class="built_in">eval</span>(<span class="string">'('</span> + text + <span class="string">')'</span>);</div></pre></td></tr></table></figure>
+
+<p>JSON 得到了最普遍应用，另外预支竞争的有JSONP，JSONP 字面含义是填充式(padding)的JSON，它通过填充额外的内容把JSON 序列化包装起来，变成一段有效的可独立运行的JavaScript于珊珊，常见栗子包括函数调用(如 callback_funcition({…JSON data…})) 或者变量赋值(var return_value = {…json data…})), 但是这些序列化无法兼容JSON。parse()，必须使用不安全的eval.</p>
+<p>而JSONP 这种的特点是使用第三方页面以&lt; script src=… &gt;形式加载这些数据时，解析不会出现错误。当然，这种情况实际上还会带来许多风险，《Web 之困》中的说明太过简单，在<a href="http://www.thespanner.co.uk/2011/05/30/json-hijacking/" target="_blank" rel="external">JSON Hijacking</a> 有更为详细的解读，以及这篇<a href="http://blog.csdn.net/hengyunabc/article/details/26305203" target="_blank" rel="external">闲扯Web安全之JSON</a>,对于其中的详细知识，还有一些漏洞，后边会继续扩充。</p>
+<p>总的来说，注意这么几点：</p>
+<ul>
+<li>禁止手动拼接JSON字符串，一律应当用JSON库输出。也不应使用自己实现的ObjectToJson等方法，因为可能有各种没有考虑到的地方。</li>
+<li>jsonp请求的callback要严格过滤，只允许”_”，0到9，a-z, A-Z，即合法的javascript函数的命名。</li>
+<li>jsonp请求也要判断合法性，比如用户是否登陆（这点很容易被忽略）。</li>
+<li>设置好Content-Type（这点对于调试不方便，但是提高了安全性）。</li>
+<li>以jsonp方式调用第三方的接口，实际相当于引入了第三方的JS代码，要慎重。</li>
+</ul>
+<h3 id="标准对象层级">标准对象层级</h3>
+<p>JavaScript 的运行环境都是围绕一个隐含的根对象构建起来的，这个根对象也是JavaScript程序里所有全局变量和函数的默认命名空间。</p>
+<p>JavaScript 预设了一些层级模式的函数，用来实现浏览器环境里的输入输出功能，包括：对浏览器窗口的操作(open(),close(),moveTo(),resizeTo(),focus(),blur()等), JavaScript 定时器设置(setTimeout(), setInterval()等)，各种提示(alert(),prompt(),print())，以及一些浏览器开发商支持的函数等等。</p>
+<p>同时，顶级对象还提供了上下文环境对象的JavaScript引用，比如父框架parent，顶层文档top, 当前窗口的源窗口opener，当前文档的子框架 frames[]，以及window和self。</p>
+<p>顶级的对象结构里，除了Document 还有一些子对象，如下：</p>
+<ul>
+<li>location 对象： 包括读取当前文档URL 信息，或者专项新地址浏览的各种属性和方法。注意使用此对象时，新地址跳转会销毁上下文环境，同时对获取的字符串不要想当然的认为他们已经经过了转义。</li>
+<li>history 对象： 不常用，能让每个窗口根据浏览记录前后切换移动，类似于前进后退。比如history.go(-1)</li>
+<li>screen 对象： 检查屏幕和浏览器窗口大小等等。</li>
+<li>navigator 对象： 查询浏览器版本，操作系统，插件列表等。</li>
+<li>document 对象： DOM 不多说。</li>
+</ul>
+<p><strong>DOM</strong> 东西太多，一言难尽，其中包括转义方面的问题，注入的漏洞。等另开一篇文章讲。</p>
+<h3 id="脚本字符编码">脚本字符编码</h3>
+<p>JavaScript 支持很多常见的反斜杠方式的字符串编码，用于转义引号，HTML 标记 和内嵌在文本中的有问题的字符。</p>
+<ul>
+<li>对某些控制祖父使用C风格的表达式： \b 退格符，\t 水平制表符 , \v 垂直制表符， \f 换页符， \r 回车， \n 换行。</li>
+<li>3位数字，不足位0填充，按照8位原字节八进制字符编码，无前缀。JSON 中支持此转义。栗子：\145 = e</li>
+<li>2位数字，不足位0填充，8位元字节十六进制字符编码，前缀为x。栗子： \x65 = e</li>
+<li>4位数字，不足位0填充，16位元字节十六进制Unicode 数值编码，前缀加u。 \u0065 = e</li>
+<li>反斜杠后边跟非8进制数字，非第一条所说字符，非u 非x，可以使用反斜杠转义。就是直接的转义符。</li>
+</ul>
+<p>对于最后一条 值得注意的是，因为JavaScript 解析顺序要晚于HTML 解析，所以，不应该用这种方式来转义尖括号，和其他HTML 语法中的分隔符，这样HTML 解析完毕，再解析JavaScript，转义结束之后就会造成问题。这和CSS 问题一样。</p>
+<p>同时以上各种方式，只有Unicode 转义方式可以用在字符串之外的位置，其他转义则不可以，而且在JavaScript里，转义编码只能出现在标示符部分，不能用在对语法有真正影响的符号上，比如括号。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">\u006lert(<span class="string">"hello"</span>);</div></pre></td></tr></table></figure>
+
+<p>上边写法是ok的，但是如果用这种方式替换圆括号或者是引号，就会失败。</p>
+<h3 id="JavaScript_代码包含在哪里">JavaScript 代码包含在哪里</h3>
+<p>JavaScript 代码经常包含在哪里呢？</p>
+<ul>
+<li>直接嵌入&lt; script&gt; 代码块。</li>
+<li>通过&lt; script sr=… &gt; 加载代码。</li>
+<li>各种HTML CSS 参数支持JavaScript：URL 触发调用。</li>
+<li>CSS expression(…) 语法和某些浏览器的XBL 绑定。</li>
+<li>事件处理器(Event handlers),比如 onload, onerror, onclick等等。</li>
+<li>定时器，Timer(setTimeout, setInterval)</li>
+<li>eval(…) 调用。</li>
+</ul>
+<p>这也是所有可能发生漏洞的地方，比如定时器那里，考虑以下代码：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;script&gt;</div><div class="line">var value = <span class="string">"user_string"</span>;</div><div class="line"><span class="keyword">...</span></div><div class="line">setTimeout(<span class="string">"do_stuff('"</span>+value+<span class="string">"')"</span>, <span class="number">1000</span>);</div><div class="line">&lt;/script&gt;</div></pre></td></tr></table></figure>
+
+<p>表面上看他没有问题，对 value 只做一次转义就好了，但实际呢，考虑其解析过程，首先是HTML 解析出script 块，然后JavaScript 做第一次解析，检查setTimeout 语法，而等到1秒之后，才会解析do_stuff，如果不多做一次转义，就有可能构造成一次注入，比如user_string 中插入一个JavaScript编码的构造，截断前边函数，然后构造自己的攻击部分。</p>
+<p>这种编码模式，看起来比较绕，但实际上也是JavaScript常出现问题的地方。</p>
+<h3 id="安全工程">安全工程</h3>
+<ul>
+<li>加载远程脚本情况，和CSS 一样，这样做等于将自己和远程站点的安全性关联到了一起，所以一定要做好最高的安全措施。</li>
+<li>解析从服务器端收到的JSON 数据，一定不要用eval 直接解析，或者是RFC 4627 里提供的基于eval的实现，尽量使用JSON。parse()。 特别是处理第三方返回数据时，这两种方式实际上都并不安全，可以参见前边所说的json2.js 的实现方式。</li>
+<li>JavaScript 代码块包含用户输入数据的集中情况<ul>
+<li><strong>&lt; script&gt; 代码块中的字符串</strong> ，依照常规，对所有控制字符（0x00~0x1f），\,左右尖括号，引号，用反斜杠加数字的形式转义处理，高位字符也应当转义处理。同时不要直接用用户提供的字符串组成HTML，选择安全的DOM 处理，也不要直接用用户提供的字符串组成参数然后传递给脚本执行功能的函数里，避免使用eval(), setTimeout() 方法。</li>
+<li><strong>在独立脚本文件里的独立字符串</strong>：重点防范跨站。</li>
+<li><strong>在事件处理器，或者javascript伪URL</strong>：在伪URL 里时，应当在这些位置出现用户提供数据时，做多重转义。而且尽量不要使用这种直接内嵌JavaScript 脚本的方式。如果做，首先进行JavaScript 转义，然后根据情况转义在进行HTML或者URL 参数编码方式编码。不要是用eval(),setTimeout()和 innerHTML .</li>
+<li><strong>非字符串类型属性</strong>：白名单形式，并且对数字型数据进行严格验证。</li>
+</ul>
+</li>
+<li>与客户端浏览器对象交互<ul>
+<li><strong>客户端产生的HTML内容</strong>：不要使用 innerHTML, document.write() 或者是类似的处理方式，因为这样会造成跨站。构建HTML 文档，请使用 createElement(),appendChild(),安全的属性如：innerText, textContent.</li>
+<li><strong>对用户控制数据的处理</strong>： 要先认为从客户端读取的数据都未经过正确转移，特别是如location 属性，以及一些外部URL来源数据，一定要自己做一些转移处理，不能直接传给自己服务器处理。</li>
+</ul>
+</li>
+<li><strong>如果页面能加载其他用户控制的脚本</strong>，实际上，这样是极不安全的，一些可用的框架，或者是沙箱框架，可能会有帮助。</li>
+</ul>
+<hr>
+<p>本来是想着一天写一篇的速度，刚刚好，今天看了CSS 部分，觉得内容很短，而且很多东西配合着 JavaScript看，会有一些收获，于是就把两章放在一起看了，这是个深坑，来自CSS 的问题尚少，都有迹可循，但是来自JavaScript 这个神奇的脚本语言的种种行为模式，思考起来就花费了一些时间，虽然之前JavaScript 有一些基础，但是作者短短几句指出来漏洞，倒是要花费我很多时间去思考这些漏洞到底是怎么构造起来的。</p>
+<p>JavaScript 这门语言发展的太快了，而且Web 也发展的太快了，注定这是一个充满了危险的地带，再加上网络这个只用很短时间就从蛮荒时代走向了琳琅满目的东西，总是充满了各种残缺待补的东西，实际上，看如今的网络，似乎没有哪家的服务器没被脱过库了，被爆出来的也都是那些转过几手，拥有的人太多的库了。</p>
+<p>由于Web 的漏洞可以来自语言，可以来自浏览器来自客户端，可以来自服务器，来自Web 程序，甚至是程序中一个小小的插件，这两天爆出来的imageTragick 漏洞，不过就是一个图像处理工具，一个小小的漏洞直接让黑客切入到心脏中。</p>
+<p>而接下来的部分，也正是将流动在网络上的这些非HTML 文档，以及他们存在的风险，最后还有一个浏览器的插件。书写完成之后，将转入安全特性的探讨上，再次总结书写的过程，应该会有更多的收获。</p>
+
+
+<!--<a href="http://yoursite.com/2016/05/05/CSS和JavaScript的烦恼-《The-Tangled-Web》/#disqus_thread" class="article-comment-link">Comments</a>-->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'null'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+<div style="display:none">
+<script src="http://s4.cnzz.com/stat.php?id=undefined&web_id=undefined" language="JavaScript"></script>script>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>

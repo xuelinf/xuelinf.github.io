@@ -4,7 +4,7 @@
   <subtitle><![CDATA[代码是一棱刀背，幸好，有此藏身。]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2016-05-04T03:32:44.413Z</updated>
+  <updated>2016-05-05T14:56:33.680Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,220 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[CSS和JavaScript的烦恼 -- 《The Tangled Web》]]></title>
+    <link href="http://yoursite.com/2016/05/05/CSS%E5%92%8CJavaScript%E7%9A%84%E7%83%A6%E6%81%BC-%E3%80%8AThe-Tangled-Web%E3%80%8B/"/>
+    <id>http://yoursite.com/2016/05/05/CSS和JavaScript的烦恼-《The-Tangled-Web》/</id>
+    <published>2016-05-05T14:55:53.000Z</published>
+    <updated>2016-05-05T14:56:22.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="CSS和JavaScript的烦恼">CSS和JavaScript的烦恼</h1>
+<h2 id="CSS">CSS</h2>
+<p>CSS 是能够做到网页表现和内容分离的样式设计语言，有人爱之深切，有人恨之入骨。由于CSS 的存在，让HTML 在语义学上越来越不重要，你随便打开一个网页，翻看一下源码，就会发现，满屏幕的div, 只起到了结构的作用，Tim Berners-Lee 的语义网梦想被CSS 阻挡，因为即使全屏的div，css 仍然能通过他五花八门的指令，伪类选择器，伪函数等等实现一个美观的网页。</p>
+<p>当然，这里谈CSS， 并不是讲切图的，而是在CSS 里，同样存在着种种漏洞，主要是以XSS 为主的漏洞，所以对CSS 的探讨也在所难免。</p>
+<h3 id="基本语法">基本语法</h3>
+<p>一般使用方法有直接在&lt; style &gt;中使用，能够全局生效。或者通过&lt; link rel=stylesheet &gt; 引入外部的css 文件。或者是直接为某个标签赋予style参数。</p>
+<p>选择器，包括复杂点的伪类选择器这里就不说了，只要稍微用过的人都知道，或者去W3C shcool也能看到详细的介绍。在CSS 的规则里，属性值是其最重要的东西，大约格式有三种：</p>
+<ul>
+<li><strong>原始文本</strong>：主要是用于设定一些数值型的值，RGB 向量，或者名字代指的原色等，以及一些预定好的关键词，比如 absolute, left, center等等</li>
+<li><strong>引号括起来的字符串</strong> ： 当CSS 属性的值不是固定的关键词时，两边用单引号括起来，但是这条规则并不总是如此，比如设置字体，或者某些URL 时候，并不需要引号，而content 属性则需要。</li>
+<li><strong>函数表示法</strong>： 有一些设计参数的伪函数，比如讲独立的のRGB 颜色转换成RGB代码的 rgb() , 以及一个大多数人都能用到的url(),同时还有一些比如scale(), rotate(), skew() 等等。<strong>特别的，IE浏览器中有一个函数expression(),可以在css 中嵌入JavaScript语句，这个函数一旦被黑客控制，后果可想而知。</strong></li>
+</ul>
+<p><strong>@指令和 XBL绑定</strong></p>
+<p>除了上边所说的选择器，属性功能，CSS 还支持一种以@ 开头的格式，允许导入独立样式，同时能够改变样式表各种设定，比如指定命名空间，设定不同的显示媒体使用的不同的样式表（如今的跨设备就是如此)。</p>
+<p>有两个重要的指令：</p>
+<ul>
+<li>@charset 用于设置当前CSS 区块的字符集格式</li>
+<li>@import 在样式表中插入一个外部文件，@import “foo.css”; @import url(‘foo.css’); @import ‘foo.css’; 这几种表示格式是一样的。</li>
+</ul>
+<p>关于XBL 绑定，全称叫XML Binding Language，参见<a href="https://zh.wikipedia.org/wiki/XBL" target="_blank" rel="external">XBL维基百科</a>用于描述如何将其他文档中的元素（如XPCOM的功能）绑定到部件（如XUL部件）。可以使用级联样式表（CSS）或文档对象模型（DOM）两种方式绑定，绑定可为部件创建新的行为。绑定可以包含已注册到“被绑定元素”的事件处理程序，实现对“被绑定元素”的新的方法和属性访问，包括“被绑定元素”内的“匿名内容”。</p>
+<p>该语言现在算是Mozilla 专有，FireFox 中的一个特性，利用 -moz-binding ，可以从外部源载入外部内容指令，可包括一些JavaScript代码。目前该使用方式并不明朗，当然看起来其中也有着不小的XSS 风险。</p>
+<p>值得注意的是，上边提到的@import, url() 都存在有引入伪URL 的安全隐患，大多数浏览器都不接受CSS 的上下文环境使用脚本，但是IE 6 却支持，可以想象，IE6 还存在有大量漏洞，而在中国这片国土，IE 6仍然有不小的占有量。</p>
+<p><strong>交互过程</strong></p>
+<p>之前说，CSS 和HTML 是各自独立的，也就是说在执行过程中，会先解析HTML，然后解析CSS，但是，如果在CSS 属性里包含了某些HTML 语法，就会造成问题，比如：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">style</span>&gt;</span><span class="css"></span></div><div class="line"><span class="tag">some_descriptor</span> <span class="rules">{</span></div><div class="line">    <span class="rule"><span class="attribute">background</span>:<span class="value"> <span class="function">url</span>(<span class="string">'http://www.example.com/</span></span></span><span class="tag">&lt;/<span class="title">style</span>&gt;</span><span class="tag">&lt;<span class="title">h1</span>&gt;</span>hi!');</div><div class="line">    }</div><div class="line"><span class="tag">&lt;/<span class="title">style</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>如此这般，即使是放在了引号里，html对style 的解析也会提前结束，造成问题。</p>
+<h3 id="重新同步的风险">重新同步的风险</h3>
+<p>很明显的CSS 的发展之路，深受HTML 的影响，所以在CSS 的解析上，和HTML 一样存在着许多让人摸不清头脑的问题，比如，<strong>解析器碰到错误时，仍会继续工作直到碰到下一对匹配的尖括号或大括号括号恢复正常解析</strong>，比如：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">a {</div><div class="line">  fklj@#$%@$@!</div><div class="line">}</div><div class="line">img {</div><div class="line">  border: 1px solid red;</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>尽管img 前边的解析的是错误的，仍然会正常解析img。利用这种特性，我们很容器就能想起一些攻击方式，比如对对某些浏览器输入一些有效的输入，对另一些浏览器，却能造成CSS 错误，利用CSS 解析器对出错CSS 的重新同步处理，到能导致一些特别的攻击行为诞生。</p>
+<p>举个栗子，比如IE 的浏览器对CSS多行字符串文本支持，所以如果用户提供的CSS 字符串里边包含CR和LF 换行符的话，IE 是OK 的，所以网站开发者，不会对此进行过滤，但是对其他浏览器确实错误的，于是就导致了前边解析错误，只能解析后边恶意植入的代码：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">some_selector {</div><div class="line">   content: 'Attacker-controller text...</div><div class="line">            } evil_rule {margin-left: -1000px;}';</div><div class="line">             }</div></pre></td></tr></table></figure>
+
+<p>对于其他浏览器，由于前边的解析错误，css 会跳到恶意代码那里判定为正常代码执行。最简单的解决办法就是禁止它，不要对IE 姑息。</p>
+<p>另外一些存在的问题是，CSS 之间兼容的we附体，比如一些老版本的解析不明白新版本的内容，比如CSS3 里的中括号，不过现在好像CSS3以前的版本已经绝迹，在此就不再赘述了。</p>
+<h3 id="又见字符编码">又见字符编码</h3>
+<p>字符编码似乎是围绕了整个Web 的问题，毕竟Web 是一个以内容交流为主要功能的平台，各种编码在所难免，问题也在所难免。</p>
+<p>在CSS 中，为了在CSS字符串中使用一些保留字符或者有问题的字符，CSS 提僧了不太正统的策略。<strong>它使用反斜杠\ 后边跟1~6位十六进制数字</strong>的方式，再这样的策略下，比如字母e, 可以编辑成\65,\065,\000065, 一般来说，只有最后一种方法才不会产生歧义，比如说teak,编码成 t\65ak，就会转义成\65a。而css 避免这种情况的方法，不过是在每个转义序列后边加上空格。</p>
+<p>存在安全问题是，很多CSS 解析器 竟然能够接受<strong>未被引号括起来的字符串里的任意转义序列</strong>，特别的在IE 中，转义的优先级还要高于伪函数语法解析，下边这样的结果是一样的：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="tag">color</span>: <span class="tag">expression</span>(<span class="tag">alert</span>(1))</div><div class="line"><span class="tag">color</span>: <span class="tag">express</span>\028 <span class="tag">alert</span> \028 1 \029 \029</div></pre></td></tr></table></figure>
+
+<p>甚至在IE 中，url() 中的反斜杠并不会解析成转义符，这仅仅是照顾那些URL 中输错了斜杠的用户的的感情~~~</p>
+<h3 id="CSS_安全工程">CSS 安全工程</h3>
+<ul>
+<li>加载远程样式表时<ul>
+<li>如果不做安全处理，就是将自身的安全性和远程样式表的域名绑在一起了，即使在样式表上下文禁止JavaScript，黑客仍然可以使用一些TCL键选择器，或者是引用url()，仍能窃取信息，尽管危险稍小。</li>
+<li>如果感受到危险，宁愿去本地保存一份副本。</li>
+<li>HTTPS 站点里，引用样式表也要使用HTTPS 协议。</li>
+</ul>
+</li>
+<li>CSS 里包含有攻击者能够控制的信息<ul>
+<li><strong>独立区块里的字符串和URL</strong>：请用引号括起来，对控制字符(0x00~0x1f)，以及斜杠尖括号中括号单双引号这些符号，尽量使用数字编码转义。</li>
+<li><strong>在style 参数中的字符串。</strong>允许用户设置本身就是高度危险的，尽量不要这么做，即使做，也要按照上一条，做好转义。</li>
+<li><strong>非字符串属性</strong>，直接使用白名单，只接受有限的输入。</li>
+</ul>
+</li>
+<li>过滤用户提供的CSS<ul>
+<li>不要保存或者产生可以用户控制的注释区，@ 指令等等。</li>
+<li>验证选择器语法，不应该出现<strong>数字，字母，下划线，空格以外的字符</strong>；{ 之前的冒号，点号，都好位置要准确，否则就会引起css 解析混乱，黑客趁虚而入。或者是<strong>直接禁止复杂的选择器。</strong></li>
+<li>解析和校验{…} 区块内的每个规则，可以的话，设置一个白名单，只允许你认为合法有效的规则进入。</li>
+<li>如果不信任用户的输入，那最好只将他们限制在一个单独的框架里。</li>
+</ul>
+</li>
+<li>HTML 标记里允许用户设置Class  值时，应当确保用户的CSS 设置不会和网站用到的Class 重名，或者是可以使用独立的命名空间前缀。</li>
+</ul>
+<hr>
+<p>CSS 可以说完全吸取了 HTML 的混乱风格，在整个CSS 发展之路上，充满了风险。当然，CSS 所能造成的灾难在明面上看起来，相比于HTML 少很多，但是仍然不能小觑，因为配合着社工，黑客仍然能够建立起一次可怕的入侵。</p>
+<h2 id="浏览器脚本">浏览器脚本</h2>
+<h3 id="JavaScript_基本特点">JavaScript 基本特点</h3>
+<p>JavaScript 的发展之路也是充满了崎岖，不再赘述，JavaScript 本身是一门相当简单的运行时解释语言，它的语法受到C 的影响，没有类的概念，有自动垃圾回收，有弱数据类型和动态类型的特点。 </p>
+<p><strong>脚本处理模型</strong></p>
+<p>前边也说了，对于JavaScript执行环境来说，就像一个沙箱，对每个在浏览器中的HTML 文档，都被赋予了独立的JavaScript 执行环境这些加载脚本的所有全局变量和函数都有一个独立的命名空间。</p>
+<p>当然，看起来脚本隔离的规则非常的严格，跨文档的交互也必须非常显式的方式进行，和操作系统的进程隔离非常相似，不过其设计的范围还是远比进程隔离小，所以仍然会存在有一些可以利用的漏洞。</p>
+<h4 id="模型的处理流程"><strong>模型的处理流程</strong></h4>
+<p><strong>源码处理</strong></p>
+<p>主要是检查脚本代码块里的语法，转换成中间层的二进制映像。在完成这一步骤之前，这些二进制代码不会对全局才造成影响，如果该阶段出错，那么整段问题代码都会被抛弃，继续解析下一段代码块。注意代码块之间除非正常解析，才会拼接在一起。</p>
+<p><strong>函数解析</strong><br>完成了源代码处理的流程，解析器会对当前代码块里的所有具名的全局函数进行识别并注册。该阶段完成后，函数才会被执行代码调用。</p>
+<p>注意每段独立的代码块并不是同时处理的，而是根据JavaScript 引擎读取代码块的先后顺序决定的，所以下边这样的写法是失败的：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">script</span>&gt;</span><span class="javascript"></span></div><div class="line">hello();</div><div class="line"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">script</span>&gt;</span><span class="javascript"></span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span><span class="params">()</span> </span>{</div><div class="line">   alert(<span class="string">"hello"</span>);</div><div class="line">   }</div><div class="line"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>而下边这个写法是能够成功执行的，因为对hello() 的注册要先于第一行代码。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">script</span>&gt;</span><span class="javascript"></span></div><div class="line">hello();</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span><span class="params">()</span> </span>{</div><div class="line">   alert(<span class="string">"hello"</span>);</div><div class="line">   }</div><div class="line"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>然而这样的全局名称解析模型只对函数有效，对变量却并非如此，和其他脚本语言类似，变量是按照执行出现的顺序注册的，所以下面的例子是错误的：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">script</span>&gt;</span><span class="javascript"></span></div><div class="line">hello();</div><div class="line"></div><div class="line"><span class="keyword">var</span> hello = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{</div><div class="line">   alert(<span class="string">"hello"</span>);</div><div class="line">   }</div><div class="line"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p><strong>代码执行</strong></p>
+<p>由于JavaScript的异步性，在执行过程中，如果碰到错误，那些已经被正确解析的函数仍然能被调用，而且已经执行的代码产生的结果，对上下文仍然有效。</p>
+<h4 id="执行顺序的控制">执行顺序的控制</h4>
+<p>在同一个执行环境里，JavaScript 是按照时间顺序执行的，外部事件无法中断代码的运行，也不支持线程对任何共享内存的修改。大多数情况下，JavaScript执行时，整个浏览器至少HTML 渲染器部分基本处于不响应状态。</p>
+<p>更进一步的说，JavaScript本身没有sleep(),或者pause() 这种暂停功能来释放CPU，如果希望延迟执行，需要注册一个定时器来延迟。而定时器里，也可以写一些内嵌的JavaScript代码。</p>
+<p>任何死循环都会被中断退出，等价于一个未处理的异常。循环退出，引擎恢复到闲置状态，引起问题的代码仍然可以被调用，所有的计时器和事件句柄也会保持原样。</p>
+<h4 id="代码和对象检视功能">代码和对象检视功能</h4>
+<p><strong>检视功能</strong></p>
+<p>对代码来说，对于非内置函数，可以通过toString() 和 toSource() 方法可以查看反编译后的源码。</p>
+<p>对于程序运行流来说，没有多好的办法能够查看，勉强搜索本页的script代码等，但一般无法知道运行到或者是将执行到哪，在此推荐调试利器Firebug。</p>
+<p><strong>eval()</strong></p>
+<p>对于eval 中的文本语法错误或执行异常都会传递给调用eval 的函数。也就是说，语法解析无误后，执行过程中产生的未处理异常也会传递到调用 eval 的函数。如果没有问题，最后一行代码的执行结果将是eval 的返回值。</p>
+<p><strong>延迟执行</strong></p>
+<p>有多种机制可以实现延迟执行，包括定时器：setTimeout, setInterval；事件处理器: onclick, onload；HTML解析器自身的若干接口:innerHTML , document.write等。</p>
+<p><strong>自省</strong></p>
+<p>JavaScript的自省相对完备，可以使用常见的迭代器方式，也可以通过typeof, instanceof 或者全等符 === 或者length这样的属性获得额外信息。</p>
+<h4 id="修改运行环境">修改运行环境</h4>
+<p><strong>重写内置函数</strong><br>如果任由流氓脚本发挥，可做的坏事很多，删除，重写，或者屏蔽大部分JavaScript内置函数和所有浏览器的提供的I/O 方法。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">eval</span> = alert;</div><div class="line"><span class="built_in">eval</span>(<span class="string">"hi"</span>);</div></pre></td></tr></table></figure>
+
+<p>这样的代码是没有问题的，但是在执行之后，Chrome,Safari，Opera 都会通过delete 操作符，删掉整个eval()函数，因为你已经重写了内置函数。</p>
+<p>从此延伸开去，几乎所有的对象，包括内置对象，String，Array，都有一个能被任意修改的原型。这个原型是个master 对象，已产生的全体对象实例甚至包括还未产生的实例，方法和属性都衍生自这个主题。（此处是需要进一步学习的点）</p>
+<p><strong>Setter Getter</strong><br>尽管他们不如C++ 里的运算符重载那么强大，但是这两个对象足以使得已有对象或者对象原型的行为变得困惑。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> evil_object = {</div><div class="line">    set foo() { alert(<span class="string">"hi"</span>); },</div><div class="line">    get foo() { <span class="keyword">return</span> <span class="number">2</span>; }</div><div class="line">    };</div><div class="line">    <span class="comment">/* 执行以下代码只会显示 hi.*/</span></div><div class="line">evil_object.foo = <span class="number">1</span>;</div><div class="line"><span class="comment">/* 而此时，foo 并不等于1 */</span></div></pre></td></tr></table></figure>
+
+<p>JavaScript 存在的潜在风险是，在特定的上下文环境里执行脚本，一旦受到了非新人内容的干扰，就没有可靠办法来检查其运行环境是否正确了。比如如果盲目信任了 location 对象，就可能导致一系列的漏洞。</p>
+<p><strong>JSON</strong></p>
+<p>关于JSON的话题很多,JSON 是对大括号的含义进行了重载，意味着JSON 区块里的内容不能按照独立的代码语句来执行。这样就可以防止&lt; script src=… &gt; 这样的方式进行跨站引用。</p>
+<p>但是JSON 还是存在有注入风险，其中一个风险来自于eval, 有些开发者往往直接使用eval 直接来吧json 转换成js 对象，如果此时JSON 数据包中注入了恶意的数据，则直接就获得了执行。所以，正确的做法是应当<strong>分割出JSON 里包含的特殊字符，然后再解析为对象</strong>，比如下面，json2.js里的：</p>
+<figure class="highlight javaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// We split the second stage into 4 regexp operations in order to work around</span></div><div class="line"><span class="comment">// crippling inefficiencies in IE's and Safari's regexp engines. First we</span></div><div class="line"><span class="comment">// replace the JSON backslash pairs with '@' (a non-JSON character). Second, we</span></div><div class="line"><span class="comment">// replace all simple value tokens with ']' characters. Third, we delete all</span></div><div class="line"><span class="comment">// open brackets that follow a colon or comma or that begin the text. Finally,</span></div><div class="line"><span class="comment">// we look to see that the remaining characters are only whitespace or ']' or</span></div><div class="line"><span class="comment">// ',' or ':' or '{' or '}'. If that is so, then the text is safe for eval.</span></div><div class="line"></div><div class="line">            <span class="keyword">if</span> (<span class="regexp">/^[\],:{}\s]*$/</span>.</div><div class="line">test(text.replace(<span class="regexp">/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g</span>, <span class="string">'@'</span>).</div><div class="line">replace(<span class="regexp">/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g</span>, <span class="string">']'</span>).</div><div class="line">replace(<span class="regexp">/(?:^|:|,)(?:\s*\[)+/g</span>, <span class="string">''</span>))) {</div><div class="line"></div><div class="line"><span class="comment">// In the third stage we use the eval function to compile the text into a</span></div><div class="line"><span class="comment">// JavaScript structure. The '{' operator is subject to a syntactic ambiguity</span></div><div class="line"><span class="comment">// in JavaScript: it can begin a block or an object literal. We wrap the text</span></div><div class="line"><span class="comment">// in parens to eliminate the ambiguity.</span></div><div class="line"></div><div class="line">                j = <span class="built_in">eval</span>(<span class="string">'('</span> + text + <span class="string">')'</span>);</div></pre></td></tr></table></figure>
+
+<p>JSON 得到了最普遍应用，另外预支竞争的有JSONP，JSONP 字面含义是填充式(padding)的JSON，它通过填充额外的内容把JSON 序列化包装起来，变成一段有效的可独立运行的JavaScript于珊珊，常见栗子包括函数调用(如 callback_funcition({…JSON data…})) 或者变量赋值(var return_value = {…json data…})), 但是这些序列化无法兼容JSON。parse()，必须使用不安全的eval.</p>
+<p>而JSONP 这种的特点是使用第三方页面以&lt; script src=… &gt;形式加载这些数据时，解析不会出现错误。当然，这种情况实际上还会带来许多风险，《Web 之困》中的说明太过简单，在<a href="http://www.thespanner.co.uk/2011/05/30/json-hijacking/" target="_blank" rel="external">JSON Hijacking</a> 有更为详细的解读，以及这篇<a href="http://blog.csdn.net/hengyunabc/article/details/26305203" target="_blank" rel="external">闲扯Web安全之JSON</a>,对于其中的详细知识，还有一些漏洞，后边会继续扩充。</p>
+<p>总的来说，注意这么几点：</p>
+<ul>
+<li>禁止手动拼接JSON字符串，一律应当用JSON库输出。也不应使用自己实现的ObjectToJson等方法，因为可能有各种没有考虑到的地方。</li>
+<li>jsonp请求的callback要严格过滤，只允许”_”，0到9，a-z, A-Z，即合法的javascript函数的命名。</li>
+<li>jsonp请求也要判断合法性，比如用户是否登陆（这点很容易被忽略）。</li>
+<li>设置好Content-Type（这点对于调试不方便，但是提高了安全性）。</li>
+<li>以jsonp方式调用第三方的接口，实际相当于引入了第三方的JS代码，要慎重。</li>
+</ul>
+<h3 id="标准对象层级">标准对象层级</h3>
+<p>JavaScript 的运行环境都是围绕一个隐含的根对象构建起来的，这个根对象也是JavaScript程序里所有全局变量和函数的默认命名空间。</p>
+<p>JavaScript 预设了一些层级模式的函数，用来实现浏览器环境里的输入输出功能，包括：对浏览器窗口的操作(open(),close(),moveTo(),resizeTo(),focus(),blur()等), JavaScript 定时器设置(setTimeout(), setInterval()等)，各种提示(alert(),prompt(),print())，以及一些浏览器开发商支持的函数等等。</p>
+<p>同时，顶级对象还提供了上下文环境对象的JavaScript引用，比如父框架parent，顶层文档top, 当前窗口的源窗口opener，当前文档的子框架 frames[]，以及window和self。</p>
+<p>顶级的对象结构里，除了Document 还有一些子对象，如下：</p>
+<ul>
+<li>location 对象： 包括读取当前文档URL 信息，或者专项新地址浏览的各种属性和方法。注意使用此对象时，新地址跳转会销毁上下文环境，同时对获取的字符串不要想当然的认为他们已经经过了转义。</li>
+<li>history 对象： 不常用，能让每个窗口根据浏览记录前后切换移动，类似于前进后退。比如history.go(-1)</li>
+<li>screen 对象： 检查屏幕和浏览器窗口大小等等。</li>
+<li>navigator 对象： 查询浏览器版本，操作系统，插件列表等。</li>
+<li>document 对象： DOM 不多说。</li>
+</ul>
+<p><strong>DOM</strong> 东西太多，一言难尽，其中包括转义方面的问题，注入的漏洞。等另开一篇文章讲。</p>
+<h3 id="脚本字符编码">脚本字符编码</h3>
+<p>JavaScript 支持很多常见的反斜杠方式的字符串编码，用于转义引号，HTML 标记 和内嵌在文本中的有问题的字符。</p>
+<ul>
+<li>对某些控制祖父使用C风格的表达式： \b 退格符，\t 水平制表符 , \v 垂直制表符， \f 换页符， \r 回车， \n 换行。</li>
+<li>3位数字，不足位0填充，按照8位原字节八进制字符编码，无前缀。JSON 中支持此转义。栗子：\145 = e</li>
+<li>2位数字，不足位0填充，8位元字节十六进制字符编码，前缀为x。栗子： \x65 = e</li>
+<li>4位数字，不足位0填充，16位元字节十六进制Unicode 数值编码，前缀加u。 \u0065 = e</li>
+<li>反斜杠后边跟非8进制数字，非第一条所说字符，非u 非x，可以使用反斜杠转义。就是直接的转义符。</li>
+</ul>
+<p>对于最后一条 值得注意的是，因为JavaScript 解析顺序要晚于HTML 解析，所以，不应该用这种方式来转义尖括号，和其他HTML 语法中的分隔符，这样HTML 解析完毕，再解析JavaScript，转义结束之后就会造成问题。这和CSS 问题一样。</p>
+<p>同时以上各种方式，只有Unicode 转义方式可以用在字符串之外的位置，其他转义则不可以，而且在JavaScript里，转义编码只能出现在标示符部分，不能用在对语法有真正影响的符号上，比如括号。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">\u006lert(<span class="string">"hello"</span>);</div></pre></td></tr></table></figure>
+
+<p>上边写法是ok的，但是如果用这种方式替换圆括号或者是引号，就会失败。</p>
+<h3 id="JavaScript_代码包含在哪里">JavaScript 代码包含在哪里</h3>
+<p>JavaScript 代码经常包含在哪里呢？</p>
+<ul>
+<li>直接嵌入&lt; script&gt; 代码块。</li>
+<li>通过&lt; script sr=… &gt; 加载代码。</li>
+<li>各种HTML CSS 参数支持JavaScript：URL 触发调用。</li>
+<li>CSS expression(…) 语法和某些浏览器的XBL 绑定。</li>
+<li>事件处理器(Event handlers),比如 onload, onerror, onclick等等。</li>
+<li>定时器，Timer(setTimeout, setInterval)</li>
+<li>eval(…) 调用。</li>
+</ul>
+<p>这也是所有可能发生漏洞的地方，比如定时器那里，考虑以下代码：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;script&gt;</div><div class="line">var value = <span class="string">"user_string"</span>;</div><div class="line"><span class="keyword">...</span></div><div class="line">setTimeout(<span class="string">"do_stuff('"</span>+value+<span class="string">"')"</span>, <span class="number">1000</span>);</div><div class="line">&lt;/script&gt;</div></pre></td></tr></table></figure>
+
+<p>表面上看他没有问题，对 value 只做一次转义就好了，但实际呢，考虑其解析过程，首先是HTML 解析出script 块，然后JavaScript 做第一次解析，检查setTimeout 语法，而等到1秒之后，才会解析do_stuff，如果不多做一次转义，就有可能构造成一次注入，比如user_string 中插入一个JavaScript编码的构造，截断前边函数，然后构造自己的攻击部分。</p>
+<p>这种编码模式，看起来比较绕，但实际上也是JavaScript常出现问题的地方。</p>
+<h3 id="安全工程">安全工程</h3>
+<ul>
+<li>加载远程脚本情况，和CSS 一样，这样做等于将自己和远程站点的安全性关联到了一起，所以一定要做好最高的安全措施。</li>
+<li>解析从服务器端收到的JSON 数据，一定不要用eval 直接解析，或者是RFC 4627 里提供的基于eval的实现，尽量使用JSON。parse()。 特别是处理第三方返回数据时，这两种方式实际上都并不安全，可以参见前边所说的json2.js 的实现方式。</li>
+<li>JavaScript 代码块包含用户输入数据的集中情况<ul>
+<li><strong>&lt; script&gt; 代码块中的字符串</strong> ，依照常规，对所有控制字符（0x00~0x1f），\,左右尖括号，引号，用反斜杠加数字的形式转义处理，高位字符也应当转义处理。同时不要直接用用户提供的字符串组成HTML，选择安全的DOM 处理，也不要直接用用户提供的字符串组成参数然后传递给脚本执行功能的函数里，避免使用eval(), setTimeout() 方法。</li>
+<li><strong>在独立脚本文件里的独立字符串</strong>：重点防范跨站。</li>
+<li><strong>在事件处理器，或者javascript伪URL</strong>：在伪URL 里时，应当在这些位置出现用户提供数据时，做多重转义。而且尽量不要使用这种直接内嵌JavaScript 脚本的方式。如果做，首先进行JavaScript 转义，然后根据情况转义在进行HTML或者URL 参数编码方式编码。不要是用eval(),setTimeout()和 innerHTML .</li>
+<li><strong>非字符串类型属性</strong>：白名单形式，并且对数字型数据进行严格验证。</li>
+</ul>
+</li>
+<li>与客户端浏览器对象交互<ul>
+<li><strong>客户端产生的HTML内容</strong>：不要使用 innerHTML, document.write() 或者是类似的处理方式，因为这样会造成跨站。构建HTML 文档，请使用 createElement(),appendChild(),安全的属性如：innerText, textContent.</li>
+<li><strong>对用户控制数据的处理</strong>： 要先认为从客户端读取的数据都未经过正确转移，特别是如location 属性，以及一些外部URL来源数据，一定要自己做一些转移处理，不能直接传给自己服务器处理。</li>
+</ul>
+</li>
+<li><strong>如果页面能加载其他用户控制的脚本</strong>，实际上，这样是极不安全的，一些可用的框架，或者是沙箱框架，可能会有帮助。</li>
+</ul>
+<hr>
+<p>本来是想着一天写一篇的速度，刚刚好，今天看了CSS 部分，觉得内容很短，而且很多东西配合着 JavaScript看，会有一些收获，于是就把两章放在一起看了，这是个深坑，来自CSS 的问题尚少，都有迹可循，但是来自JavaScript 这个神奇的脚本语言的种种行为模式，思考起来就花费了一些时间，虽然之前JavaScript 有一些基础，但是作者短短几句指出来漏洞，倒是要花费我很多时间去思考这些漏洞到底是怎么构造起来的。</p>
+<p>JavaScript 这门语言发展的太快了，而且Web 也发展的太快了，注定这是一个充满了危险的地带，再加上网络这个只用很短时间就从蛮荒时代走向了琳琅满目的东西，总是充满了各种残缺待补的东西，实际上，看如今的网络，似乎没有哪家的服务器没被脱过库了，被爆出来的也都是那些转过几手，拥有的人太多的库了。</p>
+<p>由于Web 的漏洞可以来自语言，可以来自浏览器来自客户端，可以来自服务器，来自Web 程序，甚至是程序中一个小小的插件，这两天爆出来的imageTragick 漏洞，不过就是一个图像处理工具，一个小小的漏洞直接让黑客切入到心脏中。</p>
+<p>而接下来的部分，也正是将流动在网络上的这些非HTML 文档，以及他们存在的风险，最后还有一个浏览器的插件。书写完成之后，将转入安全特性的探讨上，再次总结书写的过程，应该会有更多的收获。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="CSS和JavaScript的烦恼">CSS和JavaScript的烦恼</h1>
+<h2 id="CSS">CSS</h2>
+<p>CSS 是能够做到网页表现和内容分离的样式设计语言，有人爱之深切，有人恨之入骨。由于CSS 的存在，让HTML 在语义学上越来越不]]>
+    </summary>
+    
+      <category term="TCP/IP" scheme="http://yoursite.com/tags/TCP-IP/"/>
+    
+      <category term="Study" scheme="http://yoursite.com/categories/Study/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[HTML的纷争 -- 《The Tangled Web》]]></title>
@@ -2508,286 +2722,6 @@
       <category term="web" scheme="http://yoursite.com/tags/web/"/>
     
       <category term="前端" scheme="http://yoursite.com/categories/%E5%89%8D%E7%AB%AF/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[《增长黑客》读书笔记]]></title>
-    <link href="http://yoursite.com/2015/10/05/%E3%80%8A%E5%A2%9E%E9%95%BF%E9%BB%91%E5%AE%A2%E3%80%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
-    <id>http://yoursite.com/2015/10/05/《增长黑客》读书笔记/</id>
-    <published>2015-10-05T12:20:30.000Z</published>
-    <updated>2015-10-05T12:39:27.000Z</updated>
-    <content type="html"><![CDATA[<p>通过简书阅读：<a href="http://www.jianshu.com/p/ced81ced4b0d" target="_blank" rel="external">《增长黑客》读书笔记</a></p>
-<p>国庆期间，利用两天里的空闲时间，把这本最近颇受好评的书读了一遍，感觉很有意思之余，又把把书里的干货整理了一遍。</p>
-<p>书里的干货很多，案例很多，纯理论的东西不多，如果想要成为一个牛逼的 Leader , 就应当把自己培养成为T型的人才，跨界知识能力超强，某方面技术超硬，这个某方面，更多的指技术能力超硬。</p>
-<p>同时，书中所提到的一些案例，某些地方是游走在规矩的边界上，还有一部分虽然很有效但是也增加了用户的恶感（如捆绑下载，插件广告等），当然这本书并不是要教你学坏。</p>
-<p>在写这个读书笔记之前，我也看了一些人做的思维导图，内容很全，但是思维导图的缺点在于看的人更容易整体的浏览，一瞬接接触巨大的信息量，而无法深入的思考每一个信息点，所以我直接以正常笔记的形式进行了整理。</p>
-<h2 id="第一章：概念">第一章：概念</h2>
-<h4 id="定义（P6）">定义（P6）</h4>
-<p>以数据驱动营销，以市场指导产品，通过技术化手段贯彻增长目标的人。</p>
-<h4 id="增长目标：（P7）">增长目标：（P7）</h4>
-<p><strong>『AARRR』转化漏斗模型：</strong></p>
-<ul>
-<li>Acquisition 获取用户</li>
-<li>Activation 激发活跃</li>
-<li>Retention 提高留存</li>
-<li>Revenue 增加收入</li>
-<li>Referral 传播推荐</li>
-</ul>
-<h4 id="能力特质：（P16）">能力特质：（P16）</h4>
-<ul>
-<li><strong>数据为王：</strong>具有数据思维，一切工作建立在数据分析之上</li>
-<li><strong>专注目标：</strong>时刻围绕增长目标展开，不断的测试、改进，学习、再测试</li>
-<li><strong>关注细节：</strong>对细小改动做出评估</li>
-<li><strong>富于创意：</strong>缜密分析+天马行空的增长方案</li>
-<li><strong>信息通透：</strong>深入理解产品用户的活跃渠道，关注新生渠道和业界趋势</li>
-</ul>
-<p>（Andy Johns的增长黑客生涯）：facebook小挂件，向潜在用户发邮件广告推广，Twitter的着陆页改进（关注注册登录），新用户注册推荐用户，开发内部群发邮件系统，Quora捉摸用户行为模式，归纳为标准流程，引导其他用户执行流程<br><a id="more"></a></p>
-<h4 id="一切以数据说话：（P17）">一切以数据说话：（P17）</h4>
-<ul>
-<li><strong>明确分析目的</strong></li>
-<li><strong>了解数据来源的相关信息</strong>：<ul>
-<li><strong>强调核心指标</strong>：建立在品类特性和自身提供服务的核心价值之上</li>
-<li><strong>确定上报机制</strong>：时机、内容、技术实践形式</li>
-</ul>
-</li>
-<li><strong>数据分析方法</strong><ul>
-<li><strong>定性分析</strong>：对事物性质进行判断</li>
-<li><strong>定量分析</strong>： 对事物数量做统计</li>
-</ul>
-</li>
-</ul>
-<h4 id="团队定位（P20）">团队定位（P20）</h4>
-<p>游走在产品、运营、研发、设计、用户研究之间的多面手，比产品更关注能带来数据增长的功能特性，比运营更倾向于数据中探索新的增长机会，比设计师更少关注感观层面的艺术性，长于用户研究</p>
-<h4 id="招聘经验以及发展要素（P23）">招聘经验以及发展要素（P23）</h4>
-<p><strong>要求</strong>：具备技术、产品、营销思维、传播和分享的精神（案例为Teambition , WIFI万能钥匙的招聘经验）<br><strong>如何培养</strong>：熟悉产品和技术的市场影响，有产品干和市场思维，培养横向跨界知识，纵向某一领域专攻。<strong>软实力</strong>为：热情、聪明、好奇、收集资源、影响力、心态开放、内心强大、轻微强迫症<br><strong>常用的工具箱：</strong>Google Analytics , Mixpanel , KissMeteics , UserCycle , Customer.io , Optimize.ly , Basscamp , 友盟 </p>
-<h2 id="第二章：产品">第二章：产品</h2>
-<h4 id="PMF（P40）">PMF（P40）</h4>
-<p>也就是产品与市场的完美切合度，Product / market fit。从早期用户得到反馈，利用最小的成本持续改进产品。</p>
-<p><strong>成功案例</strong>： instagram的转型，砍掉冗余功能，吧用户喜欢的照片分享功能拿出来做<br><strong>失败案例</strong>： 叮咚小区，前期粗暴的线下广告投放，但是产品的基础功能不完善，用户体验极差。</p>
-<p>所以，应当先做好产品的验证，达到了PMF状态再全力推广。</p>
-<h4 id="需求（P45）">需求（P45）</h4>
-<ul>
-<li><strong>需求是真实存在的还是伪需求</strong>（QQ邮箱将邮件附件单列出来，但几乎没人用）</li>
-<li><strong>需求是否属于刚需</strong></li>
-<li><strong>需求是否足够大</strong>：估计目标用户的基数、消费能力、意愿预算；评估进入市场的原有规模和新的规模、借助排行榜和搜索热度了解需求（YY 向视频直播平台转变）</li>
-<li><strong>需求的变现能力如何</strong></li>
-</ul>
-<h4 id="MVP（P49）">MVP（P49）</h4>
-<p>也就是最小化的可行产品来验证需求。</p>
-<ul>
-<li><strong>基本功能</strong>： 在最短时间内完成，如Dropbox通过仅完成宣传视频，Groupon 通过WordPress建站，排版软件制作礼券等，大众点评3天做出网页，数据来源于旅游手册，微信游戏近似于图片拼凑视觉稿。这几种常见的方式：<strong>伪造网站，不提供实际的功能；用户点击按钮后告知正在开发，留下电子邮箱；调研用户呼声最高的功能，然后成为种子用户；基于微信做MVP的开发（无需适配，分发方便，便于收集反馈，数据可以沉淀，开发成本低）</strong></li>
-<li><strong>反馈渠道</strong>：内部反馈机制等</li>
-<li><strong>官方公告</strong>： 群体公告 + 单用户通知</li>
-<li><strong>自动升级</strong>： 启动时提示更新</li>
-<li><strong>使用行为统计</strong></li>
-</ul>
-<p>同时应当注意，在产品早期应当尽快适配新环境，案例：多拉口袋的iOS8崩溃问题。</p>
-<h2 id="第三章：获取用户">第三章：获取用户</h2>
-<h4 id="种子用户（P64）">种子用户（P64）</h4>
-<p>通过<strong>冷启动</strong>来获取第一批用户和制作过程，早期的种子用户的质量将决定产品初期的氛围、运营走向、以及日后的发展策略，案例如：知乎的早期邀请制度，哔哩哔哩的答题机制，小米的种子用户反馈。</p>
-<p>但是一定要警惕『产品蝗虫』，也就是目标客户之外的围观群众，他们将占用原有的目标用户名额，伤害到社区的生态，抠一些没用的『细节』，行为会对产品的决策产生误导。</p>
-<h4 id="从最笨的事情做起（P68）">从最笨的事情做起（P68）</h4>
-<p>几个案例：</p>
-<ul>
-<li>聚美优品，写BB霜的软文，提供化妆品的高质量美图</li>
-<li>Strikinfly，寻找超级粉丝，线上线下聊天</li>
-<li>云笔记，邀请内测用户成立反馈协助群</li>
-<li>Airbnb , 挨家挨户的上门拍照</li>
-</ul>
-<h4 id="社交红利（P72）与数据抓取（P77）">社交红利（P72）与数据抓取（P77）</h4>
-<ul>
-<li>与社交网络整合，获取用户量、关系链和行为数据（Spotify用facebook 登陆，Zynga用Facebook的开放平台制作社交游戏）</li>
-<li>第三方社交网络的账号登陆，达成移动应用的分享和回流（啪啪，使用微博QQ登陆，挖掘关系链潜力）</li>
-<li>数据抓取，可以保证产品初期启动的数据量，以及抢占先机，或者争取资源（微软关闭空间主页服务的时候，网易迅速提供『一键搬家』，追TA抓取唱吧的用户头像）</li>
-</ul>
-<h4 id="内容营销（P81）">内容营销（P81）</h4>
-<p>其作用是<strong>吸引流量，培养潜在用户，劝诱转化</strong>，所以应当讲用户爱听的故事，如官方微博输出用户喜欢的图文（知乎）。<br><strong>注意事项</strong>：明确目标受众，持续稳定输出高质量内容，标题的撰写技巧，保证文章长度（2400），数据分享与互动（有让人讨论的空间，如知乎刊发有争议的文章），选择合适的发布渠道。</p>
-<h4 id="搜索的优化（P89）">搜索的优化（P89）</h4>
-<p>分为搜索引擎的优化和应用商店的优化。</p>
-<p>搜索引擎的优化案例，Facebook 针对用户资料的页面优化，twitter自动提交热门标签给搜索引擎，TochCrunch通过wiki百科建立反向链接。<br>应用商店的优化案例，如大姨吗，通过副标题的修改推关键词，大众点评『更新跑得快』活动。</p>
-<h4 id="文案的撰写">文案的撰写</h4>
-<ul>
-<li>简要概述（100字内）</li>
-<li>话题事件</li>
-<li>核心特色</li>
-<li>主要功能</li>
-<li>团队访谈</li>
-<li>未来计划</li>
-<li>推广活动</li>
-<li>转化引导</li>
-</ul>
-<h4 id="更多的技巧">更多的技巧</h4>
-<ul>
-<li>捆绑下载：如豌豆荚捆绑下载其APP</li>
-<li>排队机制，饥饿营销： Mailbox显示排队人数，Trak.io付费插队，邀请好友插队。</li>
-<li>嵌入式代码和小挂件： Youtube分享</li>
-<li>线上到线下</li>
-<li>海外的扩张： 猎豹，Facebook等</li>
-</ul>
-<h2 id="第四章：激发活跃">第四章：激发活跃</h2>
-<h4 id="A/B测试（P121）">A/B测试（P121）</h4>
-<ul>
-<li>提供两个方案并行测试，</li>
-<li>变量唯一排除其他干扰因素，</li>
-<li>有判定结果优劣的标准，</li>
-<li>移动应用也可以借助HTML5快速验证需求。</li>
-</ul>
-<p>几个典型案例如37Signals 『注册高额回报账户』vs 『所有账户享受30天免费使用』，ZAGG 商品的静态图片 vs 360度图片 ， OkDork 先注册后进网站的测试，根据行为热点图去掉导航栏的测试。移动端如百姓网利用HTML5容器实现A/B测试。</p>
-<p>但注意，不要过度依赖AB测试。</p>
-<h4 id="独辟蹊径的技术（P133）">独辟蹊径的技术（P133）</h4>
-<p>在技术瓶颈下通过巧妙的手段破除用户使用功能的障碍，降低用户活跃的门槛。几个例子都很有趣：</p>
-<ul>
-<li>SKype『伪立体声』，提高清晰度，击败了其他同类服务</li>
-<li>QQ音乐利用专辑图片实现了IOS的『锁屏歌词』</li>
-<li>WIFI万能钥匙通过截图加上OCR技术识别WIFI热点，同时利用GPS+云服务获取附近的热点</li>
-</ul>
-<h4 id="补贴（P137）">补贴（P137）</h4>
-<p>有直接的现金补贴，快速获取用户，激发活跃度，也就是如返利和嘀嘀快的的补贴大战。<br>也有新玩法的红包补贴，通过社交关系链的传播，比如嘀嘀打车的补贴新玩法，打车红包。</p>
-<h3 id="游戏化（P139）与脚本自动化运营（P146）">游戏化（P139）与脚本自动化运营（P146）</h3>
-<p><strong>《游戏改变世界》提到的游戏四大特征</strong>： 目标、规则、反馈系统、自愿参与。<br>比如星巴克的线下会员成长体系，同时还开发了app把线下的游戏化搬到了线上。移动签到应用Foursquare 通过积分排名，徽章挑战和抢夺地主的游戏设计抓取用户忠诚度。滴滴打车提供的『滴米』系统等等。</p>
-<p>而产品在早期社区通过团队自己来运营启动，后期就可以通过写脚本来实现自动化运营，一个有趣的运营案例是豌豆荚打造的贴吧神兽，其实就是一个自动聊天的机器人，获得了几十万的关注度。</p>
-<h2 id="第五章：提高留存">第五章：提高留存</h2>
-<h4 id="用户留存率">用户留存率</h4>
-<p><strong>留住已有的用户胜过拓展新用户</strong><br>用户流逝的原因：</p>
-<ul>
-<li><strong>程序漏洞，性能瓶颈</strong>：Color基本流程都跑不通</li>
-<li><strong>用户频繁被骚扰</strong>： 新浪微博的各种通知、广告、推送、话题等</li>
-<li><strong>产品热度消减</strong>： 『你画我猜』的日活锐减</li>
-<li><strong>更好的替代产品</strong> ： eBay被淘宝击败</li>
-<li><strong>其他原因</strong></li>
-</ul>
-<p><strong>留存率的衡量标准</strong>：</p>
-<ul>
-<li>次日留存（40%）</li>
-<li>7日留存（20%）</li>
-<li>30日留存（10%）</li>
-</ul>
-<h4 id="产品性能优化">产品性能优化</h4>
-<p>优化内容包括：用户终端性能、网络性能、流量压缩、安装包空间、界面设计与布局、其他。</p>
-<p>如Facebook为非洲用户的优化，减少了启动速度，提供了预加载，压缩图片，优先家在适合当前分辨率的照片，优化安装包大小，其实就是前边所说的优化内容。</p>
-<p>再如 Instagram 的安卓版优化，扁平化设计，重新布局精简架构专注内容，延迟加载不必要的模块（方法追踪method tracing 和时点声明 Timing Statements 技术）。</p>
-<h4 id="有损服务——放下不必要的坚持">有损服务——放下不必要的坚持</h4>
-<p>定义：<strong>刻意输出在品质上存在某些损失的服务，换取其他方面的优化。</strong><br>原则：</p>
-<ul>
-<li><strong>优先保证核心功能的运转</strong></li>
-<li><strong>牺牲的特性越少越好，在条件允许的情况下</strong><br>几个经典的案例如：QQ农场在高峰期提供的静态默认列表，微信的高峰期不强求信息发送顺序的一致，小米在抢购的时候不提供剩余手机的精确统计（也有可能是饥饿营销），刀塔传奇的大版本升级采用『低清晰度版本』保证用户尽早升级。</li>
-</ul>
-<h4 id="引导用户上手_社交维系与社交解绑">引导用户上手 社交维系与社交解绑</h4>
-<p>Twitter注册完成后的推荐用户，知乎的推荐订阅，都是引导用户快速上手的例子。</p>
-<p>社交维系与社交解绑是对立的概念，前者如全民飞机大战，『啪啪』提示新加入的微博好友，Facebook在注销账号页面显示亲密好友的照片，通过社交手段维系用户留存。而same则通过解绑社交的方式，提高留存。</p>
-<h4 id="唤醒机制">唤醒机制</h4>
-<p>互联网产品中专为召回流失用户而设计的产品机制。</p>
-<ul>
-<li><strong>电子邮件召回EDM</strong><ul>
-<li><strong>提供奖励</strong>，Pocket 用高级付费账户试用来吸引你</li>
-<li><strong>告知进展</strong>，IFTTT增加Nest支持，Evernote推出商业版等方式</li>
-<li><strong>个性化推荐</strong>，如知乎的每周精选，淘宝的同类商品。</li>
-<li><strong>社交互动提示</strong>，如Twitter定期发送未处理消息，Facebook中通知用户『有一张照片中圈了你』。</li>
-<li>优秀的第三方服务商包括 TinyLetter,MailChimp等，EDM要注意内容，和取消订阅方式。</li>
-</ul>
-</li>
-<li><strong>消息推送通知</strong><ul>
-<li><strong>推送授权</strong>，推荐试用简单的浮层或者弹窗提示用户获取权限后的使用目的。</li>
-<li><strong>徽章通知</strong>，也就是角标，利用用户的强迫症。</li>
-<li><strong>本地通知</strong>，在预设的时间点通知，如刀塔传奇每天的三个时间点推送通知。</li>
-<li><strong>地理围栏通知</strong></li>
-<li><strong>图片推送通知</strong></li>
-<li><strong>表情文字通知</strong></li>
-</ul>
-</li>
-<li><strong>网页内唤醒移动应用</strong>，iOS有直接的URL Scheme技术来实现，安卓上有四种方式，分别是：拦截http跳转、自定义scheme、Crome Internet ，内嵌http服务。如知乎，哔哩哔哩等。</li>
-</ul>
-<h2 id="第六章：增加收入">第六章：增加收入</h2>
-<h4 id="免费的世界">免费的世界</h4>
-<ul>
-<li><strong>互联网与免费的午餐</strong><br> 互联网可以降低信息传播的承办本，海量用户摊薄了边际成本，人的本性对免费产品更感兴趣以及更喜欢『免费』的国人。</li>
-<li><strong>免费又赚钱的策略</strong><ul>
-<li>基本功能免费，高级功能收费的Freemium策略，比如Evernote，QQ，Flickr等等。</li>
-<li>交叉补贴，《征途》的游戏免费，道具收费。</li>
-<li>三方市场的流量变现，例子就是搜狗的『三级火箭』策略，通过输入法来带动搜狗浏览器下载，利用浏览器下载带动搜狗搜索的使用量（虽然我巨恶心搜狗的这个行为，但是这种变现的方式确实是最佳方式）</li>
-<li>开源代码的盈利可能，如厂商定制开发收费，比如卖技术说明文档，或者接受用户捐赠（其实这个就不算是运营了，纯粹是情怀）</li>
-<li>公司上市或者是被收购</li>
-</ul>
-</li>
-<li><strong>免费午餐的终结</strong>，在产品足够好的情况下，可以试着完全掐断免费。</li>
-</ul>
-<h4 id="重定向广告">重定向广告</h4>
-<p>也就是cookie和url分析，业界对此存在两种声音，一种认为增加了收入，另一种则担心用户隐私的泄露。</p>
-<h4 id="几个营销案例">几个营销案例</h4>
-<p><strong>Wet Seal </strong>：『和友人一起逛街』的社交购物，虚拟的DIY服务，Etsy根据社交资料精准推荐礼物。</p>
-<p><strong>罗辑思维的微信月饼</strong>：这也是一次粉丝经济的催生，分别尝试了找人代付，多人代付，随机送礼，加入游戏思维的方式完成了一次精彩的营销。</p>
-<p><strong>面对盗版的营销方式</strong>：腾讯给『非法』的QQ会员提供了八折开通会员的服务，而CleanmyMac 给盗版用户提供半价的优惠。面对盗版的变惩为奖的几个原则是：<strong>绝不责备用户，给予合理补偿，提供转化便利</strong></p>
-<p><strong>建立商业智能系统</strong>：用数据可视化的方式辅助企业管理，如百姓网建立内部的数据化营销系统，提高了业务增长。</p>
-<h2 id="第七章：病毒营销">第七章：病毒营销</h2>
-<p><strong>凯文凯利《新经济，新规则》中说道，传真机效应，单独一台传真机没有什么价值，只有它处于一个网络中才能被赋予价值。对于拥有一台传真机的人来说，网络中的传真机越多，你的传真机价值也就越大，用户买下传真机，实则买下了整个网络。</strong></p>
-<p>核心指标：</p>
-<ul>
-<li><strong>K因子</strong>：评判病毒传播的覆盖面，等于感染率*转化率。</li>
-<li><strong>病毒传播周期</strong>： 用户发出病毒邀请，到新用户完成转化所花费的时间。（引爆点提到的个别人物法则，附着力法则和环境威力法则）。</li>
-</ul>
-<h4 id="几个案例">几个案例</h4>
-<ul>
-<li><strong>坏事传千里</strong>，百度的Bug营销，利用一个假装的bug，百度云获得了大量的新注册用户和铁杆粉丝，以及完整的流程体验，大量的用户个人文件。</li>
-<li><strong>借势营销，利用时机</strong>，比如各种旅游产品借助阿里的去啊做热点营销，猎豹移动专门推出的春节抢票版。segmentFault的光棍节程序员闯关秀。（如今打开segmentfault.com/game会有一个新的闯关游戏，不过也是很难的）</li>
-<li><strong>构建产品体系外的病毒循环</strong>，追TA的整蛊朋友圈游戏。三大考验：<ul>
-<li><strong>创意来源</strong></li>
-<li><strong>生命周期</strong></li>
-<li><strong>产品契合度</strong>：知乎的财务包子铺与知乎的《金钱有术》。</li>
-</ul>
-</li>
-<li><strong>产品内置的传播因子</strong>。外置的传播因子有几个缺陷，渠道特性与产品特性不匹配，获得的用户参差不齐；渠道传播与下载转化之间可能存在断链（朋友圈可能屏蔽一些下载）；渠道传播的策划固然成功，但是用户可能对产品本身缺乏兴趣。所以借用内置的传播因子可能更好，如AirDrop的推荐产品解锁高级功能，美图秀秀内建的可分享到朋友圈的小功能。</li>
-<li><strong>邮件提醒增强传播效率</strong>： SpringSled 好友邀请提高排队名次，通过有效的邮件跟踪提高用户数量。</li>
-</ul>
-<h4 id="病毒传播中的用户心理把握">病毒传播中的用户心理把握</h4>
-<ul>
-<li><strong>喜爱</strong>：游戏，文学等大ip的作品，转化率比较高。</li>
-<li><strong>逐利</strong>：如Groupon的邀请好友奖励10美元等。</li>
-<li><strong>互惠</strong>： 是追逐利益的一种变体，基于理性经济人假说的传统经济学认为，经济行为主体是单纯追求个人利益最大化的，人们的复杂性为和社会参与，都基于成本收益的计算。如dropbox的推广获得额外空间。</li>
-<li><strong>求助</strong>：手机游戏，免费游戏，续命或者是买体力要钱。</li>
-<li><strong>炫耀</strong>： 支付宝每年一度的晒单</li>
-<li><strong>稀缺</strong>： 稀缺资源会引起争抢，如Gmail，Dribbble初期仅允许被邀请者发表作品。</li>
-<li><strong>害怕失去或错过</strong>： EverMemo 的互相扫描二维码解锁高级功能。</li>
-<li><strong>懒惰</strong>： 严肃的商业内容，大多数用户倾向于复制部分文字和链接再发送，偏重知识性娱乐性的网站，人们优先使用分享按钮分享他们看到的东西。</li>
-</ul>
-<h2 id="第八章：案例集">第八章：案例集</h2>
-<p>最后，作者复盘了几个完整的案例集，Airbnb ，Tinder ，Github，美丽说，外卖库，每一个都值得看几遍，了解一个成功的增长是如何做到的。</p>
-<hr>
-<p>整本书写的很赞，不像一些外国书，通篇的核心观点极少，统统以过分详实的案例填充那种情况。书中的干货还是非常多的，复盘的案例非常契合，分析到位。总之这是一本不错的书，至少应当读两遍。</p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<p>通过简书阅读：<a href="http://www.jianshu.com/p/ced81ced4b0d" target="_blank" rel="external">《增长黑客》读书笔记</a></p>
-<p>国庆期间，利用两天里的空闲时间，把这本最近颇受好评的书读了一遍，感觉很有意思之余，又把把书里的干货整理了一遍。</p>
-<p>书里的干货很多，案例很多，纯理论的东西不多，如果想要成为一个牛逼的 Leader , 就应当把自己培养成为T型的人才，跨界知识能力超强，某方面技术超硬，这个某方面，更多的指技术能力超硬。</p>
-<p>同时，书中所提到的一些案例，某些地方是游走在规矩的边界上，还有一部分虽然很有效但是也增加了用户的恶感（如捆绑下载，插件广告等），当然这本书并不是要教你学坏。</p>
-<p>在写这个读书笔记之前，我也看了一些人做的思维导图，内容很全，但是思维导图的缺点在于看的人更容易整体的浏览，一瞬接接触巨大的信息量，而无法深入的思考每一个信息点，所以我直接以正常笔记的形式进行了整理。</p>
-<h2 id="第一章：概念">第一章：概念</h2>
-<h4 id="定义（P6）">定义（P6）</h4>
-<p>以数据驱动营销，以市场指导产品，通过技术化手段贯彻增长目标的人。</p>
-<h4 id="增长目标：（P7）">增长目标：（P7）</h4>
-<p><strong>『AARRR』转化漏斗模型：</strong></p>
-<ul>
-<li>Acquisition 获取用户</li>
-<li>Activation 激发活跃</li>
-<li>Retention 提高留存</li>
-<li>Revenue 增加收入</li>
-<li>Referral 传播推荐</li>
-</ul>
-<h4 id="能力特质：（P16）">能力特质：（P16）</h4>
-<ul>
-<li><strong>数据为王：</strong>具有数据思维，一切工作建立在数据分析之上</li>
-<li><strong>专注目标：</strong>时刻围绕增长目标展开，不断的测试、改进，学习、再测试</li>
-<li><strong>关注细节：</strong>对细小改动做出评估</li>
-<li><strong>富于创意：</strong>缜密分析+天马行空的增长方案</li>
-<li><strong>信息通透：</strong>深入理解产品用户的活跃渠道，关注新生渠道和业界趋势</li>
-</ul>
-<p>（Andy Johns的增长黑客生涯）：facebook小挂件，向潜在用户发邮件广告推广，Twitter的着陆页改进（关注注册登录），新用户注册推荐用户，开发内部群发邮件系统，Quora捉摸用户行为模式，归纳为标准流程，引导其他用户执行流程<br>]]>
-    
-    </summary>
-    
-      <category term="PM" scheme="http://yoursite.com/tags/PM/"/>
-    
-      <category term="读书笔记" scheme="http://yoursite.com/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
     
   </entry>
   
