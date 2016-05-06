@@ -1,0 +1,99 @@
+<html>
+<head>
+	
+	<title>(level 3) HTML中的野怪 -- XSS升级之路</title>
+	<meta name="keywords" content="Just do, Just for fun" />
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--<link rel="stylesheet" href="/css/main.css" type="text/css">
+-->
+	<link href="/css/main.css?v=2" rel="stylesheet" type="text/css" />
+    <!--<link rel="stylesheet" href="/css/style.css" type="text/css">
+-->
+    
+
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+
+    
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2"/>
+    
+
+</head>
+
+<body>
+
+<h1 id="level_3_HTML_中的野怪">level 3 HTML 中的野怪</h1>
+<p>当然XSS 的漏洞不仅仅只出现在script 代码块中，还可以包含在丰富的HTML 的标签属性中。比如img,input 等一系列标签，基本格式是 &lt; HTML标签 onXXXX=”在这里” &gt; 或者是放在伪URL 里，比如&lt; a href = “javascript:在这里”&gt; xxxx 。</p>
+<p>一般这样地方的参数，很少是直接通过输入就直接放进去的，不过有时候常常是接受了用户的输入，最后输出的时候，会出现在这些位置，但如果对用户的输入没有做详尽的处理和过滤的话，就会出现明显的XSS 漏洞。来个栗子：</p>
+<p>比如某网站是这样的：</p>
+<p><a href="http://example.com/search.php?word=helloworld" target="_blank" rel="external">http://example.com/search.php?word=helloworld</a></p>
+<p>对应在HTML 代码中，他出现在了这样的区域里：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">input</span> <span class="attribute">type</span>=<span class="value">"text"</span> <span class="attribute">value</span>=<span class="value">"helloworld"</span> /&gt;</span></div></pre></td></tr></table></figure>
+
+<p>开发者没有对helloworld进行过滤的话，我们直接构造</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">word=helloworld<span class="string">" onclick="</span>alert(<span class="regexp">/xss/</span>)</div></pre></td></tr></table></figure>
+
+<p>然后在对引号括号等，使用URL 编码，直接变成如下结构：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">helloworld%22+onclick%3d%22alert(%2fxss%2f)</div></pre></td></tr></table></figure>
+
+<p>也就完成了xss过程，不过这种漏洞现在已经非常稀少，因为它太容易过滤了，只需要将双引号过滤即可，一般做法就是将双引号过滤成HTML 实体编码，也就是&#quot; 对于HTML 解析器，它能够识别在文本节点和参数值里边的实体编码，并且在内存中创建文档树的表现形式时，透明的对这些编码进行解码。所以，在创建DOM 树结构的时候，&amp;quot(有个分号，但是markdown会直接转了); 还没有被解码成引号，而且创建文档树的内容的时，才会考虑解码，而这时，其XSS 功效已经不能发挥作用了。</p>
+<p>于是，对于有过滤规则的情况下，该标签将变成：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">input</span> <span class="attribute">type</span>=<span class="value">"text"</span> <span class="attribute">value</span>=<span class="value">"helloworld&quot; onclick=&quot;alert(1)"</span> /&gt;</span></div></pre></td></tr></table></figure>
+
+<p>但是，仅仅是这样的过滤，显然是不够用的，还有其他的注入点可以进，继续在乌云上来看腾讯的例子，考虑这样一个网址：<br><a href="http://follow.v.t.qq.com/index.php?c=follow&amp;a=index&amp;appkey=801004516&amp;bg=FFFFFF&amp;hsize=80&amp;name=Zhanglifenft,chengyizhong,xiangyang20112007,linchufang,leonardoit,linchufang,qingfengxu6685,zhouzhichen001,yuguoming-ruc,luomingtitan,bjwbgq,kezuozongbianji,weibotalk,lee007,jxzhongweizhi,lihaipengtx" target="_blank" rel="external">http://follow.v.t.qq.com/index.php?c=follow&amp;a=index&amp;appkey=801004516&amp;bg=FFFFFF&amp;hsize=80&amp;name=Zhanglifenft,chengyizhong,xiangyang20112007,linchufang,leonardoit,linchufang,qingfengxu6685,zhouzhichen001,yuguoming-ruc,luomingtitan,bjwbgq,kezuozongbianji,weibotalk,lee007,jxzhongweizhi,lihaipengtx</a></p>
+<p>我们查看输出的HTML 源码，发现bg 那里对应的是background-color,我们尝试那里用不同的字符尝试，观察其过滤情况。在这里，我让bg = “\&lt;&gt;() 就是希望观察一下它的过滤情况，基本上所有的字符都被过滤了，但是只有\ 没有被过滤<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-06-14625007746187.jpg" alt=""></p>
+<p>如何只用 \ 构造利用语句呢，我们可以想到CSS 中的字符编码，CSS 提供了一套转义处理策略，一个反斜杠后边跟1~6位十六进制数字。然后利用CSS 的expression 来调用JavaScript 代码。也就是试图构造出</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">expression(eval(alert(/xss/))</div></pre></td></tr></table></figure>
+
+<p>这样的代码，完整来说，就是这样的：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">body</span> <span class="attribute">style</span>=<span class="value">"... background-color:;width:expression(eval(alert(/xss/)))"</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>用分号来结束backgroud-color,然后 w: 后边跟上expression,如果expression 要被过滤，那就加上转义，把expression 随意变下形就可以，于是，在下边这样的代码构造下，漏洞又被利用了。</p>
+<p><a href="http://follow.v.t.qq.com/index.php?c=follow&amp;a=index&amp;appkey=801004516&amp;bg=;w:expr\65ssion\28%20eval\28\27\69\66\28\21\77\69\6e\64\6f\77\2e\78\29\7b\61\6c\65\72\74\28\64\6f\63\75\6d\65\6e\74\2e\63\6f\6f\6b\69\65\29\3b\77\69\6e\64\6f\77\2e\78\3d\31\7d\27\29\29&amp;hsize=80&amp;name=Zhanglifenft,chengyizhong,xiangyang20112007,linchufang,leonardoit,linchufang,qingfengxu6685,zhouzhichen001,yuguoming-ruc,luomingtitan,bjwbgq,kezuozongbianji,weibotalk,lee007,jxzhongweizhi,lihaipengtx" target="_blank" rel="external">http://follow.v.t.qq.com/index.php?c=follow&amp;a=index&amp;appkey=801004516&amp;bg=;w:expr\65ssion\28%20eval\28\27\69\66\28\21\77\69\6e\64\6f\77\2e\78\29\7b\61\6c\65\72\74\28\64\6f\63\75\6d\65\6e\74\2e\63\6f\6f\6b\69\65\29\3b\77\69\6e\64\6f\77\2e\78\3d\31\7d\27\29\29&amp;hsize=80&amp;name=Zhanglifenft,chengyizhong,xiangyang20112007,linchufang,leonardoit,linchufang,qingfengxu6685,zhouzhichen001,yuguoming-ruc,luomingtitan,bjwbgq,kezuozongbianji,weibotalk,lee007,jxzhongweizhi,lihaipengtx</a></p>
+<p>不过很遗憾的，expression 当年是微软搞出来的技术，但是一直没被其他浏览器接受，同时，甚至微软自己如今也抛弃了这种特性，它出现在IE6，IE7，和IE8的一些早期版本，因为微软官方也认为该属性不具有通用性，而且它处理的事务，如今已经能够在CSS 中正常的完成，如min-width,max-width， 这些都已经在IE8之后得到很好的支持，所以expression 也只能在这两个古老版本上起效。</p>
+<p>那么，继续考虑一些别的情况，考虑下面这个网站：<br><a href="http://stock.finance.qq.com/report/search.php?searchtype_yjbg=yjjg&amp;searchvalue_yjbg=aaaaaaaaaa" target="_blank" rel="external">http://stock.finance.qq.com/report/search.php?searchtype_yjbg=yjjg&amp;searchvalue_yjbg=aaaaaaaaaa</a></p>
+<p>其输出的HTML 代码中，我们可以找到它：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-06-14625022573118.jpg" alt=""></p>
+<p>对于放在javascript: 中的伪URL，其效果和放在script 代码块中没有区别。在这里 aaaaaa我们可以考虑对其做点什么，很自然的，我们想到用单引号闭合，然后后边加上alert(/xss/) 这样的构造，看起来比较绕，其构造步骤是这样的：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">location.href=<span class="string">'...&searchvalue=aaaaaa'</span></div><div class="line">location.href=<span class="string">'...&searchvalue=aaaa'</span>+alert(<span class="number">1</span>)+<span class="string">''</span></div><div class="line">location.href=<span class="string">'...&searchvalue=aaaa&#x27;+alert(1)+&#x27;'</span></div></pre></td></tr></table></figure>
+
+<p>如果单引号，被过滤，就要改成HTML 编码，这样，就能在源代码中javascript 伪URL那里添加了alert(1) 这样的XSS。这步骤改造完毕之后，我们将可能被过滤的&amp;-&gt; %26,#-&gt;%23 转换成URL 编码，构造成这样的URL：<br><a href="http://stock.finance.qq.com/report/search.php?searchtype_yjbg=yjjg&amp;searchvalue_yjbg=aaaaaaa%26%23x27;%2balert(1)%2b%26%23x27" target="_blank" rel="external">http://stock.finance.qq.com/report/search.php?searchtype_yjbg=yjjg&amp;searchvalue_yjbg=aaaaaaa%26%23x27;%2balert(1)%2b%26%23x27</a>;</p>
+<p>至此，又完成了一次XSS 注入，但到此处，是否有一个疑问呢，还是关于编码解析的问题。在上一个栗子中，我们说，将双引号，改成&amp;quot ; 这样的形式，就不会出现异常的解析了，但是这里，我们主动的将单引号改成了&amp;#27 ; 这样的形式，反而成功的完成了XSS 呢。</p>
+<p>其实，这是一个解析顺序的原因，正常的解析顺序是这样的，先对URL解码，那些用URL 编码的字符都变成解码后的参数传出去，然后是HTML 解析，HTML 解析，此时 ，是先构建DOM文档结构，然后才会对每一个文本节点，属性值内容进行解析，这时候，HTML 实体编码的部分，才会还原回来，这个时候已经不会对DOM 结构造成影响了。然后是JS 解析，此时才会执行JS 代码的内容。而此时，HTML 已经完成了解码。</p>
+<p>对应上边的栗子，在JS 解析之前，HTML 已经对那些编码完成了解码，对于JS 来说，一切都写的清清楚楚的了。</p>
+<p>回到那个栗子，我们利用的代码，原样是这样的：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">li</span>&gt;</span><span class="tag">&lt;<span class="title">input</span> <span class="attribute">type</span>=<span class="value">"text"</span> <span class="attribute">id</span>=<span class="value">"pagenum"</span>  <span class="attribute">class</span>=<span class="value">"inputstyle0814"</span>  <span class="attribute">onkeydown</span>=<span class="value">"if ((event.keyCode==13) && (this.value!='')) location.href='http://stock.finance.qq.com/report/search.php?offset='+this.value+'&searchtype_yjbg=yjjg&searchvalue_yjbg=aaaaaaaaaa'"</span>/&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>当我们构造完成利用代码之后，对于页面上来说，就是要点击按钮，也就是onkeydown。 不仅要将URL 传出去，还需要用户点击按钮，这样造成的威胁小很多，不如img 标签里的onerror ，onload那样可以自动触发。</p>
+<p>最后我们再考虑一下如何防守吧，上上栗子的问题，在于漏掉了斜杠的过滤，那么\ 该过滤还是要过滤的。对于上边这个栗子，可以考虑二次过滤，也就是将&amp;都过滤为 &amp;amp ;，这样不仅过滤了无编码的单引号等格式，又可以过滤掉利用实体编码想要逃过的实体编码格式。而如果只是用正则去片段&amp;#xNN..等形式，实际上是不一定搞定所有的HTML 编码形式的。</p>
+
+
+<!--<a href="http://yoursite.com/2016/05/06/-level-3-HTML中的野怪-XSS升级之路/#disqus_thread" class="article-comment-link">Comments</a>-->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'null'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+<div style="display:none">
+<script src="http://s4.cnzz.com/stat.php?id=undefined&web_id=undefined" language="JavaScript"></script>script>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>
