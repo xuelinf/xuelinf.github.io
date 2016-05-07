@@ -4,7 +4,7 @@
   <subtitle><![CDATA[代码是一棱刀背，幸好，有此藏身。]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2016-05-06T03:27:25.290Z</updated>
+  <updated>2016-05-07T09:29:57.325Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,119 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[非HTML类型文档的复仇以及插件 -- 《The Tangled Web》]]></title>
+    <link href="http://yoursite.com/2016/05/07/%E9%9D%9EHTML%E7%B1%BB%E5%9E%8B%E6%96%87%E6%A1%A3%E7%9A%84%E5%A4%8D%E4%BB%87%E4%BB%A5%E5%8F%8A%E6%8F%92%E4%BB%B6-%E3%80%8AThe-Tangled-Web%E3%80%8B/"/>
+    <id>http://yoursite.com/2016/05/07/非HTML类型文档的复仇以及插件-《The-Tangled-Web》/</id>
+    <published>2016-05-07T09:29:03.000Z</published>
+    <updated>2016-05-07T09:29:51.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="非HTML类型文档的复仇以及插件">非HTML类型文档的复仇以及插件</h1>
+<p>除了HTML文档，浏览器还可以识别其他若干的文件格式，而这些文件格式，在大多数情况风险比较低，但是在某些时候，会冒出致命的危险，接下来会说的一个最近刚刚曝出的漏洞。</p>
+<h2 id="纯文本文件">纯文本文件</h2>
+<p>Content-Type: text/plain</p>
+<p>除了IE，收到没有头域的HTTP/0.9 或者缺少Content-Type 的响应，默认是处理为纯文本文件，而IE会处理为HTML 文件。同时，大多数浏览器，对若干的MIME 类型，及其各种变种，text/CSS 都映射为纯文本文件，是为了方便开发人员，当然，JSON除外。</p>
+<h2 id="位图图片">位图图片</h2>
+<p>在缺少Content-Type 响应头的情况下，会有解析器去检测文档的头部信息，来判断类型。如果包含了Content-Type类型，那么先匹配到MIME 类型，如果无法解析，就会再检测文档头部信息，来确定类型。</p>
+<p>而近期曝出的ImageMagick 的0day 漏洞，就是这样一个漏洞，漏洞发生在这款ImageMagick 的图像处理软件，它被广泛用来在网站上进行图像处理，其原理就是，用户上传图像，每个图像会有一个magic bytes，实际上就是文件头，用来表示图像类型，ImageMagick 的功能就是通过解析器，对文件头进行解析，然后进一步处理。</p>
+<p>如果我们把一个含有恶意代码的文件保存为文件格式，交给ImageMagick 解析，正常是ImageMagick 无法解析的，当然漏洞就是不正常的时候了，参考如下代码：</p>
+<figure class="highlight javaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">push graphic-context</div><div class="line"></div><div class="line">viewbox <span class="number">0</span> <span class="number">0</span> <span class="number">640</span> <span class="number">480</span></div><div class="line"></div><div class="line">fill ‘url(https:<span class="comment">//example.com/image.jpg“|ls “-la)’</span></div><div class="line"></div><div class="line">pop graphic-context</div></pre></td></tr></table></figure>
+
+<p>将其保存为jpg 格式等，调用ImageMagick 去处理它，就会触发一个最常见的查看本地文件的漏洞，下面在说一下原因。</p>
+<p>ImageMagick 在 MagickCore/constitute.c 的 ReadImage 函数中解析图片，如果图片地址是 https:// 开头的，即调用 InvokeDelegate。MagickCore/delegate.c 定义了委托。作为一个执行命令被引入的，但是，对参数的引入没有做好足够的过滤，造成了渗透的可能，比如一个默认命令是为了处理来自http 请求送来的：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="string">"wget"</span> -q -O <span class="string">"%o"</span> <span class="string">"https:%M"</span></div></pre></td></tr></table></figure>
+
+<p>此处的%M 是真实的输入参数，如果他的值是这样的:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">`https://example.com<span class="string">";|ls "</span>-la`</div></pre></td></tr></table></figure>
+
+<p>很显然，由于引号的奇怪闭合方式，这一块恰好满足了bash 的语法，通过一个通道符，我们继续调用了ls -la ，显然，这就引起了注入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ convert <span class="string">'https://example.com";|ls "-la'</span> out.png</div><div class="line">total <span class="number">32</span></div><div class="line">drwxr-xr-x <span class="number">6</span> user group <span class="number">204</span> Apr <span class="number">29</span> <span class="number">23</span>:<span class="number">08</span> .</div><div class="line">drwxr-xr-x+ <span class="number">232</span> user group <span class="number">7888</span> Apr <span class="number">30</span> <span class="number">10</span>:<span class="number">37</span> ..</div></pre></td></tr></table></figure>
+
+<p>这是基本的原因，实际上的利用漏洞过程通过上传文件，构造exploit, 上文中已经构造了一个文件，他的格式是按照mvg 格式，对于ImageMigick 存在这种漏洞的有两个格式，mvg,和svg,mvg 相对好构造一点。</p>
+<p>更进一步的，通过构造exploit ，我们可以删除服务器文件，移动服务器文件，或者是读取服务器文件，其结果，你懂得。</p>
+<p>具体参见这个漏洞专门成立的网站<a href="https://imagetragick.com/" target="_blank" rel="external">Imagetragick</a>, 如今在乌云上，借着这个漏洞，已经提交了无数个0day 漏洞了。</p>
+<h2 id="音视频文件">音视频文件</h2>
+<p>其细节内容，不做过多的深究，对于其安全隐患，也就是是否合理的消除类型错判带来的风险，和上边的图片处理有一点点相似。</p>
+<p>另外，作者想了一个很有想象力的情况，如果<audio> 支持未压缩的原生音频播放，然后这个标签被指向了敏感的非音频文件，但是由于是处在这个标签下，还是会被当做原生的音频播放，虽然是混乱的声波。而在HTML5 之下，调用麦克风API，可以捕捉这些声波信息，通过这些声波信息，又重组了文件内容。OTZ…</audio></p>
+<h2 id="XML_文件">XML 文件</h2>
+<p>浏览器会根据收到的Content-Type 或一些其他线索，为集中特殊的XML 格式提供单一用途的XML 解析器。而绝大部分时候，和XHTML 同一个解析器。在XML 中，</p>
+<ul>
+<li>文档的实际含义取决于XML 文件中的xmlns 命名空间</li>
+<li>xmlns 和 Content-Type 的值无关，按后者进行解析</li>
+<li>可能有多个xmlns,对文档的每个段落赋予不同的含义</li>
+</ul>
+<h4 id="常规的XML_视图">常规的XML 视图</h4>
+<p>如果没有能够识别的命名空间设定，那么浏览器会默认显示一种树状结构，如果有的话，就按照实际含义进行显示。</p>
+<p>但由于这种需要显示未知用途和无法识别命名空间的XML 文档，会带来一定的容错，这种容错，可能导致XSS，比如代理未经过滤的RSS 订阅源，一般来说是有特定的解析器进行处理，但如果没有内置RSS 阅读功能的浏览器，可能会使用最常规的解析模式，而RSS 订阅源中可能存在有HTML 代码，造成XSS 漏洞。</p>
+<h4 id="可缩放向量图片">可缩放向量图片</h4>
+<p>这里所说的一般是SVG，在上一部分的那个例子里，已经探讨过SVG带来的灾难，一个常见的svg 表达方式如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">svg</span> <span class="attribute">xmlns</span>=<span class="value">"http://www.w3.org/2000/svg"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">script</span>&gt;</span><span class="javascript">&lt;![CDATA[</span></div><div class="line">  <span class="function"><span class="keyword">function</span> <span class="title">clicked</span><span class="params">()</span> </span>{alert(<span class="string">"hello"</span>);}</div><div class="line">]]&gt;<span class="tag">&lt;/<span class="title">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">circle</span> <span class="attribute">onclick</span>=<span class="value">"clicked()"</span> <span class="attribute">cx</span>=<span class="value">"50"</span> <span class="attribute">cy</span>=<span class="value">"50"</span> <span class="attribute">r</span>=<span class="value">"50"</span> <span class="attribute">fill</span>=<span class="value">"pink"</span> /&gt;</span><span class="tag">&lt;/<span class="title">svg</span>&gt;</span></div></pre></td></tr></table></figure>
+
+
+<p>目前该特性已被绝大多数浏览器支持，这里的svg是完成了一个划出圆圈，同时在圆圈中点击会显示提示信息。</p>
+<p>对于svg来说，这种格式的图片可以直接放在独立的XML 文档中被访问到，同时也可以放在第三方页面上用&lt; img&gt;引用到，而使用img的话，svg的脚本部分会被完全禁止掉，但是虽然会被禁止，但是还是有危险的，他所在的内置脚本仍然有可能获得图片所在域名的上下文环境权限并且执行，所以如果引入外部来源的svg,就一定要做好非常严谨的语法过滤，上文提到的ImageMagick 漏洞，就是因为在处理图片头的时候，没有做好过滤造成的。</p>
+<p>除此之外，还有一些其他类型的文档，比如<strong>数学标记语言</strong>， <strong>XML用户界面语言</strong>， <strong>无线标记语言</strong>，<strong>RSS Atom订阅源</strong> 等等。</p>
+<p>另外，还有一些不可显示的文件类型，如插件和扩展的安装清单列表，manifests,自动HTTP代理配置歘繁忙PAC，可安装的外观样式，整数撤销列表CRL，反恶意网站黑名单等等。</p>
+<h3 id="安全工程">安全工程</h3>
+<p>当需要处理的数据很可能被解析为XHTML 格式，或其他支持脚本的文档类型，不要只去根据Content-Type 响应头和最顶层的xmlns 指令来判断。同时不要再任意位置上允许出现可由用户控制的标记语言。</p>
+<p>如果不需要直接访问该文件，可以在响应的响应头加上<strong>Content-Disposition:Attachment</strong>。</p>
+<p>对于非HTML 类型文档，正确识别Content-Type响应头，同时正确设置字符集编码，也很重要。</p>
+<h1 id="浏览器插件">浏览器插件</h1>
+<p>浏览器插件林林总总，形态各异。简单来讲，一个常见的插件，是讲在浏览器中显示一种新型的文件格式，格式类似于HTML，浏览器得到后交给插件进行处理。</p>
+<p>很容易可以想到，浏览器插件的安全漏洞，不仅多，而且千奇百怪，可以说针对Web 应用程序的攻击，与插件占有关系占了很大一部分。</p>
+<p>对插件的调用通过几个显式的形式调用：</p>
+<ul>
+<li>标记 &lt; object data=…&gt; 这样的形式，或者是&lt; embed src=…&gt;.</li>
+<li>type 参数，将type的参数的MIME 与浏览器里注册的有效插件的MIME类型做一个对比，如果匹配，就把它传给谍影的插件如理，如果没有匹配，理论上会出现窗口，提示用户下载，但某些时候，浏览器会根据Content-Type头域，或者URL 里文件后缀的方式猜测。</li>
+<li>插件里的输入信息一般通过&lt; object&gt; 区块里嵌入&lt; param&gt; 标签来进行设置。</li>
+</ul>
+<p>这里我们要强调的是，在对插件Content-Type 处理时是存在风险的，若干插件实际上有自己完整的代码执行环境，而且这些可执行的应用在于他们所在源站点进行交互时拥有一系列的特权，就很容易出现CSRF 的跨站漏洞。比如已经被启用的&lt; applet&gt;标签，可用于加载java 小程序。GIFAR 漏洞在2008年诞生，就是用一个applet 中加载的java程序，偷偷的隐藏在一个GIF 图片中。</p>
+<p><strong>插件的各种应用框架</strong></p>
+<p>这其中藏着无数的坑待挖掘，这里只是个小引子~</p>
+<ul>
+<li>Flash ,不多说，如今越来越不受待见其中存在有严重的脚本注入等问题，如getURL() navigateToURL() 控制浏览器打开访问新窗口等等，他还拥有一些特殊技能，这些特殊技能都有着致命的危险：<ul>
+<li>收集字体等系统识别特征</li>
+<li>可以全屏，所以可以制作UI 欺诈</li>
+<li>能得到麦克风和摄像头的数据</li>
+<li>能忽略浏览器的安全和隐私设定，使用自己的安全设置进行数据持久化</li>
+<li>默认情况下，可以直接使用浏览器的HTTP 堆栈及其管理的全局身份凭证信息。</li>
+<li>可以和其他运行的Flash 交互</li>
+<li>访问应用页的DOM 元素</li>
+<li>FLash 自带内部简化版HTML 解析器，转义等等问题要注意</li>
+<li>插件自身的设计问题等等等等等等等等等等</li>
+</ul>
+</li>
+<li>Microsoft Sliverlight ,不懂，有机会接触的时候再详细理解吧。</li>
+<li>Sun java,&lt; applet&gt; 已经因为严重的问题被抛弃了。</li>
+<li>XML Browser Applications ，微软家的不怎么懂，同上上。</li>
+<li>ActiveX Controls ,一度很火，如今几乎挂了，不过IE8之前，你懂得，黑客的天堂。</li>
+</ul>
+<h2 id="安全工程-1">安全工程</h2>
+<p>提供需要让插件处理的文件时：</p>
+<ul>
+<li>对于来源信任的数据，还是应当避免处理用户提供的URL，也不要在小程序中产生或者试图修改用户控制的HTML。</li>
+<li>对于用户控制的简单的多媒体，记得要验证文件格式，甚至是限制文件格式，使用正确的Content-Type 设置，同时要吸取各种前车之鉴，避免内容检测造成的漏洞。</li>
+<li>用户控制的文档格式，虽然本质上是可以绝对安全，但是插件仍然有漏洞的可能，所以对于文档，两个解决办法，专用域名，单词有效的令牌，不要持久cookie.</li>
+</ul>
+<p>对于需要嵌入由插件处理的文件，无外乎就是确保type 参数明确，如果无法被识别的话，一定要做出各种限制，任何非信任站点来的东西，都不要随便接收，做好对设置的核查。</p>
+<p>开发ActiveX 组件？放弃吧！</p>
+<hr>
+<p>由于对浏览器插件这一块不熟，而且感觉这里边有一些有趣的文章可以做，但作者又讲的很少，而且大多数是一些行将就木的过时插件的东西，所以这里我就简短的写了写。</p>
+<p>至此，所有关于Web 的东西基本上结束了，回顾整个过程，我们会发现，在Web 中，存在的漏洞一方面是由于本身在协议阶段就存在不科学的地方，另一方面在浏览器等客户端在实现过程中，又由于各自为战，也存在有不统一和各自的缺陷存在，还有一个原因，就是开发者自己在开发中，并不懂自己写出来的代码会带来什么样的困扰，这大概是最可怕的，同时，由于客户端的真正操作者是对程序对代码一窍不通的人，在安全风险上，完全不能依赖他们去提供一点点的阻挡。</p>
+<p>所以，一个真正想要构建安全环境的产品，是需要一个团队在整个流程里，能准确把握所有可能造成安全问题的隐患，用最稳妥的方式处理。渗透不可怕，可怕的是每次只有当渗透发生了之后，仅仅明白哪里出错，而不知道为什么会出错，为什么会被黑客抓住。</p>
+<p>所以，真正的安全者，是对自己的产品每一块防护措施都了如指掌的人。 </p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="非HTML类型文档的复仇以及插件">非HTML类型文档的复仇以及插件</h1>
+<p>除了HTML文档，浏览器还可以识别其他若干的文件格式，而这些文件格式，在大多数情况风险比较低，但是在某些时候，会冒出致命的危险，接下来会说的一个最近刚刚曝出的漏洞。</p>
+<h]]>
+    </summary>
+    
+      <category term="TCP/IP" scheme="http://yoursite.com/tags/TCP-IP/"/>
+    
+      <category term="Study" scheme="http://yoursite.com/categories/Study/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[(level 3) HTML中的野怪 -- XSS升级之路]]></title>
@@ -2414,104 +2527,6 @@
       <category term="Linux" scheme="http://yoursite.com/tags/Linux/"/>
     
       <category term="Study" scheme="http://yoursite.com/categories/Study/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[《C陷阱与缺陷》笔记]]></title>
-    <link href="http://yoursite.com/2015/10/08/%E3%80%8AC%E9%99%B7%E9%98%B1%E4%B8%8E%E7%BC%BA%E9%99%B7%E3%80%8B%E7%AC%94%E8%AE%B0/"/>
-    <id>http://yoursite.com/2015/10/08/《C陷阱与缺陷》笔记/</id>
-    <published>2015-10-08T14:27:37.000Z</published>
-    <updated>2015-10-08T14:45:50.000Z</updated>
-    <content type="html"><![CDATA[<p>这本书超薄，但含金量很高，里边一些常见的陷阱也是面试的时留的坑，适合没事翻一翻，指不定什么时候还有意外惊喜。<br><a id="more"></a></p>
-<h2 id="词法陷阱">词法陷阱</h2>
-<p><strong>词法分析中的『贪心法』</strong>：<br>编译器将程序分解成符号的方法是,从左到右一个字符一个字符地读入,如果该字符可能组成一个符号,那么再读入下一个字符,判断已经读入的两个字符组成的字符串是否可能是一个符号的组成部分;如果可能,继续读入下一个字符,重复上述判断,直到读入的字符组成的字符串已不再可能组成一个有意义的符号。<br>比如：<code>y = x/*p</code>与<code>y = x / *p</code>一个将<code>/*</code> 理解为注释的开始，一个理解为指针。</p>
-<p><strong>双引号与单引号</strong>：<br>也就是字符与字符串的区别，在C语言里，单引号引起的一个字符实际上代表的是一个张数，与ASCII严格对应。而双引号引起的字符串，代表的是一个指向无名数组起始字符的指针，该数组被双引号之间的字符以及一个额外的二进制值为0的字符<code>\0</code> 初始化。</p>
-<h2 id="语法陷阱">语法陷阱</h2>
-<p><strong><code>（*(void(*)())0）()</code>所代表的含义</strong><br>实际上一层一层看即可，<code>void(*)()</code>是一个函数指针,该函数返回<code>void</code>型数据<br><em>`(void(</em>)())0<code>*就是将常数0转换为指向返回值为</code>void<code>的函数的指针
-而</code>(<em>(void(</em>)())0)();<code>就是一个表达式,调用</code>0`地址的函数</p>
-<p>而它的等价表达式为：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">typedef void (<span class="keyword">*</span>funcptr)();</div><div class="line">(<span class="keyword">*</span>(funcptr)0)();</div></pre></td></tr></table></figure>
-
-<p><strong>运算符优先级问题</strong>：<br>这类问题例子很多，比如 <code>if (A &amp; B != 0)</code> 其中的<code>&amp;</code>优先级更低，所以先执行 非等判断，再进行与操作。所以解决这类问题的方式，就是在不知道优先级的情况下，加上括号就好了。记住几点：</p>
-<ul>
-<li>任何一个逻辑运算符的优先级低于任何一个关系运算符</li>
-<li>移位运算符的优先级比算术运算符要低，但是比关系运算符要高</li>
-<li>所有的赋值运算符的优先级是一样的，他们的结合方式是从右到左，所以<code>home = visitor = 0</code> 是从右往左赋值的。</li>
-</ul>
-<p><strong>几个小陷阱注意</strong></p>
-<ul>
-<li>分号，有时候不会引起编译错误，但是结果千差万别。</li>
-<li><code>switch</code> 语句中每一个case 不要忘记<code>break</code>， 否则顺序执行。</li>
-<li><code>else</code> 始终与同一对括号内最近的未匹配的if结合。</li>
-</ul>
-<h2 id="语义陷阱">语义陷阱</h2>
-<p><strong>非数组的指针</strong>：<br>下面这个方法想要合并s， t两个字符串，变成一个单字符串r，但是这种方法是行不通的，因为不能确定r指向了何处。不仅要让<code>r</code> 指向一个地址，还应该有内存空间可供容纳字符串。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="value">char</span> *r;</div><div class="line"><span class="function">strcpy</span>(r, s);</div><div class="line"><span class="function">strcat</span>(r, t);</div></pre></td></tr></table></figure>
-
-<p>在这里引入一个库函数<code>malloc</code> 实现这个操作。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">char</span> *r, *<span class="built_in">malloc</span>();</div><div class="line">r = <span class="built_in">malloc</span>(<span class="built_in">strlen</span>(s) + <span class="built_in">strlen</span>(t));</div><div class="line"><span class="built_in">strcpy</span>(r, s);</div><div class="line"><span class="built_in">strcat</span>(r, t);</div></pre></td></tr></table></figure>
-
-<p>但是这样仍然是不对的，原因有三个。</p>
-<ul>
-<li>malloc 函数可能无法提供请求的内存，这种情况下malloc 函数会返回一个空指针作为内存分配失败的信号。</li>
-<li>r 分配的内存在使用结束后，应当立即释放。</li>
-<li>长度是不够的，因为字符串最后一位空字符没有算在内，需要 +1。</li>
-</ul>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">char</span> *r, *<span class="built_in">malloc</span>();</div><div class="line">r = <span class="built_in">malloc</span>(<span class="built_in">strlen</span>(s) + <span class="built_in">strlen</span>(t) + <span class="number">1</span>)；</div><div class="line"><span class="keyword">if</span>(!r){</div><div class="line">	complain();</div><div class="line">	<span class="built_in">exit</span>(<span class="number">1</span>);</div><div class="line">}</div><div class="line"><span class="built_in">strcpy</span>(r, s);</div><div class="line"><span class="built_in">strcat</span>(r, t);</div><div class="line"><span class="comment">//一段时间以后</span></div><div class="line"><span class="built_in">free</span>(r);</div></pre></td></tr></table></figure>
-
-<p>（所以说，c简直就是个坑，入大Python教）</p>
-<p><strong>空指针</strong><br>编译器保证由<code>0</code> 转化而来的指针不等于任何有效的指针，通常被<code>null</code> 这个值代替，所以任何企图使用该指针所指向的内存中存储的内容的行为都是非法的。</p>
-<p><strong>求值顺序</strong>：<br>C语言中只有四个运算符<code>(&amp;&amp; ,  || ,  ?: , ,)</code>存在规定的求值顺序.运算符<code>&amp;&amp;</code>和运算符<code>||</code>首先对左侧操作数求值,只在需要时才对右侧操作数求值.运算符<code>?:</code>有3个操作数:在<code>a?b:c</code>中,操作数a首先被求值,根据<code>a</code>的值再求操作数<code>b</code>或<code>c</code>的值.而逗号运算符<code>,</code>首先对左侧操作数求值,然后该值被”丢弃”,再对右侧操作数求值.其他所有运算符对其操作数求值的顺序都是未定义的.特别的,赋值运算符并不保证任何求值顺序.</p>
-<h2 id="连接">连接</h2>
-<p>这部分是C语言的特性，所以就直接粗略的看了一下跳过去。<br><strong>static 修饰符与命名冲突</strong>：他是一个能有效减少命名冲突的方式，<code>static int a;</code> 之后，a 的作用域限制在了一个源文件里，其他文件是不可见的。<code>static</code> 同样适用于函数。</p>
-<h2 id="库函数">库函数</h2>
-<p>作者刁刁的，写这本书的时候，ANSI C 标准还没有最后定案。所以书中考虑了很多现在不需要考虑的问题，比如兼容各种风格，兼容K&amp;R 风格的函数定义形式。<br><strong><code>getchar（）</code>函数</strong>：<br>getchar()函数读取的字符，如何直接赋值给一个<code>char</code>型的 <code>c</code> ，就会出现问题。因为c无法容下所有可能的字符，特别是，可能无法容下读文件结束时候的<code>EOF</code>，这样就会出现问题，如果getchar()读入的字符无法存入<code>char c</code>中去，那么就会『截断』，结果可能正确，但是这样做是不对的。</p>
-<p><strong>更新文件顺序</strong>：<br>一个输入操作不能随后直接紧跟一个输出操作，输入fread和输出fwrite同时操作，需在其中插入fseek函数的调用，之后文件就可以正常的读取或写入了。</p>
-<p><strong>缓冲输出</strong>：<code>setbuf(stdout, buf)</code>  将写入刀stdout 的输出都使用buf 作为输出缓冲区，知道buf 缓冲区已满，或者是直接调用 <code>fflush</code> buf 缓冲区的内容才会实际写入stdout中去。</p>
-<p><strong>errno 检测错误</strong>： 在库函数调用没有失败的情况下，并没有强制要求库函数一定要设置<code>errno</code> 为0，也可能是上一个执行失败的库函数设置的值。甚至在函数看似正确执行的情况下，也会将<code>errno</code> 设置一个值，所以用 <code>if(errno)</code> 来处理这个错误的方式是不可以的，我们可以用 <code>if (返回错误的值) 检查 errno</code> 这种方式，也就是我们检测作为错误指示的返回值，确定程序执行已经失败，再检查errno，来搞清楚错误原因。</p>
-<p><strong> signal </strong>：信号这个函数非常的复杂，因为在其他的库函数中，可能已经有信号在执行过程中，我们再使用signal处理函数，极有可能导致数据完全崩溃。所以，信号非常的复杂和棘手，具有一些从本质上不可移植的特性，所以要让<code>signal</code>处理函数尽可能的简单。</p>
-<h2 id="预处理器">预处理器</h2>
-<p>C语言里的宏，和C++中的泛型模板，在精神上有相仿之处，也有人用C 的宏实现通用容器。众多C++书籍都告诉我们，宏是万恶之首，所以没达到得心应手的时候，所以这一块，当做了解来看。</p>
-<p><strong>不要忽视宏定义中的空格</strong>：注意这里说的是<strong>宏定义</strong>。一个宏如果不带参数，则只需要调用宏名即可，括号无关紧要，所以宏定义后边的空格可能就会引起下面的麻烦。<br><code>#define f (x) ((x)-1)</code><br>f代表(x) ((x)-1),而不是f(x)代表((x)-1),后者应写为<br><code>#define f(x) ((x)-1)</code><br>这一规则不适用于宏调用,只对宏定义适用.因此上面完成宏定义后,f(3)与f (3)求值后都等于2.</p>
-<p><strong>宏不是函数</strong>：最好在宏定义中把每个参数都用括号括起来，整个结果表达式也用括号括起来，防止当宏用于一个更大一些的表达式中可能出现的问题。<br><strong>宏不是语句</strong>：assert(e)的正确定义</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#define <span class="keyword">assert</span>(e) /</div><div class="line">             ((<span class="keyword">void</span>)((e) || _assert_error(<span class="keyword">__FILE__</span>,<span class="keyword">__LINE__</span>)))</div></pre></td></tr></table></figure>
-
-<p>这个定义实际上利用了||运算符对两侧的操作数依次顺序求值的性质.<br><strong>宏不是类型定义</strong>：<br>宏的一个常见用途是，让多个不同变量的类型可以在一个地方说明：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#define FOOTYPE struct foo</span></div><div class="line"><span class="title">FOOTYPE</span> a;</div><div class="line"><span class="title">FOOTYPE</span> b,c;</div></pre></td></tr></table></figure>
-
-<p>这样，我们只需要在程序中改动一行代码，就可以改变a, b, c 的类型了，而与a, b, c 在程序中的什么地方声明无关。这与<code>typedef</code> 的方式相同，但是后者更通用一些。而宏的方式某些时候，可能存在一些问题。</p>
-<h2 id="可移植性缺陷">可移植性缺陷</h2>
-<p>作者大牛在这里超前讨论了C语言在移植的时候小心的一些坑和缺陷。</p>
-<ul>
-<li><strong>标示符名称的限制</strong></li>
-<li><strong>整数的大小</strong>：因为无法保证short型，int型，long型在不同语言中的长度，所以考虑到可移植性，也许最好的方式是使用long型，也可以自己定义一个新的类型。</li>
-<li><strong>字符是有符号整数还是无符号整数</strong>：在char 类型转化刀较大的整数int类型时，做有符号处理还是无符号处理，影响是巨大的。而如果使用<code>（unsigned）c</code> 同样会带来问题，因为将字符转换为无符号的整数时，首先会被转换为int型整数，同样达不到预期效果，较好的解决方法是使用语句<code>（unsigned char）c</code> ，一个<code>unsigned char</code>类型的字符在转换为无符号整数类型的时候，无需首先转换为int型。</li>
-<li><strong>移位运算符</strong>：<ul>
-<li>向右移位时,空出的位是由0填充,还是由符号位的副本填充?<br>  如果被移位的对象是无符号数,那么空出的位将被0填充.如果被移位的是有符号数,那么C语言实现既可以用0填充空出的位,也可以用符号位的副本填充空出的位.</li>
-<li>移位计数(即移位操作的位数)允许的取值范围是什么?<br>  如果被移位的对象长度是n位,那么移位计数必须大于或等于0,而严格小于n.</li>
-<li>另外，不要用除法代替有符号的整数的移位运算，例如<code>（-1）&gt;&gt;1</code></li>
-</ul>
-</li>
-<li>null 指针不知现任和对象，除非用于赋值和比较运算，其他用法都是非法的。</li>
-<li><strong>除法运算</strong>：大多数编译器要求余数与被除数的正负号相同.</li>
-<li><strong>随机数的大小</strong></li>
-<li><strong>大小写的转换</strong>： C语言有两种处理大小写转换的方式，一种是直接利用ASCII码转换，但是当输入的字母大小写不对的时候，就会返回一些奇异的值，另一种则进行了一个判断操作，但是这样增加了开销，所以根据效率自行选择，在移植的时候，应当注意这个问题。</li>
-<li><code>malloc</code>, <code>realloc</code> , <code>free</code> </li>
-</ul>
-<h2 id="建议">建议</h2>
-<p>最后作者提出了几个建议，说的挺有意思。比如作者推荐我们在编程的时候，一定要尽可能的清晰表达意图，该用括号的时候，都尽量用括号，以防不该有的错误出现。同时要考察一些最简单的特例，测试程序的工作情况。一定要注意一些边界问题，比如数组的下标。以及一些潜伏在暗处的Bug。</p>
-<p>最后作者提出了防御性编程，其实就是在说，啊，C语言有很多很多的坑，我们不知道什么时候就会踩到了坑，所以再变成的时候，一定要采用最稳妥的方式编程，意思就是一定要走那些被证明是康庄大道的平坦的道路呀，少年，不然你就要被坑惨了~~</p>
-<p>以上。</p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<p>这本书超薄，但含金量很高，里边一些常见的陷阱也是面试的时留的坑，适合没事翻一翻，指不定什么时候还有意外惊喜。<br>]]>
-    
-    </summary>
-    
-      <category term="C/C++" scheme="http://yoursite.com/tags/C-C/"/>
-    
-      <category term="读书笔记" scheme="http://yoursite.com/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
     
   </entry>
   

