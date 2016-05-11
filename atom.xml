@@ -4,7 +4,7 @@
   <subtitle><![CDATA[代码是一棱刀背，幸好，有此藏身。]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2016-05-10T14:59:07.897Z</updated>
+  <updated>2016-05-11T08:52:25.438Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,99 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[内容隔离逻辑 -- 《The Tangled Web》]]></title>
+    <link href="http://yoursite.com/2016/05/11/%E5%86%85%E5%AE%B9%E9%9A%94%E7%A6%BB%E9%80%BB%E8%BE%91-%E3%80%8AThe-Tangled-Web%E3%80%8B/"/>
+    <id>http://yoursite.com/2016/05/11/内容隔离逻辑-《The-Tangled-Web》/</id>
+    <published>2016-05-11T08:48:45.000Z</published>
+    <updated>2016-05-11T08:52:15.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="内容隔离逻辑">内容隔离逻辑</h1>
+<p>在最开始，阐述浏览器安全的时候，我们提到了浏览器的隔离措施，虽然浏览器试图通过内容隔离逻辑，来保证不同源的文件之间访问的控制，但是这样的策略仍然是非完全安全的，从这一部分开始，我们就开始探讨关于Web应用，特别是浏览器的各种安全特性。</p>
+<h2 id="DOM_同源策略">DOM 同源策略</h2>
+<p>同源策略Same-Origin Policy 其实规则非常直接：<strong>除非JavaScript所处的两个页面的协议，DNS域名，端口完全一致，否则两个独立的JavaScript运行环境不能访问彼此的DOM</strong>，其他任何跨域文档JavaScript DOM 访问都会失败。</p>
+<p>这个同源策略看起来非常易于理解，但其中包含的问题也不少。</p>
+<p>首先是DNS，这里的问题是，浏览器在判断同源的时候，只对DNS域名进行判断，而非IP地址，假如某个特定主机的IP地址发生了变化，就有可能造成漏洞产生，这种攻击行为叫做DNS 重绑定攻击。</p>
+<p>我们再看这个URL，浏览器代码里包含有多套独立的URL 解析处理，如果HTTP 堆栈里对源的解析和JavaScript对源的判断产生了误差，就可能导致问题。在各种浏览器中，有可能产生不少由于URL 刻意变形导致的SOP 绕过漏洞。</p>
+<p>同时对于IE浏览器早期版本，甚至在做同源检查的时候，可能会忽略端口，后果可想而知。</p>
+<p>同源策略在一开始只是针对DOM 的，但是后来这个策略逐渐扩散到了保护从JavaScript的根对象开始的其他敏感数据。不过<strong>非同源的脚本还是可以这任意窗口或者框架使用location.assign(), location.replace()</strong></p>
+<p>同时，同源策略还存在一些障碍，比如无法隔离本来属于两个用户的网页（因为无法给每个用户单独分配域名），另一种情况，这个策略也会使得原本合法的同站点域名不能无缝交换数据。比如login.exp.com 和 payment.exp.com。当然，修复的方法广泛支持的是document.domain 和 postMessage()。</p>
+<p><strong>document.domain</strong></p>
+<p>javaScript 通过设置document.domain 来覆盖同源检查策略中的主机名匹配，不过只是允许具有相同顶级域名，比如exp.com 甚至是 .com。赋值形式如下：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">document</span>.domain = <span class="string">"exp.com"</span></div></pre></td></tr></table></figure>
+
+<p>但需要注意的是，一个设置了document.domain 的页面是不能访问一个没有设置的页面，这样有可能造成本来是同源的页面，反而变成了隔离，虽然有时候有人试图使用这条规则，或者是给两个同源页面设置不同的document.domain，但实际上这种伪隔离域仍然支持对另一个设定进行 javascript:URL 跳转动作。</p>
+<p>另外，由于场景不清晰，本来只是打算让两个页面同源，但此时会招来另一个页面，通过设置domain 一样能够同源，这样，实际上就是告诉我们，设置domain,实际上是将整个域的安全，交给了整个域中最不安全的那一个了。</p>
+<p><strong>postMessage(…)</strong></p>
+<p>postMessage()方法允许来自不同源的脚本采用异步方式进行有限的通信，可以实现跨文本档、多窗口、跨域消息传递。</p>
+<p>postMessage(data,origin)方法接受两个参数:</p>
+<ol>
+<li>data:要传递的数据，html5规范中提到该参数可以是JavaScript的任意基本类型或可复制的对象，然而并不是所有浏览器都做到了这点儿，部分浏览器只能处理字符串参数，所以我们在传递参数的时候需要使用JSON.stringify()方法对对象参数序列化，在低版本IE中引用json2.js可以实现类似效果。</li>
+<li>origin：字符串参数，指明目标窗口的源，协议+主机+端口号[+URL]，URL会被忽略，所以可以不写，这个参数是为了安全考虑，postMessage()方法只会将message传递给指定窗口，当然如果愿意也可以建参数设置为”*”，这样可以传递给任意窗口，如果要指定和当前窗口同源的话设置为”/“。</li>
+</ol>
+<p>考虑一下场景，在payments.exp.com 的根路径 下有两个页面，需要把用户登录信息显示在该页面上。为达到这个目的，payments.exp.com 这个页面加载一个纸箱login.exp.com 的子框架。这个子框架发送以下指令：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">parent.postMessage(<span class="string">"user=bob"</span>, <span class="string">"https://payment.exp.com"</span>)</div></pre></td></tr></table></figure>
+
+<p>只有当payment.exp.com 确认是指定的信任源，浏览器才会发送postMessage 消息出于根路径下的接收方也需要确认消息的正确性，这样就确保了整个机制的健壮。</p>
+<p><strong>与浏览器身份验证的交互</strong></p>
+<p>在了解完DOM 相关的同源策略后，我们应当记住<strong>同源策略无法和全局身份认证，SSL 状态，网络上下文环境，以及众多浏览器管理涉及安全的其他参数同步</strong>。这里有一个很绕的例子：</p>
+<p>某站点的登陆表单有CSRF 的漏洞，攻击者首先在框架里嵌入目标此网站上的一个敏感页面，然后诱使受害者登录到该站一个由攻击者控制的账号里，然后执行目标网站其他应用上的跨站攻击。进入HTTP 的身份验证信息已经改变了，但是后一个步骤里的代码注入却会对之前加载的子框架具有完全的访问权限，也会导致数据被窃取。这是一个很绕的攻击过程，不过不难理解，正是由于DOM 的同源和这些身份认证，状态等信息无法同步的原因造成的。</p>
+<h2 id="XMLHttpRequest_同源策略">XMLHttpRequest 同源策略</h2>
+<p>XMLHttpRequest 对象用于在后台与服务器交换数据。</p>
+<ul>
+<li>在不重新加载页面的情况下更新网页</li>
+<li>在页面已加载后从服务器请求数据</li>
+<li>在页面已加载后从服务器接收数据</li>
+<li>在后台向服务器发送数据</li>
+<li>所有现代的浏览器都支持 XMLHttpRequest 对象。</li>
+</ul>
+<p>而这个机制的关键是他会用到浏览器的HTTP 堆栈及其组件，包括全局身份认证，缓存机制，持续会话等。XMLHttpRequest 的同源机制，和浏览器的默认同源机制差不多，不过因一点点不同，比如XMLHttpRequest.open（）里设定的目标URL 地址必须与发起的页面完全同源。</p>
+<p>用户对于发送的请求头域有绝对的控制，其优点就是，通过插入一些自定义的请求头，可以确认特定的请求来源。但是问题就是<strong>插入某些请求头则可能对目标服务器端或者代理服务器的解析产生影响</strong>，比如设定错误的Content-Length 可能导致攻击者在原该浏览器维护的HTTP 持续会话里偷偷加入第二个请求。</p>
+<p>考虑下面的代码：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> x = <span class="keyword">new</span> XMLHttpRequest();</div><div class="line">x.open(<span class="string">"POST"</span>, <span class="string">"http://www.exp.com"</span>,<span class="literal">false</span>);</div><div class="line"><span class="comment">// 下边会替换掉自动记录出来的长度</span></div><div class="line">x.setRequestHeader(<span class="string">"Content-Length"</span>, <span class="string">"7"</span>);</div><div class="line"><span class="comment">// 当长度超过之后，会截断，剩下的，会被认为是第二个独立的请求。</span></div><div class="line">x.send(</div><div class="line">    <span class="string">"Gotcha!\n"</span>+</div><div class="line">    <span class="string">"GET /evil.html HTTP/1.1\n"</span>+</div><div class="line">    <span class="string">"HOST: www.unnyoulet.com\n\n"</span></div></pre></td></tr></table></figure>
+
+<p>一般，面对这种风险的方式，就是，设置一个黑名单，比如Content-Length, Host, Referer ，而对譬如User-Agent,Cookie, Origin ， If-Modified-Since 的处理却各有不同。</p>
+<h2 id="Web_Storage_同源">Web Storage 同源</h2>
+<p>Web Storage 是浏览器中实现的一个简单的数据存储功能，目前有两个JavaScript对象， localStorage , sessionStorage。前者是可以进行持久存储的，后者则是绑定当前浏览器，提供临时的缓存机制。</p>
+<h2 id="Cookie_安全策略">Cookie 安全策略</h2>
+<p>Cookie 的默认有效范围是域名，但是并没有办法吧Cookie 范围限制在单个主机名上，可以吧Cookie 里的Domain 设置为当前主机名上，但实际上访问该主机名的子域名，也会认为是有效的。</p>
+<p>所以就形成了一个有意思的现象，当我们完全不设置domain 的时候，反而在某些浏览器上会将Cookie 的范围局限在主机名之内，但对IE 来说确实无效的。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-11-14629533767415.jpg" alt=""></p>
+<p>那么如何有效的设置范围呢，cookie 中使用的是path. 只有请求的路径与cookie 的path 参数吻合，才会发送cookie。</p>
+<p>但实际上，无论cookie 如何设定，对于同源策略来说，是不会检查URL 路径的，JS 代码还是可以随意访问同意主机上的不同URL，那么cookie 的path实际上不能作为有效的安全边界。</p>
+<p>另外还有两个标记，分别是httponly，secure 。前者通过设置，可以禁止document.cookie 访问页面的cookie, 后者则要求cookie 不能用于非加密通道。</p>
+<p>这么看起来稳妥了很多，然而还是有问题的，<strong>因为这可以防止数据不被读取，但是无法防止不被覆盖</strong>，通过js代码，我们可以使某域名对应的Cookie 池发生溢出，然后设置新的不带secure 的cookie 。对此的解决办法是，将cookie 池内容隔离，分为Httponly cookie 和普通的cookie,但是如果cookie 允许名字相同，在碰到匹配请求的时候，这些cookie 会被浏览器一起发送。</p>
+<p>如此，我们可以看到，cookie和同源机制实际上是会相互影响到的，比如前边提到的同源机制影响了cookie 的路径范围机制，而另一方面讲，cookie 更加严重的影响了同源策略，因为cookie 经常被用作身份认证信息，如果cookie信息被获取，就相当于绕过了同源策略。</p>
+<p><strong>域名限制的问题</strong></p>
+<p>由于Cookie 的有效范围设置，容易造成安全问题，那么避免cookie 的域名错误，就是需要解决的问题。目前支持的方法是，数点号的个数。一般化的要求是，<strong>只有处于具体域名的主机名范围内，才能设置该域名对应的Cookie, 这个域名包括至少2个或3个点号，才能避免出现诸如.com .edu vas.us 这样的形式</strong>，特别的，对于域名属于7种特定格式的定居于明，那么需要包含2个点，除此之外则是3个点，但问题在于域名设置各式各样，比如有.com， .com.cn 但还可以直接.cn ，所以浏览器们基本上都是使用了各自的的过滤方法来处理，但是，如今域名的形式越来越多，相信cookie 的这一机制也面临各种挑战。</p>
+<p><strong>Cookie 与 合法DNS 劫持</strong></p>
+<p>这个实际上在中国非常广泛，运营社对于不存在的域名，会返回其广告页。那如果这个看起来非常破的广告页，如果存在漏洞，那么利用漏洞，可以获得任意域的上下文环境执行权限。</p>
+<h2 id="安全工程">安全工程</h2>
+<ul>
+<li>对全部站点都要使用可靠地安全策略，为保护用户，应该在最顶层的crossdomain.xml 文件设定permitted-cross-domain-policies 参数项为master-only 或者是by-content-type ，实际这个站点没有用的Flash,这样做可以组织由攻击者控制的无关内容被错误的当做另一个crossdomain.xml 文件，对同源策略产生影响。</li>
+<li>当依赖HTTP cookies 来作身份验证时<ul>
+<li>使用httponly 标签，不要让JavaScript 直接访问到身份授权的cookie 信息，对于敏感的cookie 的有效范围越小越好，或者是不设置domain。</li>
+<li>如果应用基于https, 那么cookie 标记为secure， 同时防止cookie 被注入。</li>
+</ul>
+</li>
+<li>处理JavaScript 跨域通信的时候<ul>
+<li>不要是document.domain， 尽量使用postMessage(), 以此来确保目标源的设置是正确的，对于域名的判断不要直接使用简单的截断匹配方式: msg.origin.indexOf(“.exp.com”)</li>
+<li>小心postMessage() 绕过的方法。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>内容隔离是浏览器为Web 安全竖起的一道长城，然而由于 Web 本身的种种特点，造成了这个长城有非常多的漏洞，能够让长城两端以各种形式自由出入，这里边，关于插件部分，被我跳过了，主要是因为这一块比较陌生。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="内容隔离逻辑">内容隔离逻辑</h1>
+<p>在最开始，阐述浏览器安全的时候，我们提到了浏览器的隔离措施，虽然浏览器试图通过内容隔离逻辑，来保证不同源的文件之间访问的控制，但是这样的策略仍然是非完全安全的，从这一部分开始，我们就开始探讨关于Web应用，特别是浏览器]]>
+    </summary>
+    
+      <category term="TCP/IP" scheme="http://yoursite.com/tags/TCP-IP/"/>
+    
+      <category term="Study" scheme="http://yoursite.com/categories/Study/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[(level 4)离奇的宽字节 -- XSS升级之路]]></title>
@@ -2467,116 +2560,6 @@
       <category term="年终总结" scheme="http://yoursite.com/tags/%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/"/>
     
       <category term="个人总结" scheme="http://yoursite.com/categories/%E4%B8%AA%E4%BA%BA%E6%80%BB%E7%BB%93/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[用Python写一个虚拟解释器]]></title>
-    <link href="http://yoursite.com/2015/11/09/%E7%94%A8Python%E5%86%99%E4%B8%80%E4%B8%AA%E8%99%9A%E6%8B%9F%E8%A7%A3%E9%87%8A%E5%99%A8/"/>
-    <id>http://yoursite.com/2015/11/09/用Python写一个虚拟解释器/</id>
-    <published>2015-11-09T13:18:08.000Z</published>
-    <updated>2015-11-09T13:20:14.000Z</updated>
-    <content type="html"><![CDATA[<p><a href="http://www.jianshu.com/p/28c029de8fb3" target="_blank" rel="external">刀背藏身|简书</a><br>先来看看这篇文章 <a href="http://www.yinwang.org/blog-cn/2012/08/01/interpreter/" target="_blank" rel="external">怎样写一个解释器</a></p>
-<p>所谓虚拟机器，就是一定意义上的堆栈机。<br>解释器能够执行其他计算机语言编写的程序的系统软件，他是一个翻译程序。它的执行方式是一边翻译一边执行，因此其执行效率一般比较低。解释器的实现比较简单，而且编写源程序的高级语言可以使用更加灵活和富于表现力的语法。<br>可参考<a href="https://csl.name/post/vm/" target="_blank" rel="external">本链接</a>，开源项目<a href="https://github.com/cslarsen/crianza" target="_blank" rel="external">Crianza</a>。<br>当然，解释器要从最基础的最简单的语言开始，然后逐步增加语言的复杂度，才能构造出正确的解释器。而最基础的一个解释器，其实就是一个高级的计算器，下面我们一起来创建一个解释器吧。<br><a id="more"></a></p>
-<h2 id="0-_解释器到底是什么">0. 解释器到底是什么</h2>
-<p>前边解释了一些，但解释的并不清楚，在<a href="http://www.yinwang.org/blog-cn/2012/08/01/interpreter/" target="_blank" rel="external">怎样写一个解释器</a>中，做一个比较不错的解释。</p>
-<blockquote>
-<p>首先我们来谈一下解释器是什么。说白了解释器跟计算器差不多。它们都接受一个“表达式”，输出一个 “结果”。比如，得到 ‘(+ 1 2) 之后就输出 3。不过解释器的表达式要比计算器的表达式复杂一些。解释器接受的表达式叫做“程序”，而不只是简单的算术表达式。从本质上讲，每个程序都是一台机器的“描述”，而解释器就是在“模拟”这台机器的运转，也就是在进行“计算”。所以从某种意义上讲，解释器就是计算的本质。当然，不同的解释器就会带来不同的计算。</p>
-<p>需要注意的是，我们的解释器接受的参数是一个表达式的“数据结构”，而不是一个字符串。这里我们用一种叫“S-expression”的数据结构来表示表达式。比如表达式 ‘(+ 1 2) 里面的内容是三个符号：’+, ‘1 和 ‘2，而不是字符串“(+ 1 2)”。从结构化的数据里面提取信息很方便，而从字符串里提取信息很麻烦，而且容易出错。</p>
-<p>从广义上讲，解释器是一个通用的概念。计算器实际上是解释器的一种形式，只不过它处理的语言比程序的解释器简单很多。也许你会发现，CPU 和人脑，从本质上来讲也是解释器，因为解释器的本质实际上是“任何用于处理语言的机器”。</p>
-</blockquote>
-<h2 id="1-_学习写一个解释器的另一个原因">1. 学习写一个解释器的另一个原因</h2>
-<p>在《编程珠玑》的第十章，提到代码空间技术，如何节省足够的空间，讲到了解释程序。他说，远古时代，有时候空间的瓶颈不在于数据，而在于程序本身的规模。比如一开始一个图形程序，有如下代码：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="matrix">[<span class="number">17</span>, <span class="number">43</span>]</span> set(<span class="built_in">i</span>, <span class="number">68</span>)</div><div class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="matrix">[<span class="number">18</span>, <span class="number">42</span>]</span> set(<span class="built_in">i</span>, <span class="number">69</span>)</div><div class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="matrix">[<span class="number">81</span>, <span class="number">91</span>]</span> set(<span class="number">30</span>, <span class="built_in">j</span>)</div><div class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="matrix">[<span class="number">82</span>, <span class="number">92</span>]</span> set(<span class="number">31</span>, <span class="built_in">j</span>)</div></pre></td></tr></table></figure>
-
-<p>其中，set(i,j)表示点亮屏幕（i, j）处的像素，也就是说这实际上是一个绘制直线的程序。而当我们使用了适当的函数，比如用于绘制水平线的hor函数和垂直线的ver函数，就可以替代上述代码：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="title">hor</span><span class="params">(<span class="number">17</span>, <span class="number">43</span>, <span class="number">68</span>)</span></span></div><div class="line"><span class="title">hor</span><span class="params">(<span class="number">18</span>, <span class="number">42</span>, <span class="number">69</span>)</span></div><div class="line"><span class="title">ver</span><span class="params">(<span class="number">81</span>, <span class="number">91</span>, <span class="number">30</span>)</span></div><div class="line"><span class="title">ver</span><span class="params">(<span class="number">82</span>, <span class="number">92</span>, <span class="number">31</span>)</span></div></pre></td></tr></table></figure>
-
-<p>而上述代码又可以利用一个解释器来替换，这个解释程序可以从下面的数组中读取命令。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="title">h</span> <span class="number">17</span>, <span class="number">43</span>, <span class="number">68</span></div><div class="line">h <span class="number">18</span>, <span class="number">42</span>, <span class="number">69</span></div><div class="line">v <span class="number">81</span>, <span class="number">91</span>, <span class="number">30</span></div><div class="line">v <span class="number">82</span>, <span class="number">92</span>, <span class="number">31</span></div></pre></td></tr></table></figure>
-
-<p>至此，我们已经将空间减小了很多了，但如果你还想减少，那么就可以为命令h 或 v分配两个位，为后边的三个数字，每个数字，分配10个位置，这样一个32位的数字，表示一行命令了。这就是代码空间技术的运用。</p>
-<p>当然，今天我们谈起节省空间，好像已经成了笑话，但是，当我们面对巨量数据，也就是我们今天所说的大数据的时候，空间，时间，效率的话题又一次被提起来。当我们面对着像混乱电流一样的数据时，尝试将自己的头脑想象成计算机，学会用更加底层的方式去思考，对对理解数据处理将有更深刻的认识。</p>
-<p>为什么我们时常提起像机器一样思考呢？那是因为机器远比我们人类严谨，也是所有检验逻辑最严格的关卡，他不容许一点点错误，一个毫不起眼的bug，都会让程序完全崩溃。而程序是写给计算机的语言，所以，程序的严谨性就应当像计算机一样严谨。所以我们时常劝告自己要像计算机一样思考。</p>
-<p>正如『正义的花生』在<a href="http://www.jianshu.com/p/f0863846b7e8" target="_blank" rel="external">数学与编程</a>中提到的一样：</p>
-<blockquote>
-<p>普通程序员使用的编程语言，就算是C++这样毛病众多的语言，其实也已经比数学家使用的语言好很多。用数学的语言可以写出含糊复杂的证明，在期刊或者学术会议上蒙混过关，用程序语言写出来的代码却无法混过计算机这道严格的关卡。因为计算机不是人，它不会迷迷糊糊的点点头让你混过去，或者因为你是大师就不懂装懂。代码是需要经过现实的检验的。如果你的代码有问题，它迟早会导致出问题。</p>
-</blockquote>
-<p>诚然，大牛作者在思想上有很多偏执的地方，但是往往他的观点我都有着不小的认同感。前边那篇『怎样写一个解释器』也是他的文章。</p>
-<p>所以，学习写一个解释器，可以带给我更多的思考，从效率，空间，机器等等方面进一步认识程序运行的本质，将这种认识正反馈到实际编程中，将潜移默化的带来影响。当然，这篇文章试着依葫芦画瓢的写完一个解释器，显然仅仅算是摸了摸门道，想要继续探索，还有更多的事情可以做。做更多的事情，可以参考上边提到的开源项目<a href="https://github.com/cslarsen/crianza" target="_blank" rel="external">Crianza</a>。</p>
-<h2 id="1-_构建堆栈机">1. 构建堆栈机</h2>
-<p>堆栈机的执行原理很简单，将需要处理的值放进堆栈中，然后执行。Python， Java这些高级语言将它作为自己的虚拟机。</p>
-<p>所以我们利用了堆栈的方式存放指令。首先，我们需要一个指令指针栈，它能够储存返回地址。这个返回地址就是当我们执行一个子程序（如函数）的时候，需要用它跳回到开始调用该函数的地方。</p>
-<p>我们将这个复杂的问题简洁化。比如有一个数学表达式：<code>（2+3）*4</code> ，这个表达式的意思就是依次推入<code>2 3 + 4 *</code>, 将2 和3 依次推入栈中，接下来要推入的指令是 <code>+</code>， 将两个数字弹出，令他们执行加法运算，然后将结果入栈。然后继续进行下去，直到计算出结果。</p>
-<p>依靠这个原理，我们开始建立一个栈，我们使用python 中的一个类 collections.deque。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span><span class="params">(deque)</span>:</span> <span class="comment"># 定义一个栈</span></div><div class="line">    push = deque.append  <span class="comment"># 添加元素</span></div><div class="line">    <span class="comment"># 返回最后一个元素</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">top</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">return</span> self[-<span class="number">1</span>]</div></pre></td></tr></table></figure>
-
-<p>deque 中自带pop 方法，所以我们就不用再定义 pop .</p>
-<p>接下来我们继续构建一个虚拟机的类 Machine。 我们需要两个栈和一段储存代码的内存空间。一个栈储存数据，一个栈储存地址。得益于Python 动态类型，因此我们可以往列表里面存储任何东西，但是我们不能区分列表里面的内置函数和字符串，正确的做法是将Python 内置函数单独存放在一个列表。这里我们使用字典方法，键值分别对应字符串和函数。另外，我们需要一个指令指针，用来指向代码中下一个需要被执行的模块。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Machine</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, code)</span>:</span> <span class="comment"># 预先定义一个初始化函数</span></div><div class="line">       self.data_stack = Stack()</div><div class="line">       self.return_addr_stack = Stack()</div><div class="line">       self.code = code</div><div class="line">       self.instruction_pointer = <span class="number">0</span> </div><div class="line">    <span class="comment"># 再创建一些栈结构中必备的函数</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pop</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">return</span> self.data_stack.pop()</div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span><span class="params">(self, value)</span>:</span></div><div class="line">        self.data_stack.push(value)</div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">top</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">return</span> self.data_stack.top()</div></pre></td></tr></table></figure>
-
-<p>为了执行操作码，而这个操作码并非实际意义上的操作码，它只是一种动态类型，所以我们建立一个dispatch 函数，在这之前，我们创建一个解释器的循环。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span>   <span class="comment"># 代码运行的条件</span></div><div class="line">    <span class="keyword">while</span> self.instruction_pointer &lt; len(self.code):</div><div class="line">         opcode = self.code[self.instruction_pointer]</div><div class="line">         self.instruction_pointer += <span class="number">1</span></div><div class="line">         self.dispatch(opcode)</div></pre></td></tr></table></figure>
-
-<p>它的原理很简单： 获取下一个指令，指令指针自增1 然后基于操作码执行dispatch 函数，下面就是dispatch函数的定义。而对解释器的扩展增强基本在这个函数中实现。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">dispatch</span><span class="params">(self, op)</span>:</span></div><div class="line">    dispatch_map = {</div><div class="line">        <span class="string">"%"</span>:        self.mod,</div><div class="line">        <span class="string">"*"</span>:        self.mul,</div><div class="line">        <span class="string">"+"</span>:        self.plus,</div><div class="line">        <span class="string">"-"</span>:        self.minus,</div><div class="line">        <span class="string">"/"</span>:        self.div,</div><div class="line">        <span class="string">"=="</span>:       self.eq,</div><div class="line">        <span class="string">"cast_int"</span>: self.cast_int,</div><div class="line">        <span class="string">"cast_str"</span>: self.cast_str,</div><div class="line">        <span class="string">"drop"</span>:     self.drop,</div><div class="line">        <span class="string">"dup"</span>:      self.dup,</div><div class="line">        <span class="string">"if"</span>:       self.if_stmt,</div><div class="line">        <span class="string">"jmp"</span>:      self.jmp,</div><div class="line">        <span class="string">"over"</span>:     self.over,</div><div class="line">        <span class="string">"print"</span>:    self.print_,</div><div class="line">        <span class="string">"println"</span>:  self.println,</div><div class="line">        <span class="string">"read"</span>:     self.read,</div><div class="line">        <span class="string">"stack"</span>:    self.dump_stack,</div><div class="line">        <span class="string">"swap"</span>:     self.swap,</div><div class="line">        }</div><div class="line">    <span class="keyword">if</span> op <span class="keyword">in</span> dispatch_map:</div><div class="line">        dispatch_map[op]()</div><div class="line">    <span class="keyword">elif</span> isinstance(op, int):  <span class="comment"># 如果指令是整形数据，就将数据存放到数据栈中</span></div><div class="line">        self.push(op)</div><div class="line">    <span class="keyword">elif</span> isinstance(op, str) <span class="keyword">and</span> op[<span class="number">0</span>]==op[-<span class="number">1</span>]==<span class="string">'"'</span>:</div><div class="line">        <span class="comment"># 如果是字符串类型，就将字符串内容存放到数据栈中</span></div><div class="line">        self.push(op[<span class="number">1</span>:-<span class="number">1</span>])</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        <span class="keyword">raise</span> RuntimeError( <span class="string">"Unknown opcode: '%s'"</span> % op)</div></pre></td></tr></table></figure>
-
-<p>上边的指令的意思是，当输入一段指令后，该函数就会根据这段指令在字典中找到对应的方法。比如符号<code>*</code>对应的是self.mul 。而这个self.mul 也是我们定义的函数：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">mul</span><span class="params">(self)</span>:</span></div><div class="line">    self.push(self.pop() * self.pop())</div></pre></td></tr></table></figure>
-
-<p>其他的函数定义也如此。</p>
-<p>搭建好环境之后，下面继续进行。一个语言解释器包括两个部分：</p>
-<ol>
-<li>解析：解析部分接受一个由字符序列表示的输入指令，然后将输入字符分解成一系列的词法单元</li>
-<li>执行： 程序内部的解释器根据语义规则进一步处理词法单元，进而执行原指令的实际运算。</li>
-</ol>
-<p>这是流程图：</p>
-<figure class="highlight flow"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">st=&gt;start: 指令</div><div class="line">op1=&gt;operation: 解析器</div><div class="line">op2=&gt;operation: 词法单元</div><div class="line">op3=&gt;operation: 执行运算</div><div class="line">e=&gt;end: 结果</div><div class="line"></div><div class="line">st<span class="variable">-&gt;op1</span><span class="variable">-&gt;op2</span><span class="variable">-&gt;op3</span><span class="variable">-&gt;e</span></div></pre></td></tr></table></figure>
-
-<h2 id="2-_下面我们创建一个简单的解析器">2. 下面我们创建一个简单的解析器</h2>
-<p>使用<a href="https://docs.python.org/3/library/tokenize.html" target="_blank" rel="external">tokenize</a>模块。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> tokenize</div><div class="line"><span class="keyword">from</span> StringIO <span class="keyword">import</span> StringIO</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(text)</span>:</span></div><div class="line">    <span class="comment"># 将text以StringIO的形式读入内存</span></div><div class="line">    <span class="comment"># 以字符串形式返回刀generate_tokens()函数中。</span></div><div class="line">    tokens = tokenize.generate_tokens(StringIO(text).readline)</div><div class="line">    <span class="comment"># generate_tokens 生成器生成一个5元组：标记类型、标记字符串、标记开始位置二元组、标记结束位置二元组以及标记所在的行号</span></div><div class="line">    <span class="comment"># 下面大写的单词都属于token模块的常量</span></div><div class="line">    <span class="keyword">for</span> toknum, tokval, _, _, _ <span class="keyword">in</span> tokens:</div><div class="line">        <span class="keyword">if</span> toknum == tokenize.NUMBER:</div><div class="line">            <span class="keyword">yield</span> int(tokval)</div><div class="line">        <span class="keyword">elif</span> toknum <span class="keyword">in</span> [tokenize.OP, tokenize.STRING, tokenize.NAME]:</div><div class="line">            <span class="keyword">yield</span> int(tokval)</div><div class="line">        <span class="keyword">elif</span> tokun == tokenize.ENDMARKER:</div><div class="line">            <span class="keyword">break</span></div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">raise</span> RuntimeError(<span class="string">"Unknown token %s: '%s'"</span> % (tokenize.tok_name[toknum], tokval))</div></pre></td></tr></table></figure>
-
-<p>关于token常量，查看<a href="https://docs.python.org/3/library/token.html#module-token" target="_blank" rel="external">官方文档</a>。</p>
-<p>其中还有一个关键字 <code>yield</code>，它是用来定义生成器(Generator)，具体功能是可以当return 使用，从函数理返回一个值，不同之处是用yield 返回之后，可以让函数从上回yield 返回的地点继续执行。也就是说，yield 返回函数，交给调用者一个返回值，然后再移动回去，让函数继续运行下去，知道下一个yield语句再返回一个新的值。举个简单的例子：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; def test_yield():</div><div class="line">...     yield 1</div><div class="line">...     yield 2</div><div class="line">...     yield (1,2)</div><div class="line">...</div><div class="line">&gt;&gt;&gt; a = test_yield()</div><div class="line">&gt;&gt;&gt; a.next()</div><div class="line">1</div><div class="line">&gt;&gt;&gt; a.next()</div><div class="line">2</div><div class="line">&gt;&gt;&gt; a.next()</div><div class="line">(1, 2)</div><div class="line">&gt;&gt;&gt; a.next()</div><div class="line">Traceback (most recent call last):</div><div class="line">  File "&lt;stdin&gt;", line 1, in ?</div><div class="line">StopIteration</div></pre></td></tr></table></figure>
-
-<p>我们用生成器产生一个Fibonacci数列的函数就会更加直观：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">fab</span><span class="params">(max)</span>:</span></div><div class="line">    a,b = <span class="number">0</span>,<span class="number">1</span></div><div class="line">    <span class="keyword">while</span> a &lt; max:</div><div class="line">        <span class="keyword">yield</span> a</div><div class="line">        a, b = b, a+b</div><div class="line"> </div><div class="line"><span class="prompt">&gt;&gt;&gt; </span><span class="keyword">for</span> i <span class="keyword">in</span> fab(<span class="number">20</span>):</div><div class="line"><span class="prompt">... </span>    <span class="keyword">print</span> i,<span class="string">","</span>,</div><div class="line">...</div><div class="line"><span class="number">0</span> , <span class="number">1</span> , <span class="number">1</span> , <span class="number">2</span> , <span class="number">3</span> , <span class="number">5</span> , <span class="number">8</span> , <span class="number">13</span> ,</div></pre></td></tr></table></figure>
-
-<h2 id="3-_简单优化：_常量折叠">3. 简单优化： 常量折叠</h2>
-<blockquote>
-<p>常量折叠是其中一种被很多现代编译器使用的编译器最优化技术。常量折叠是在编译时间简单化常量表达的一个过程。简单来说就是将常量表达式计算求值，并用求得的值来替换表达式，放入常量表。可以算作一种编译优化。</p>
-</blockquote>
-<p>也就是我们最早举例子的时候说的，将2，3放入栈中，+ 进来的时候，2 3取出来进行运算，然后将运算结果放入栈中。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">constant_fold</span><span class="params">(code)</span>:</span></div><div class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">        <span class="comment"># 指令中找到两个连续的数字以及一个运算符</span></div><div class="line">        <span class="keyword">for</span> i, (a, b, op) <span class="keyword">in</span> enumerate(zip(code, code[<span class="number">1</span>:], code[<span class="number">2</span>:])):</div><div class="line">            <span class="keyword">if</span> isinstance(a, int) <span class="keyword">and</span> isinstance(b, int) <span class="keyword">and</span> op <span class="keyword">in</span> {<span class="string">"+"</span>, <span class="string">"-"</span>, <span class="string">"*"</span>, <span class="string">"/"</span>}:</div><div class="line">                m = Machine((a, b, op))</div><div class="line">                m.run()</div><div class="line">                code[i:i+<span class="number">3</span>] = [m.top()]</div><div class="line">                print(<span class="string">"Constant-folded %s%s%s to %s"</span> % (a, op, b, m.top()))</div><div class="line">                <span class="keyword">break</span></div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">break</span></div><div class="line">    <span class="keyword">return</span> code</div></pre></td></tr></table></figure>
-
-<h2 id="读取-求值-输出循环">读取-求值-输出循环</h2>
-<blockquote>
-<p>“读取-求值-输出”循环（英语：Read-Eval-Print Loop，简称REPL）是一个简单的，交互式的编程环境。这个词常常用于指代一个Lisp的交互式开发环境，但也能指代命令行的模式和例如APL、BASIC、Clojure、F#、Haskell、J、Julia、Perl、PHP、Prolog、Python、R、Ruby、Scala、Smalltalk、Standard ML、Tcl、Javascript这样的编程语言所拥有的类似的编程环境。这也被称做交互式顶层构件（interactive toplevel）。</p>
-</blockquote>
-<p><a href="https://zh.wikipedia.org/wiki/%E8%AF%BB%E5%8F%96%EF%B9%A3%E6%B1%82%E5%80%BC%EF%B9%A3%E8%BE%93%E5%87%BA%E5%BE%AA%E7%8E%AF" target="_blank" rel="external">read-eval-print loop</a><br>这个名字来自于以下几个Lisp用来实现这种机制的内置函数：</p>
-<ul>
-<li>读入函数接收一个来自于用户的表达式，将其解析成数据结构并存入内存。例如，用户可能会输入一个s-表达式　(+ 1 2 3)，这句话会被解析成一个包含四个元素的链表。</li>
-<li>求值函数　负责处理内部的数据结构并对其求值。在Lisp中，求一个以函数名开头的ｓ－表达式意味着对接下来的参数调用那个函数。所以函数”+”被在参数1 2 3上调用，产生结果6。</li>
-<li>输出函数接受求值结果，并呈现将其给用户。尽管当前的结果“6”并不具有复杂的格式，但如果是一个较为复杂的表达式，那么它将会被精心处理，以便于更方便地被理解。</li>
-</ul>
-<p>代码应当这样写：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">repl</span><span class="params">()</span>:</span></div><div class="line">    print(<span class="string">'Hit CTRL+D or type "exit" to quit.'</span>)</div><div class="line"></div><div class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">        <span class="keyword">try</span>:</div><div class="line">            source = raw_input(<span class="string">"&gt; "</span>)</div><div class="line">            code = list(parse(source))</div><div class="line">            code = constant_fold(code)</div><div class="line">            Machine(code).run()</div><div class="line">        <span class="keyword">except</span> (RuntimeError, IndexError) <span class="keyword">as</span> e:</div><div class="line">            print(<span class="string">"IndexError: %s"</span> % e)</div><div class="line">        <span class="keyword">except</span> KeyboardInterrupt:</div><div class="line">            print(<span class="string">"\nKeyboardInterrupt"</span>)</div></pre></td></tr></table></figure>
-
-<h2 id="再思考">再思考</h2>
-<p>这样，基本上的我们就完成了一个简单的解释器，实际上它的能力很弱小，但是作为一个锻炼思考的方式，是一个不错的实践。接下来，可以给这个解释器添加更多的功能。</p>
-<p>另外，推荐几个其他的文章：<br><a href="http://python.jobbole.com/82206/" target="_blank" rel="external">用 Python 从零开始写一个简单的解释器</a><br><a href="http://blog.jobbole.com/88152/" target="_blank" rel="external">一起来写个简单的解释器</a><br><a href="http://blog.jobbole.com/47659/" target="_blank" rel="external">如何使用Python编写一个Lisp解释器</a></p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<p><a href="http://www.jianshu.com/p/28c029de8fb3" target="_blank" rel="external">刀背藏身|简书</a><br>先来看看这篇文章 <a href="http://www.yinwang.org/blog-cn/2012/08/01/interpreter/" target="_blank" rel="external">怎样写一个解释器</a></p>
-<p>所谓虚拟机器，就是一定意义上的堆栈机。<br>解释器能够执行其他计算机语言编写的程序的系统软件，他是一个翻译程序。它的执行方式是一边翻译一边执行，因此其执行效率一般比较低。解释器的实现比较简单，而且编写源程序的高级语言可以使用更加灵活和富于表现力的语法。<br>可参考<a href="https://csl.name/post/vm/" target="_blank" rel="external">本链接</a>，开源项目<a href="https://github.com/cslarsen/crianza" target="_blank" rel="external">Crianza</a>。<br>当然，解释器要从最基础的最简单的语言开始，然后逐步增加语言的复杂度，才能构造出正确的解释器。而最基础的一个解释器，其实就是一个高级的计算器，下面我们一起来创建一个解释器吧。<br>]]>
-    
-    </summary>
-    
-      <category term="Python" scheme="http://yoursite.com/tags/Python/"/>
-    
-      <category term="Study" scheme="http://yoursite.com/categories/Study/"/>
     
   </entry>
   

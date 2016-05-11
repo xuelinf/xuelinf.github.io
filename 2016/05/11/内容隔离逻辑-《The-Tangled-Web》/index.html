@@ -1,0 +1,131 @@
+<html>
+<head>
+	
+	<title>内容隔离逻辑 -- 《The Tangled Web》</title>
+	<meta name="keywords" content="Just do, Just for fun" />
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--<link rel="stylesheet" href="/css/main.css" type="text/css">
+-->
+	<link href="/css/main.css?v=2" rel="stylesheet" type="text/css" />
+    <!--<link rel="stylesheet" href="/css/style.css" type="text/css">
+-->
+    
+
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+
+    
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2"/>
+    
+
+</head>
+
+<body>
+
+<h1 id="内容隔离逻辑">内容隔离逻辑</h1>
+<p>在最开始，阐述浏览器安全的时候，我们提到了浏览器的隔离措施，虽然浏览器试图通过内容隔离逻辑，来保证不同源的文件之间访问的控制，但是这样的策略仍然是非完全安全的，从这一部分开始，我们就开始探讨关于Web应用，特别是浏览器的各种安全特性。</p>
+<h2 id="DOM_同源策略">DOM 同源策略</h2>
+<p>同源策略Same-Origin Policy 其实规则非常直接：<strong>除非JavaScript所处的两个页面的协议，DNS域名，端口完全一致，否则两个独立的JavaScript运行环境不能访问彼此的DOM</strong>，其他任何跨域文档JavaScript DOM 访问都会失败。</p>
+<p>这个同源策略看起来非常易于理解，但其中包含的问题也不少。</p>
+<p>首先是DNS，这里的问题是，浏览器在判断同源的时候，只对DNS域名进行判断，而非IP地址，假如某个特定主机的IP地址发生了变化，就有可能造成漏洞产生，这种攻击行为叫做DNS 重绑定攻击。</p>
+<p>我们再看这个URL，浏览器代码里包含有多套独立的URL 解析处理，如果HTTP 堆栈里对源的解析和JavaScript对源的判断产生了误差，就可能导致问题。在各种浏览器中，有可能产生不少由于URL 刻意变形导致的SOP 绕过漏洞。</p>
+<p>同时对于IE浏览器早期版本，甚至在做同源检查的时候，可能会忽略端口，后果可想而知。</p>
+<p>同源策略在一开始只是针对DOM 的，但是后来这个策略逐渐扩散到了保护从JavaScript的根对象开始的其他敏感数据。不过<strong>非同源的脚本还是可以这任意窗口或者框架使用location.assign(), location.replace()</strong></p>
+<p>同时，同源策略还存在一些障碍，比如无法隔离本来属于两个用户的网页（因为无法给每个用户单独分配域名），另一种情况，这个策略也会使得原本合法的同站点域名不能无缝交换数据。比如login.exp.com 和 payment.exp.com。当然，修复的方法广泛支持的是document.domain 和 postMessage()。</p>
+<p><strong>document.domain</strong></p>
+<p>javaScript 通过设置document.domain 来覆盖同源检查策略中的主机名匹配，不过只是允许具有相同顶级域名，比如exp.com 甚至是 .com。赋值形式如下：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">document</span>.domain = <span class="string">"exp.com"</span></div></pre></td></tr></table></figure>
+
+<p>但需要注意的是，一个设置了document.domain 的页面是不能访问一个没有设置的页面，这样有可能造成本来是同源的页面，反而变成了隔离，虽然有时候有人试图使用这条规则，或者是给两个同源页面设置不同的document.domain，但实际上这种伪隔离域仍然支持对另一个设定进行 javascript:URL 跳转动作。</p>
+<p>另外，由于场景不清晰，本来只是打算让两个页面同源，但此时会招来另一个页面，通过设置domain 一样能够同源，这样，实际上就是告诉我们，设置domain,实际上是将整个域的安全，交给了整个域中最不安全的那一个了。</p>
+<p><strong>postMessage(…)</strong></p>
+<p>postMessage()方法允许来自不同源的脚本采用异步方式进行有限的通信，可以实现跨文本档、多窗口、跨域消息传递。</p>
+<p>postMessage(data,origin)方法接受两个参数:</p>
+<ol>
+<li>data:要传递的数据，html5规范中提到该参数可以是JavaScript的任意基本类型或可复制的对象，然而并不是所有浏览器都做到了这点儿，部分浏览器只能处理字符串参数，所以我们在传递参数的时候需要使用JSON.stringify()方法对对象参数序列化，在低版本IE中引用json2.js可以实现类似效果。</li>
+<li>origin：字符串参数，指明目标窗口的源，协议+主机+端口号[+URL]，URL会被忽略，所以可以不写，这个参数是为了安全考虑，postMessage()方法只会将message传递给指定窗口，当然如果愿意也可以建参数设置为”*”，这样可以传递给任意窗口，如果要指定和当前窗口同源的话设置为”/“。</li>
+</ol>
+<p>考虑一下场景，在payments.exp.com 的根路径 下有两个页面，需要把用户登录信息显示在该页面上。为达到这个目的，payments.exp.com 这个页面加载一个纸箱login.exp.com 的子框架。这个子框架发送以下指令：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">parent.postMessage(<span class="string">"user=bob"</span>, <span class="string">"https://payment.exp.com"</span>)</div></pre></td></tr></table></figure>
+
+<p>只有当payment.exp.com 确认是指定的信任源，浏览器才会发送postMessage 消息出于根路径下的接收方也需要确认消息的正确性，这样就确保了整个机制的健壮。</p>
+<p><strong>与浏览器身份验证的交互</strong></p>
+<p>在了解完DOM 相关的同源策略后，我们应当记住<strong>同源策略无法和全局身份认证，SSL 状态，网络上下文环境，以及众多浏览器管理涉及安全的其他参数同步</strong>。这里有一个很绕的例子：</p>
+<p>某站点的登陆表单有CSRF 的漏洞，攻击者首先在框架里嵌入目标此网站上的一个敏感页面，然后诱使受害者登录到该站一个由攻击者控制的账号里，然后执行目标网站其他应用上的跨站攻击。进入HTTP 的身份验证信息已经改变了，但是后一个步骤里的代码注入却会对之前加载的子框架具有完全的访问权限，也会导致数据被窃取。这是一个很绕的攻击过程，不过不难理解，正是由于DOM 的同源和这些身份认证，状态等信息无法同步的原因造成的。</p>
+<h2 id="XMLHttpRequest_同源策略">XMLHttpRequest 同源策略</h2>
+<p>XMLHttpRequest 对象用于在后台与服务器交换数据。</p>
+<ul>
+<li>在不重新加载页面的情况下更新网页</li>
+<li>在页面已加载后从服务器请求数据</li>
+<li>在页面已加载后从服务器接收数据</li>
+<li>在后台向服务器发送数据</li>
+<li>所有现代的浏览器都支持 XMLHttpRequest 对象。</li>
+</ul>
+<p>而这个机制的关键是他会用到浏览器的HTTP 堆栈及其组件，包括全局身份认证，缓存机制，持续会话等。XMLHttpRequest 的同源机制，和浏览器的默认同源机制差不多，不过因一点点不同，比如XMLHttpRequest.open（）里设定的目标URL 地址必须与发起的页面完全同源。</p>
+<p>用户对于发送的请求头域有绝对的控制，其优点就是，通过插入一些自定义的请求头，可以确认特定的请求来源。但是问题就是<strong>插入某些请求头则可能对目标服务器端或者代理服务器的解析产生影响</strong>，比如设定错误的Content-Length 可能导致攻击者在原该浏览器维护的HTTP 持续会话里偷偷加入第二个请求。</p>
+<p>考虑下面的代码：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> x = <span class="keyword">new</span> XMLHttpRequest();</div><div class="line">x.open(<span class="string">"POST"</span>, <span class="string">"http://www.exp.com"</span>,<span class="literal">false</span>);</div><div class="line"><span class="comment">// 下边会替换掉自动记录出来的长度</span></div><div class="line">x.setRequestHeader(<span class="string">"Content-Length"</span>, <span class="string">"7"</span>);</div><div class="line"><span class="comment">// 当长度超过之后，会截断，剩下的，会被认为是第二个独立的请求。</span></div><div class="line">x.send(</div><div class="line">    <span class="string">"Gotcha!\n"</span>+</div><div class="line">    <span class="string">"GET /evil.html HTTP/1.1\n"</span>+</div><div class="line">    <span class="string">"HOST: www.unnyoulet.com\n\n"</span></div></pre></td></tr></table></figure>
+
+<p>一般，面对这种风险的方式，就是，设置一个黑名单，比如Content-Length, Host, Referer ，而对譬如User-Agent,Cookie, Origin ， If-Modified-Since 的处理却各有不同。</p>
+<h2 id="Web_Storage_同源">Web Storage 同源</h2>
+<p>Web Storage 是浏览器中实现的一个简单的数据存储功能，目前有两个JavaScript对象， localStorage , sessionStorage。前者是可以进行持久存储的，后者则是绑定当前浏览器，提供临时的缓存机制。</p>
+<h2 id="Cookie_安全策略">Cookie 安全策略</h2>
+<p>Cookie 的默认有效范围是域名，但是并没有办法吧Cookie 范围限制在单个主机名上，可以吧Cookie 里的Domain 设置为当前主机名上，但实际上访问该主机名的子域名，也会认为是有效的。</p>
+<p>所以就形成了一个有意思的现象，当我们完全不设置domain 的时候，反而在某些浏览器上会将Cookie 的范围局限在主机名之内，但对IE 来说确实无效的。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-11-14629533767415.jpg" alt=""></p>
+<p>那么如何有效的设置范围呢，cookie 中使用的是path. 只有请求的路径与cookie 的path 参数吻合，才会发送cookie。</p>
+<p>但实际上，无论cookie 如何设定，对于同源策略来说，是不会检查URL 路径的，JS 代码还是可以随意访问同意主机上的不同URL，那么cookie 的path实际上不能作为有效的安全边界。</p>
+<p>另外还有两个标记，分别是httponly，secure 。前者通过设置，可以禁止document.cookie 访问页面的cookie, 后者则要求cookie 不能用于非加密通道。</p>
+<p>这么看起来稳妥了很多，然而还是有问题的，<strong>因为这可以防止数据不被读取，但是无法防止不被覆盖</strong>，通过js代码，我们可以使某域名对应的Cookie 池发生溢出，然后设置新的不带secure 的cookie 。对此的解决办法是，将cookie 池内容隔离，分为Httponly cookie 和普通的cookie,但是如果cookie 允许名字相同，在碰到匹配请求的时候，这些cookie 会被浏览器一起发送。</p>
+<p>如此，我们可以看到，cookie和同源机制实际上是会相互影响到的，比如前边提到的同源机制影响了cookie 的路径范围机制，而另一方面讲，cookie 更加严重的影响了同源策略，因为cookie 经常被用作身份认证信息，如果cookie信息被获取，就相当于绕过了同源策略。</p>
+<p><strong>域名限制的问题</strong></p>
+<p>由于Cookie 的有效范围设置，容易造成安全问题，那么避免cookie 的域名错误，就是需要解决的问题。目前支持的方法是，数点号的个数。一般化的要求是，<strong>只有处于具体域名的主机名范围内，才能设置该域名对应的Cookie, 这个域名包括至少2个或3个点号，才能避免出现诸如.com .edu vas.us 这样的形式</strong>，特别的，对于域名属于7种特定格式的定居于明，那么需要包含2个点，除此之外则是3个点，但问题在于域名设置各式各样，比如有.com， .com.cn 但还可以直接.cn ，所以浏览器们基本上都是使用了各自的的过滤方法来处理，但是，如今域名的形式越来越多，相信cookie 的这一机制也面临各种挑战。</p>
+<p><strong>Cookie 与 合法DNS 劫持</strong></p>
+<p>这个实际上在中国非常广泛，运营社对于不存在的域名，会返回其广告页。那如果这个看起来非常破的广告页，如果存在漏洞，那么利用漏洞，可以获得任意域的上下文环境执行权限。</p>
+<h2 id="安全工程">安全工程</h2>
+<ul>
+<li>对全部站点都要使用可靠地安全策略，为保护用户，应该在最顶层的crossdomain.xml 文件设定permitted-cross-domain-policies 参数项为master-only 或者是by-content-type ，实际这个站点没有用的Flash,这样做可以组织由攻击者控制的无关内容被错误的当做另一个crossdomain.xml 文件，对同源策略产生影响。</li>
+<li>当依赖HTTP cookies 来作身份验证时<ul>
+<li>使用httponly 标签，不要让JavaScript 直接访问到身份授权的cookie 信息，对于敏感的cookie 的有效范围越小越好，或者是不设置domain。</li>
+<li>如果应用基于https, 那么cookie 标记为secure， 同时防止cookie 被注入。</li>
+</ul>
+</li>
+<li>处理JavaScript 跨域通信的时候<ul>
+<li>不要是document.domain， 尽量使用postMessage(), 以此来确保目标源的设置是正确的，对于域名的判断不要直接使用简单的截断匹配方式: msg.origin.indexOf(“.exp.com”)</li>
+<li>小心postMessage() 绕过的方法。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>内容隔离是浏览器为Web 安全竖起的一道长城，然而由于 Web 本身的种种特点，造成了这个长城有非常多的漏洞，能够让长城两端以各种形式自由出入，这里边，关于插件部分，被我跳过了，主要是因为这一块比较陌生。</p>
+
+
+<!--<a href="http://yoursite.com/2016/05/11/内容隔离逻辑-《The-Tangled-Web》/#disqus_thread" class="article-comment-link">Comments</a>-->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'null'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+<div style="display:none">
+<script src="http://s4.cnzz.com/stat.php?id=undefined&web_id=undefined" language="JavaScript"></script>script>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>
