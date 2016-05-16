@@ -1,0 +1,81 @@
+<html>
+<head>
+	
+	<title>(level 6)符号的进阶 -- XSS升级之路</title>
+	<meta name="keywords" content="Just do, Just for fun" />
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--<link rel="stylesheet" href="/css/main.css" type="text/css">
+-->
+	<link href="/css/main.css?v=2" rel="stylesheet" type="text/css" />
+    <!--<link rel="stylesheet" href="/css/style.css" type="text/css">
+-->
+    
+
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+
+    
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2"/>
+    
+
+</head>
+
+<body>
+
+<h1 id="符号的进阶">符号的进阶</h1>
+<p>上一次是反斜杠发挥的妙用，它默默地转义了一个双引号，还有一些其他有意思的符号，比如换行符也能发挥妙用，这次是来自换行符的一发偷袭。</p>
+<p>看这样一个地址：<br><a href="http://datalib.games.qq.com/cgi-bin/search?libid=178&amp;FilterAttrAND=3602&amp;FilterValueAND=aaaaaaaaaa" target="_blank" rel="external">http://datalib.games.qq.com/cgi-bin/search?libid=178&amp;FilterAttrAND=3602&amp;FilterValueAND=aaaaaaaaaa</a></p>
+<p>逐个测试注入点，我们发现最后的FilterValueAND 的输入点在源码中找到了输出点：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-16-14633225014088.jpg" alt=""></p>
+<p>它出现在JS 语句里，一上来就感觉有戏。接下来尝试写入特殊字符，测试过滤情况。正常的情况下，尖括号，双引号：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-16-14633226756194.jpg" alt=""></p>
+<p>但是令人奇怪的是，最后一个输出点竟然是在一大段注释里，这应该是开发的一个失误：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-16-14633227582291.jpg" alt=""></p>
+<p>看到注释想到了什么呢？如果这里插进来一个换行符，那么应该被注释的部分就不是注释了。那后边再跟注入语句，就能够执行了。然后我们在用一个双斜杠来注释后边的无用部分。利用代码如下：<br><a href="http://datalib.games.qq.com/cgi-bin/search?libid=178&amp;FilterAttrAND=3602&amp;FilterValueAND=%0aalert(/xss/);//" target="_blank" rel="external">http://datalib.games.qq.com/cgi-bin/search?libid=178&amp;FilterAttrAND=3602&amp;FilterValueAND=%0aalert(/xss/);//</a></p>
+<p>直接就弹窗了。</p>
+<p>这一次利用的太过简单，看起来应该是开发的一时疏忽，将一大段内容注释了，而注释里原本好包含了输出，那就有可能出问题了。</p>
+<p>那么下面再看一个更综合的例子，地址如下：<br><a href="http://cgi.data.tech.qq.com/index.php?mod=search&amp;type=data&amp;site=digi&amp;libid=2&amp;curpage=1&amp;pagenum=30&amp;filterattr=138,138|16|4,5,4,5&amp;filtervalue=3500-4000,%B4%F3%D3%DA4000|%D0%FD%D7%AA|WCDMA,WCDMA,HSDPA,HSDPA&amp;tplname=centersearch.shtml&amp;orderby=aaaaaaaaaaaa" target="_blank" rel="external">http://cgi.data.tech.qq.com/index.php?mod=search&amp;type=data&amp;site=digi&amp;libid=2&amp;curpage=1&amp;pagenum=30&amp;filterattr=138,138|16|4,5,4,5&amp;filtervalue=3500-4000,%B4%F3%D3%DA4000|%D0%FD%D7%AA|WCDMA,WCDMA,HSDPA,HSDPA&amp;tplname=centersearch.shtml&amp;orderby=aaaaaaaaaaaa</a></p>
+<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-16-14633230686974.jpg" alt=""></p>
+<p>看一下源码，先测试双引号，妥妥的被过滤，HTML标签里的东西没希望了。往后边看，第二个又出现在了注释里，看来开发还是很希望遗留这些漏洞的，我们直接用一个换行符。</p>
+<p>但问题是注释那里被注释掉了，但是接下来的var searchOrder=”….”;这一句就麻烦了。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">//document.getElementById("order_select").value="aaa</div><div class="line">alert(/xss/); //";</div><div class="line"></div><div class="line">var searchOrder="aaa</div><div class="line">alert(1);//";</div></pre></td></tr></table></figure>
+
+<p>第一个是OK 了，第二个语法错误了。那么又想到什么了呢，在JavaScript 语法里，一个反斜杠可以让语法让换行的内容接起来，形成多行写法。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> sarchOrder=<span class="string">"aaa\</span></div><div class="line">alert(/xss/);//";</div></pre></td></tr></table></figure>
+
+<p>于是，语法上又恢复了正常，而这一部分内容我们不用管它，只要上一个有效就可以了。但问题是，反斜杠被过滤了，过滤的方法是被转义了。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-16-14633235895962.jpg" alt=""></p>
+<p>两个反斜杠就没法让JavaScript成立了，怎么办呢？记得之前采用的宽字符的战术，看一眼网页的编码格式,gb2312，说明宽字节是有效的。那我们就用128以上的字符，去吃掉一个反斜杠：</p>
+<p><a href="http://cgi.data.tech.qq.com/index.php?mod=search&amp;type=data&amp;site=digi&amp;libid=2&amp;curpage=1&amp;pagenum=30&amp;filterattr=138,138|16|4,5,4,5&amp;filtervalue=3500-4000,%B4%F3%D3%DA4000|%D0%FD%D7%AA|WCDMA,WCDMA,HSDPA,HSDPA&amp;tplname=centersearch.shtml&amp;orderby=aaaa%c0%5c%0aalert(1);//" target="_blank" rel="external">http://cgi.data.tech.qq.com/index.php?mod=search&amp;type=data&amp;site=digi&amp;libid=2&amp;curpage=1&amp;pagenum=30&amp;filterattr=138,138|16|4,5,4,5&amp;filtervalue=3500-4000,%B4%F3%D3%DA4000|%D0%FD%D7%AA|WCDMA,WCDMA,HSDPA,HSDPA&amp;tplname=centersearch.shtml&amp;orderby=aaaa%c0%5c%0aalert(1);//</a></p>
+<p>从结果上看，%c0吃掉了一个%5c，留下了一个反斜杠。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-16-14633239849141.jpg" alt=""></p>
+<p>语法完全ok, 于是弹窗。</p>
+<p>至此，这种反射型的XSS 基本上就这么些内容了。想要挖XSS 的洞，非常的耗费功夫，因为即使是没有安全编码尝试的开发者，也基本知道一些必须过滤的字符一定要过滤，另外在PHP 这些语言中，也有专门的函数诸如魔术引号来过滤处理。</p>
+<p>不过学习这种XSS 类型，将扩宽思路，不仅是从注入的角度来看，能想到各种有意思的注入和XSS 利用，更重要的是从安全编码的角度看待开发，如何保证代码的安全实际上是比效率更加重要的点。</p>
+
+
+<!--<a href="http://yoursite.com/2016/05/16/-level-6-符号的进阶-XSS升级之路/#disqus_thread" class="article-comment-link">Comments</a>-->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'null'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+<div style="display:none">
+<script src="http://s4.cnzz.com/stat.php?id=undefined&web_id=undefined" language="JavaScript"></script>script>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>
