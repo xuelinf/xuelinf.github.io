@@ -1,0 +1,110 @@
+<html>
+<head>
+	
+	<title>DOM XSS启程 -- XSS升级之路</title>
+	<meta name="keywords" content="Just do, Just for fun" />
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--<link rel="stylesheet" href="/css/main.css" type="text/css">
+-->
+	<link href="/css/main.css?v=2" rel="stylesheet" type="text/css" />
+    <!--<link rel="stylesheet" href="/css/style.css" type="text/css">
+-->
+    
+
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+
+    
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2"/>
+    
+
+</head>
+
+<body>
+
+<h1 id="DOM_XSS启程">DOM XSS启程</h1>
+<p>之前提到的漏洞内容，都是反射型XSS，攻击性一般来说比较低，即用即消，难以持久，而且一般来说，如果cookie 设置成httponly，你就不能通过document.cookie 的方式获取cookie了，在做其他一些事情，反射型xss就显得乏力了。不过，如果没有设置成httponly，还是有方法获取到海量的用户cookie,简单的利用方法就是在一个自己可控的站点，控制一个iframe，然后链接到主站可xss利用的站点，在URL 里写好脚本，做好接受，就能源源不断的接受来自用户的信息了。</p>
+<p>比如说新浪微博或者是腾讯微博存在XSS反射漏洞，我们在自己的站点中写好利用的iframe，然后在自己的微博上写一个吸引人的标题，然后附一个经过短链接转义过得链接。如果别人点进去，就会自动触发我们的XSS 脚本。以前Twitter 上也有这样的漏洞，短时间让黑客的粉丝暴涨百万，实际上只是自动执行了关注黑客的脚本。</p>
+<p>下面我们进入下一个XSS类型，DOM XSS。所谓DOM 操作，就是利用JavaScript 的DOM 操作来进行利用。关于DOM树，DOM操作的基础，可以参见<a href="https://zh.wikipedia.org/wiki/%E6%96%87%E6%A1%A3%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B" target="_blank" rel="external">wikipedia</a> ，可以查看更多信息。</p>
+<p>DOM 常见的方法有：</p>
+<ul>
+<li>获取节点<ul>
+<li>getElementsById()</li>
+<li>getElementsByTagName()</li>
+<li>getElementsByClassName()</li>
+</ul>
+</li>
+<li>新增结点<ul>
+<li>document.createElement()  创建节点对象，参数是字符串也就是html标签</li>
+<li>createTextNode  创建文本节点，配合上一个使用</li>
+<li>appendChild(element)  把新的结点添加到指定节点下，参数是一个节点对象</li>
+<li>insertChild()  在指定结点钱插入新的节点</li>
+</ul>
+</li>
+<li>修改节点<ul>
+<li>replaceChild()  节点交换</li>
+<li>setAttribute()  设置属性</li>
+</ul>
+</li>
+<li>删除节点<ul>
+<li>removeChild(element)  删除节点，要先获得父节点然后再删除子节点</li>
+</ul>
+</li>
+<li>一些属性<ul>
+<li>innerHTML 节点内容，可以获取或者设置</li>
+<li>parentNode  当前节点的父节点</li>
+<li>childNode  子节点</li>
+<li>attributes  节点属性</li>
+<li>style  修改样式</li>
+</ul>
+</li>
+</ul>
+<p>下面我们回到XSS 上，如何利用一个显式的DOM XSS。</p>
+<p>这样一个URL：<br><a href="http://datalib.ent.qq.com/cgi-bin/search?libid=1&amp;keyvalue=aaaaaaa&amp;attr=133&amp;stype=2&amp;tname=star_second.shtml" target="_blank" rel="external">http://datalib.ent.qq.com/cgi-bin/search?libid=1&amp;keyvalue=aaaaaaa&amp;attr=133&amp;stype=2&amp;tname=star_second.shtml</a></p>
+<p>我们在代码中寻找其输出：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-17-14634946364874.jpg" alt=""></p>
+<p>发现了很多个，将其代码格式化之后如下，我们会实际上，被执行的只有一个：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">&lt;strong id=<span class="string">"titleshow"</span>&gt;按职业<span class="number">1</span>检索：aaaaaaa &lt;<span class="regexp">/strong&gt;&lt;/</span>div&gt;</div><div class="line"></div><div class="line"><span class="xml"><span class="tag">&lt;<span class="title">script</span>&gt;</span><span class="javascript"></span></span></div><div class="line"><span class="keyword">if</span>(<span class="string">"aaaaaaa"</span>==<span class="string">""</span>)</div><div class="line"></div><div class="line"><span class="built_in">document</span>.getElementById(<span class="string">"titleshow"</span>).innerHTML=<span class="string">"按地区检索：全部明星"</span>;</div><div class="line"></div><div class="line"><span class="keyword">if</span>(<span class="string">"职业1"</span>==<span class="string">"职业1"</span>)</div><div class="line"></div><div class="line"><span class="built_in">document</span>.getElementById(<span class="string">"titleshow"</span>).innerHTML=<span class="string">"按职业检索：aaaaaaa"</span>;</div><div class="line"></div><div class="line"><span class="keyword">if</span>(<span class="string">"职业1"</span>==<span class="string">"职业2"</span>)</div><div class="line"></div><div class="line"><span class="built_in">document</span>.getElementById(<span class="string">"titleshow"</span>).innerHTML=<span class="string">"按职业检索：aaaaaaa"</span>;</div><div class="line"></div><div class="line"><span class="keyword">if</span>(<span class="string">"职业1"</span>==<span class="string">"职业3"</span>)</div><div class="line"></div><div class="line"><span class="built_in">document</span>.getElementById(<span class="string">"titleshow"</span>).innerHTML=<span class="string">"按职业检索：aaaaaaa"</span>;</div><div class="line"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>我们先测试几个特殊字符，发现尖括号被过滤了，但是\ 没有被过滤，而这里又是JS 代码，我们可以十三月Unicode 编码来代替尖括号，仍然可以实现代码利用。\u003c \003e 分别代表尖括号，\0020 代表空格。 而这里其实有一个比较关键的知识点，为什么有时候转义可以，有时候转义不行，编码解码的顺序到底是怎样的，具体可以看下一条文章。</p>
+<p>所以，我们构造的完整URL 如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://datalib.ent.qq.com/cgi-bin/search?<span class="variable">libid=</span><span class="number">1</span>&<span class="variable">keyvalue=</span>\u003Cimg\<span class="variable">u0020src=</span><span class="number">1</span>\<span class="variable">u0020onerror=</span>alert(<span class="number">1</span>)\u003e&<span class="variable">attr=</span><span class="number">133</span>&<span class="variable">stype=</span><span class="number">2</span>&<span class="variable">tname=</span>star_second.shtml</div></pre></td></tr></table></figure>
+
+<p>但是，左右尖括号的Unicode表示已经被过滤：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-17-14634949862018.jpg" alt=""></p>
+<p>但仔细观察一下，我们发现，\u0020 都没有被转义，说明开发者的转义是非常局限的，指哪打哪，很有可能有别的方法可以利用。而Unicode 编码也有多种书写方式，比如 \x3c \x3e 就可以代表左右尖括号。那么我们值得一试：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://datalib.ent.qq.com/cgi-bin/search?<span class="variable">libid=</span><span class="number">1</span>&<span class="variable">keyvalue=</span>\x3Cimg\<span class="variable">u0020src=</span><span class="number">1</span>\<span class="variable">u0020onerror=</span>alert(<span class="number">1</span>)\x3e&<span class="variable">attr=</span><span class="number">133</span>&<span class="variable">stype=</span><span class="number">2</span>&<span class="variable">tname=</span>star_second.shtml</div></pre></td></tr></table></figure>
+
+<p>令人惊奇的是竟然没有转义：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-17-14634951065021.jpg" alt=""></p>
+<p>这样，弹窗就是必然的了。</p>
+<p>这是一次简单的DOM XSS 过程，后边会有更加复杂的XSS等待挖掘。</p>
+
+
+<!--<a href="http://yoursite.com/2016/05/17/DOM-XSS启程-XSS升级之路/#disqus_thread" class="article-comment-link">Comments</a>-->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'null'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+<div style="display:none">
+<script src="http://s4.cnzz.com/stat.php?id=undefined&web_id=undefined" language="JavaScript"></script>script>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>

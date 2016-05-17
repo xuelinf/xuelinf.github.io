@@ -4,7 +4,7 @@
   <subtitle><![CDATA[代码是一棱刀背，幸好，有此藏身。]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2016-05-16T03:05:12.382Z</updated>
+  <updated>2016-05-17T15:01:08.855Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,78 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[DOM XSS启程 -- XSS升级之路]]></title>
+    <link href="http://yoursite.com/2016/05/17/DOM-XSS%E5%90%AF%E7%A8%8B-XSS%E5%8D%87%E7%BA%A7%E4%B9%8B%E8%B7%AF/"/>
+    <id>http://yoursite.com/2016/05/17/DOM-XSS启程-XSS升级之路/</id>
+    <published>2016-05-17T15:00:38.000Z</published>
+    <updated>2016-05-17T15:01:03.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="DOM_XSS启程">DOM XSS启程</h1>
+<p>之前提到的漏洞内容，都是反射型XSS，攻击性一般来说比较低，即用即消，难以持久，而且一般来说，如果cookie 设置成httponly，你就不能通过document.cookie 的方式获取cookie了，在做其他一些事情，反射型xss就显得乏力了。不过，如果没有设置成httponly，还是有方法获取到海量的用户cookie,简单的利用方法就是在一个自己可控的站点，控制一个iframe，然后链接到主站可xss利用的站点，在URL 里写好脚本，做好接受，就能源源不断的接受来自用户的信息了。</p>
+<p>比如说新浪微博或者是腾讯微博存在XSS反射漏洞，我们在自己的站点中写好利用的iframe，然后在自己的微博上写一个吸引人的标题，然后附一个经过短链接转义过得链接。如果别人点进去，就会自动触发我们的XSS 脚本。以前Twitter 上也有这样的漏洞，短时间让黑客的粉丝暴涨百万，实际上只是自动执行了关注黑客的脚本。</p>
+<p>下面我们进入下一个XSS类型，DOM XSS。所谓DOM 操作，就是利用JavaScript 的DOM 操作来进行利用。关于DOM树，DOM操作的基础，可以参见<a href="https://zh.wikipedia.org/wiki/%E6%96%87%E6%A1%A3%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B" target="_blank" rel="external">wikipedia</a> ，可以查看更多信息。</p>
+<p>DOM 常见的方法有：</p>
+<ul>
+<li>获取节点<ul>
+<li>getElementsById()</li>
+<li>getElementsByTagName()</li>
+<li>getElementsByClassName()</li>
+</ul>
+</li>
+<li>新增结点<ul>
+<li>document.createElement()  创建节点对象，参数是字符串也就是html标签</li>
+<li>createTextNode  创建文本节点，配合上一个使用</li>
+<li>appendChild(element)  把新的结点添加到指定节点下，参数是一个节点对象</li>
+<li>insertChild()  在指定结点钱插入新的节点</li>
+</ul>
+</li>
+<li>修改节点<ul>
+<li>replaceChild()  节点交换</li>
+<li>setAttribute()  设置属性</li>
+</ul>
+</li>
+<li>删除节点<ul>
+<li>removeChild(element)  删除节点，要先获得父节点然后再删除子节点</li>
+</ul>
+</li>
+<li>一些属性<ul>
+<li>innerHTML 节点内容，可以获取或者设置</li>
+<li>parentNode  当前节点的父节点</li>
+<li>childNode  子节点</li>
+<li>attributes  节点属性</li>
+<li>style  修改样式</li>
+</ul>
+</li>
+</ul>
+<p>下面我们回到XSS 上，如何利用一个显式的DOM XSS。</p>
+<p>这样一个URL：<br><a href="http://datalib.ent.qq.com/cgi-bin/search?libid=1&amp;keyvalue=aaaaaaa&amp;attr=133&amp;stype=2&amp;tname=star_second.shtml" target="_blank" rel="external">http://datalib.ent.qq.com/cgi-bin/search?libid=1&amp;keyvalue=aaaaaaa&amp;attr=133&amp;stype=2&amp;tname=star_second.shtml</a></p>
+<p>我们在代码中寻找其输出：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-17-14634946364874.jpg" alt=""></p>
+<p>发现了很多个，将其代码格式化之后如下，我们会实际上，被执行的只有一个：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">&lt;strong id=<span class="string">"titleshow"</span>&gt;按职业<span class="number">1</span>检索：aaaaaaa &lt;<span class="regexp">/strong&gt;&lt;/</span>div&gt;</div><div class="line"></div><div class="line"><span class="xml"><span class="tag">&lt;<span class="title">script</span>&gt;</span><span class="javascript"></span></span></div><div class="line"><span class="keyword">if</span>(<span class="string">"aaaaaaa"</span>==<span class="string">""</span>)</div><div class="line"></div><div class="line"><span class="built_in">document</span>.getElementById(<span class="string">"titleshow"</span>).innerHTML=<span class="string">"按地区检索：全部明星"</span>;</div><div class="line"></div><div class="line"><span class="keyword">if</span>(<span class="string">"职业1"</span>==<span class="string">"职业1"</span>)</div><div class="line"></div><div class="line"><span class="built_in">document</span>.getElementById(<span class="string">"titleshow"</span>).innerHTML=<span class="string">"按职业检索：aaaaaaa"</span>;</div><div class="line"></div><div class="line"><span class="keyword">if</span>(<span class="string">"职业1"</span>==<span class="string">"职业2"</span>)</div><div class="line"></div><div class="line"><span class="built_in">document</span>.getElementById(<span class="string">"titleshow"</span>).innerHTML=<span class="string">"按职业检索：aaaaaaa"</span>;</div><div class="line"></div><div class="line"><span class="keyword">if</span>(<span class="string">"职业1"</span>==<span class="string">"职业3"</span>)</div><div class="line"></div><div class="line"><span class="built_in">document</span>.getElementById(<span class="string">"titleshow"</span>).innerHTML=<span class="string">"按职业检索：aaaaaaa"</span>;</div><div class="line"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>我们先测试几个特殊字符，发现尖括号被过滤了，但是\ 没有被过滤，而这里又是JS 代码，我们可以十三月Unicode 编码来代替尖括号，仍然可以实现代码利用。\u003c \003e 分别代表尖括号，\0020 代表空格。 而这里其实有一个比较关键的知识点，为什么有时候转义可以，有时候转义不行，编码解码的顺序到底是怎样的，具体可以看下一条文章。</p>
+<p>所以，我们构造的完整URL 如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://datalib.ent.qq.com/cgi-bin/search?<span class="variable">libid=</span><span class="number">1</span>&<span class="variable">keyvalue=</span>\u003Cimg\<span class="variable">u0020src=</span><span class="number">1</span>\<span class="variable">u0020onerror=</span>alert(<span class="number">1</span>)\u003e&<span class="variable">attr=</span><span class="number">133</span>&<span class="variable">stype=</span><span class="number">2</span>&<span class="variable">tname=</span>star_second.shtml</div></pre></td></tr></table></figure>
+
+<p>但是，左右尖括号的Unicode表示已经被过滤：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-17-14634949862018.jpg" alt=""></p>
+<p>但仔细观察一下，我们发现，\u0020 都没有被转义，说明开发者的转义是非常局限的，指哪打哪，很有可能有别的方法可以利用。而Unicode 编码也有多种书写方式，比如 \x3c \x3e 就可以代表左右尖括号。那么我们值得一试：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://datalib.ent.qq.com/cgi-bin/search?<span class="variable">libid=</span><span class="number">1</span>&<span class="variable">keyvalue=</span>\x3Cimg\<span class="variable">u0020src=</span><span class="number">1</span>\<span class="variable">u0020onerror=</span>alert(<span class="number">1</span>)\x3e&<span class="variable">attr=</span><span class="number">133</span>&<span class="variable">stype=</span><span class="number">2</span>&<span class="variable">tname=</span>star_second.shtml</div></pre></td></tr></table></figure>
+
+<p>令人惊奇的是竟然没有转义：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-17-14634951065021.jpg" alt=""></p>
+<p>这样，弹窗就是必然的了。</p>
+<p>这是一次简单的DOM XSS 过程，后边会有更加复杂的XSS等待挖掘。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="DOM_XSS启程">DOM XSS启程</h1>
+<p>之前提到的漏洞内容，都是反射型XSS，攻击性一般来说比较低，即用即消，难以持久，而且一般来说，如果cookie 设置成httponly，你就不能通过document.cookie 的方式获取cookie了，]]>
+    </summary>
+    
+      <category term="TCP/IP" scheme="http://yoursite.com/tags/TCP-IP/"/>
+    
+      <category term="Study" scheme="http://yoursite.com/categories/Study/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[(level 6)符号的进阶 -- XSS升级之路]]></title>
@@ -2347,129 +2419,6 @@
     </summary>
     
       <category term="C/C++" scheme="http://yoursite.com/tags/C-C/"/>
-    
-      <category term="Study" scheme="http://yoursite.com/categories/Study/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[SSL 图解]]></title>
-    <link href="http://yoursite.com/2016/03/10/SSL-%E5%9B%BE%E8%A7%A3/"/>
-    <id>http://yoursite.com/2016/03/10/SSL-图解/</id>
-    <published>2016-03-10T03:22:20.000Z</published>
-    <updated>2016-03-10T03:23:36.000Z</updated>
-    <content type="html"><![CDATA[<p>SSL 协议详解<br>安全套接字（Secure Socket Layer，SSL）协议是Web浏览器与Web服务器之间安全交换信息的协议，提供两个基本的安全服务：鉴别与保密。</p>
-<p>SSL是Netscape于1994年开发的，后来成为了世界上最著名的web安全机制，所有主要的浏览器都支持SSL协议。<br>　　<br>目前有三个版本：2、3、3.1，最常用的是第3版，是1995年发布的。</p>
-<p><strong>SSL协议的三个特性</strong></p>
-<ul>
-<li>保密：在握手协议中定义了会话密钥后，所有的消息都被加密。</li>
-<li>鉴别：可选的客户端认证，和强制的服务器端认证。</li>
-<li>完整性：传送的消息包括消息完整性检查（使用MAC）。<br><a id="more"></a><br>SSL介于应用层和TCP层之间。应用层数据不再直接传递给传输层，而是传递给SSL层，SSL层对从应用层收到的数据进行加密，并增加自己的SSL头。SSL 包括的工作原理有，<strong>握手协议，记录协议，报警协议。</strong></li>
-</ul>
-<h3 id="握手协议">握手协议</h3>
-<p>握手协议是客户机和服务器用SSL连接通信时使用的第一个子协议，握手协议包括客户机与服务器之间的一系列消息。SSL中最复杂的协议就是握手协议。该协议允许服务器和客户机相互验证，协商加密和MAC算法以及保密密钥，用来保护在SSL记录中发送的数据。握手协议是在应用程序的数据传输之前使用的。</p>
-<p>每个握手协议包含以下3个字段</p>
-<ul>
-<li>Type：表示10种消息类型之一</li>
-<li>Length：表示消息长度字节数</li>
-<li>Content：与消息相关的参数<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575301594684.jpg" alt=""></li>
-</ul>
-<p>比如我们在发送已加密的 HTTP 报文之前,客户端和服务器要进行一次 SSL 握手,在这个握手过程中,它们要完成以下工作:</p>
-<ul>
-<li>交换协议版本号;</li>
-<li>选择一个两端都了解的密码;</li>
-<li>对两端的身份进行认证;</li>
-<li>生成临时的会话密钥,以便加密信道。</li>
-</ul>
-<p>我这里引述阮一峰在博客中举得alice and Bob 的例子。</p>
-<ol>
-<li>第一步，爱丽丝给出协议版本号、一个客户端生成的随机数（Client random），以及客户端支持的加密方法。</li>
-<li>第二步，鲍勃确认双方使用的加密方法，并给出数字证书、以及一个服务器生成的随机数（Server random）。</li>
-<li>第三步，爱丽丝确认数字证书有效，然后生成一个新的随机数（Premaster secret），并使用数字证书中的公钥，加密这个随机数，发给鲍勃。</li>
-<li>第四步，鲍勃使用自己的私钥，获取爱丽丝发来的随机数（即Premaster secret）。</li>
-<li>第五步，爱丽丝和鲍勃根据约定的加密方法，使用前面的三个随机数，生成”对话密钥”（session key），用来加密接下来的整个对话过程。</li>
-</ol>
-<p>下面再进一步详解每一部分：</p>
-<p><strong>第一和第二步，建立安全能力</strong></p>
-<p>SSL握手的第一阶段启动逻辑连接，建立这个连接的安全能力。首先客户机向服务器发出client hello消息并等待服务器响应，随后服务器向客户机返回server hello消息，对client hello消息中的信息进行确认。<br>Client hello消息包括Version，Random，Session id，Cipher suite，Compression method等信息。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575307943892.jpg" alt=""></p>
-<p>ClientHello 客户发送CilentHello信息，包含如下内容：</p>
-<ul>
-<li>客户端可以支持的SSL最高版本号</li>
-<li>一个用于生成主秘密的32字节的随机数。</li>
-<li>一个确定会话的会话ID。</li>
-<li>一个客户端可以支持的密码套件列表。</li>
-<li>一个客户端可以支持的压缩算法列表。</li>
-</ul>
-<p>密码套件格式：每个套件都以“SSL”开头，紧跟着的是密钥交换算法。用“With”这个词把密钥交换算法、加密算法、散列算法分开，例如：SSL_DHE_RSA_WITH_DES_CBC_SHA, 表示把DHE_RSA(带有RSA数字签名的暂时Diffie-HellMan)定义为密钥交换算法；把DES_CBC定义为加密算法；把SHA定义为散列算法。</p>
-<p>而ServerHello服务器用ServerHello信息应答客户，包括下列内容</p>
-<ul>
-<li>一个SSL版本号。取客户端支持的最高版本号和服务端支持的最高版本号中的较低者。</li>
-<li>一个用于生成主秘密的32字节的随机数。（客户端一个、服务端一个）</li>
-<li>会话ID</li>
-<li>从客户端的密码套件列表中选择的一个密码套件</li>
-<li>从客户端的压缩方法的列表中选择的压缩方法</li>
-</ul>
-<p>这个阶段之后，客户端服务端知道了下列内容：</p>
-<ul>
-<li>SSL版本</li>
-<li>密钥交换、信息验证和加密算法</li>
-<li>压缩方法</li>
-<li>有关密钥生成的两个随机数。</li>
-</ul>
-<p><strong>第二阶段，服务器鉴别与密钥的交换</strong></p>
-<p>服务器启动SSL握手第2阶段，是本阶段所有消息的唯一发送方，客户机是所有消息的唯一接收方。该阶段分为4步：</p>
-<ul>
-<li>证书：服务器将数字证书和到根CA(Certification Authority)整个链发给客户端，使客户端能用服务器证书中的服务器公钥认证服务器。</li>
-<li>服务器密钥交换（可选）：这里视密钥交换算法而定</li>
-<li>证书请求：服务端可能会要求客户自身进行验证。</li>
-<li>服务器握手完成：第二阶段的结束，第三阶段开始的信号</li>
-</ul>
-<p>这一步在刚才的例子中被合并在第二步里。其重点在于服务端的验证和密钥的交换。在SSL 中密钥交换算法有6种：无效（没有密钥交换）、RSA、匿名Diffie-Hellman、暂时Diffie-Hellman、固定Diffie-Hellman、Fortezza。</p>
-<p>在阶段一那里，双方已经协商确定使用哪种算法。而且CA 证书里包含了公钥。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575744280354.jpg" alt=""></p>
-<p>比如我们协商使用了RSA 交换密钥，那么过程是这样的：<br>这个方法中，服务器在它的第一个信息中，发送了RSA加密/解密公钥证书。不过，因为预备主秘密是由客户端在下一个阶段生成并发送的，所以第二个信息是空的。注意，公钥证书会进行从服务器到客户端的验证。当服务器收到预备主秘密时，它使用私钥进行解密。服务端拥有私钥是一个证据，可以证明服务器是一个它在第一个信息发送的公钥证书中要求的实体。</p>
-<p><strong>第三阶段，客户机鉴别与密钥交换</strong></p>
-<p>在这一阶段，主要是我们的客户机启动，发送消息，服务器是唯一的接收方。分为三个阶段：</p>
-<ul>
-<li>证书（可选）：为了对服务器证明自身，客户要发送一个证书信息，这是可选的，在IIS中可以配置强制客户端证书认证。</li>
-<li>客户机密钥交换（Pre-master-secret）：这里客户端将预备主密钥发送给服务端，注意这里会使用服务端的公钥进行加密。</li>
-<li>证书验证（可选），对预备秘密和随机数进行签名，证明拥有（a）证书的公钥。</li>
-</ul>
-<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575746918586.jpg" alt=""></p>
-<p>这里的重点就是，我们的客户端把自己的公钥发给服务端，方便服务端用公钥加密，然后通过服务端之间发过来的证书里的公钥，加密自己的随机数和预备秘密，又保证了秘密的私密性，又证明了它拥有证书的公钥。</p>
-<p><strong>第四阶段</strong></p>
-<p>刚才服务端收到了用公钥加密的第三个随机数，这时服务端和客户端就可以使用三个随机数生成本次的会话密钥，双方通过计算得到本次使用的会话密钥。然后互相发送：</p>
-<ul>
-<li>编码改变通知，表示随后的信息都将用双方商定的加密方法和密钥发送。</li>
-<li>握手结束通知，表示握手阶段已经结束。这一项同时也是前面发送的所有内容的hash值，用来供互相校验。</li>
-</ul>
-<p>而这三个随机数要获得总共六个加密秘密：四个密钥（客户公钥私钥 和服务器公钥私钥），两个IV（initialization vector 初始向量，与区块加密模式有关）。加密过程如下图：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575782242346.jpg" alt=""></p>
-<p>首先利用之前发送的预备主秘密，双方发送的随机数等组合散列并获得MD5值，得到一个主秘密。再对主秘密进行处理，得到一串散列值，这个散列值可以拆分成四个密钥和两个IV。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575791281572.jpg" alt=""></p>
-<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575791478878.jpg" alt=""></p>
-<h3 id="记录协议">记录协议</h3>
-<p>刚才讲的只是在完成了握手协议，下面在握手成功后，双方如何互传信息呢。就需要使用记录协议。记录协议提供了两个服务：</p>
-<ul>
-<li>保密性，使用握手协议定义的秘密密钥实现</li>
-<li>完整性，握手协议定义了MAC， 用于保证信息完整性</li>
-</ul>
-<p>整个记录协议的过程如下：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-03-10-14575792771159.jpg" alt=""></p>
-<h3 id="警报协议">警报协议</h3>
-<p>当客户和服务器发现出现错误的时候，就需要处理这个错误。于是，就向对方发送一个警报信息。如果是致命错误，那么就会立即关闭SSL 连接，而且双方还会删除相关的会话号，秘密和密钥。这就是警报协议，每个警报的信息共有两个字节，第一个字节表示错误类型，如果是警报，置1，如果是致命错误，置2.第二个字节指定实际的错误类型。</p>
-<p>相关扩展：</p>
-<p><a href="https://zh.wikipedia.org/wiki/%E8%BF%AA%E8%8F%B2-%E8%B5%AB%E7%88%BE%E6%9B%BC%E5%AF%86%E9%91%B0%E4%BA%A4%E6%8F%9B" target="_blank" rel="external">DH加密方法</a></p>
-<p><a href="http://www.openssl.org/" target="_blank" rel="external">OpenSSL</a> </p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<p>SSL 协议详解<br>安全套接字（Secure Socket Layer，SSL）协议是Web浏览器与Web服务器之间安全交换信息的协议，提供两个基本的安全服务：鉴别与保密。</p>
-<p>SSL是Netscape于1994年开发的，后来成为了世界上最著名的web安全机制，所有主要的浏览器都支持SSL协议。<br>　　<br>目前有三个版本：2、3、3.1，最常用的是第3版，是1995年发布的。</p>
-<p><strong>SSL协议的三个特性</strong></p>
-<ul>
-<li>保密：在握手协议中定义了会话密钥后，所有的消息都被加密。</li>
-<li>鉴别：可选的客户端认证，和强制的服务器端认证。</li>
-<li>完整性：传送的消息包括消息完整性检查（使用MAC）。<br>]]>
-    
-    </summary>
-    
-      <category term="TCP/IP" scheme="http://yoursite.com/tags/TCP-IP/"/>
     
       <category term="Study" scheme="http://yoursite.com/categories/Study/"/>
     
