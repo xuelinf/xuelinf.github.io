@@ -1,0 +1,75 @@
+<html>
+<head>
+	
+	<title>(level 8)DOM XSS寻踪 -- XSS升级之路</title>
+	<meta name="keywords" content="Just do, Just for fun" />
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--<link rel="stylesheet" href="/css/main.css" type="text/css">
+-->
+	<link href="/css/main.css?v=2" rel="stylesheet" type="text/css" />
+    <!--<link rel="stylesheet" href="/css/style.css" type="text/css">
+-->
+    
+
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+
+    
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2"/>
+    
+
+</head>
+
+<body>
+
+<h1 id="DOM_XSS寻踪">DOM XSS寻踪</h1>
+<p>让我们继续寻找DOM XSS，在上一节里，在地址栏里输入的内容，很容易出现在了源代码里，然后我们发现源代码里是一个DOM 操作，通过js 的Unicode 转义，我们将利用代码植入到了innerHTML 指向的内容中，同时绕过了过滤。</p>
+<p>关于编码的顺序问题，可以参考我之前总结的一篇文章，比较清晰。</p>
+<p>那么，如果我们在源代码里，定位不到我们在URL 里的参数呢，其实这并没有太多不同。只是因为网页直接通过脚本，通过DOM 操作，修改了或者添加了某些标签，源码中看不到。但只需要进入调试工具里，就能找到了。</p>
+<p>这里拉来一个老漏洞，现已修复：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://qt.qq.com/video/play_video.htm?sid=aaaaaa</div></pre></td></tr></table></figure>
+
+<p>这样一个地址，我们跑去源代码里，是不会直接找到输出的，其实这也是更为常见的情况：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-19-14636624184026.jpg" alt=""></p>
+<p>此时我们应该去到调试工具里找，在审查元素里，我们看到了输出的位置：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-19-14636624575899.jpg" alt=""></p>
+<p>按照以往的方法，我们仍然是使用常识构造的方式，去看那些写法是被过滤的，然后尝试去构造攻击模式。另一种方法，则是去resources 中，去查看脚本，是那个脚本执行了什么操作，让变量进入了标签，了解清楚了之后，可以对症下药的创造攻击向量。</p>
+<p>我们直接对sid 这个参数在resource 中搜索，会找到响应的处理函数。在这里，是一个叫getUrlPara 的函数：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-19-14636628056657.jpg" alt=""><br>进一步，定位到该函数的定义，通过分析该函数，我们能了解脚本在获得该参数后的操作，在该函数里，我们发现，该函数对 location.href 中的尖括号和引号已经进行了过滤处理，但实际上，这段代码实际上是不太正确。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-19-14636630231700.jpg" alt=""></p>
+<p>因为在进行处理之前，拿到的href 已经经过了URL 编码，该函数不会对任何符号进行处理。即使是浏览器不做编码处理，如果我们预先对它进行编码处理，也会跳过函数中的过滤。然后让我们再回到函数调用之后的上下文。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> sid=getUrlPara(<span class="string">"sid"</span>);</div><div class="line"></div><div class="line"><span class="keyword">if</span>(!sid || sid==<span class="string">""</span>){</div><div class="line"></div><div class="line">	<span class="built_in">document</span>.getElementById(<span class="string">"dv_video"</span>).innerHTML=<span class="string">'&lt;div class="errmsg" style="margin-top:-10px;"&gt;抱歉，视频不存在！&lt;/div&gt;'</span>;</div><div class="line"></div><div class="line">}<span class="keyword">else</span>{</div><div class="line"></div><div class="line">	<span class="keyword">var</span> flash_ver=GetSwfVer();</div><div class="line"></div><div class="line">	<span class="keyword">if</span>(flash_ver == -<span class="number">1</span>){</div><div class="line"></div><div class="line">		<span class="built_in">document</span>.getElementById(<span class="string">"dv_video"</span>).innerHTML=<span class="string">'&lt;div class="errmsg" style="margin-top:-30px;"&gt;抱歉，您还没有安装flash插件&lt;br/&gt;请&lt;a target="_blank" href="http://www.macromedia.com/go/getflashplayer"&gt;下载&lt;/a&gt;10.0以上的flash播放器&lt;br/&gt;安装flash后，请&lt;a href="javascript:location.reload();"&gt;点此刷新&lt;/a&gt;&lt;/div&gt;'</span>;</div><div class="line"></div><div class="line">	}<span class="keyword">else</span> <span class="keyword">if</span>(flash_ver.split(<span class="string">'.'</span>)[<span class="number">0</span>]&lt;<span class="number">10</span>){</div><div class="line"></div><div class="line">		<span class="built_in">document</span>.getElementById(<span class="string">"dv_video"</span>).innerHTML=<span class="string">'&lt;div class="errmsg" style="margin-top:-30px;"&gt;抱歉，您的flash版本过低&lt;br/&gt;请&lt;a target="_blank" href="http://www.macromedia.com/go/getflashplayer"&gt;下载&lt;/a&gt;10.0以上的flash播放器&lt;br/&gt;安装flash后，请&lt;a href="javascript:location.reload();"&gt;点此刷新&lt;/a&gt;&lt;/div&gt;'</span>;</div><div class="line"></div><div class="line">	}<span class="keyword">else</span>{</div><div class="line"></div><div class="line">		sid=<span class="built_in">decodeURIComponent</span>(sid).trim().replace(<span class="regexp">/([\'\"])/g</span>,<span class="string">'\\\\$1'</span>);</div><div class="line"></div><div class="line">		<span class="keyword">if</span>(!is_valid_sid(sid)){</div><div class="line"></div><div class="line">			<span class="built_in">document</span>.getElementById(<span class="string">"dv_video"</span>).innerHTML=<span class="string">'&lt;div class="errmsg" style="margin-top:-10px;"&gt;无法打开视频文件，视频地址不合法！&lt;/div&gt;'</span>;</div><div class="line"></div><div class="line">		}<span class="keyword">else</span>{</div><div class="line"></div><div class="line">			insertFlash(<span class="string">"dv_video"</span>,<span class="string">"f"</span>,sid,<span class="string">"100%"</span>,<span class="string">"100%"</span>);</div><div class="line">		}</div><div class="line">	}</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>这里，通过decodeURLComponent 将编码后的参数，又解码成了原符号，而后边调用的insertFlash 操作，未经过滤的将sid 写进了页面：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">insertFlash</span><span class="params">(elm, eleid, url, w, h)</span> </span>{</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (!<span class="built_in">document</span>.getElementById(elm)) <span class="keyword">return</span>;</div><div class="line"></div><div class="line">    <span class="keyword">var</span> str = <span class="string">''</span>;</div><div class="line"></div><div class="line">    str += <span class="string">'&lt;object width="'</span> + w + <span class="string">'" height="'</span> + h + <span class="string">'" id="'</span> + eleid + <span class="string">'" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0"&gt;'</span>;</div><div class="line"> </div><div class="line">    str += <span class="string">'&lt;param name="movie" value="'</span> + url + <span class="string">'" /&gt;'</span>;</div><div class="line">    str += <span class="string">'&lt;param name="allowScriptAccess" value="never" /&gt;'</span>;</div><div class="line">    str += <span class="string">'&lt;param name="allowFullscreen" value="true" /&gt;'</span>;</div><div class="line">    str += <span class="string">'&lt;param name="wmode" value="transparent" /&gt;'</span>;</div><div class="line">    str += <span class="string">'&lt;param name="quality" value="autohigh" /&gt;'</span>;</div><div class="line">    str += <span class="string">'&lt;embed width="'</span> + w + <span class="string">'" height="'</span> + h + <span class="string">'" name="'</span> + eleid + <span class="string">'" src="'</span> + url + <span class="string">'" quality="autohigh" swLiveConnect="always" wmode="transparent" allowScriptAccess="never" allowFullscreen="true" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"&gt;&lt;/embed&gt;'</span>;</div><div class="line">    str += <span class="string">'&lt;/object&gt;'</span>;</div><div class="line">    <span class="built_in">document</span>.getElementById(elm).innerHTML = str</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>我们很容易的想象到了构造&lt; img src=# onerror=alert(1)&gt;，对尖括号进行URL 编码就可以了。实际上，就这一个漏洞，我们不仅可以使用URL 编码的方式。结合我之前说的浏览器的解析顺序，在这里，从URL 获得的参数，进入脚本，脚本调用DOM 操作，修改DOM 树，所以我们用Unicode编码也能最后得到解析。</p>
+<p>我们始终说，安全编码是一个不容易的技术，因为一步疏漏就会在最终造成满盘皆输。所以，对于开发者，想要真正构建安全的程序，就必须对程序所涉及的技术框架了如指掌。比如对于Web,应该对浏览器的原理，HTTP/HTTPS,各种编码原理，JS&amp;CSS&amp;HTML，PHP&amp;ASP，的安全部分都有一定了解，才能在构建程序的时候，抓住最关键的部分，确保不出问题。</p>
+
+
+<!--<a href="http://yoursite.com/2016/05/19/-level-8-DOM-XSS寻踪-XSS升级之路/#disqus_thread" class="article-comment-link">Comments</a>-->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'null'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+<div style="display:none">
+<script src="http://s4.cnzz.com/stat.php?id=undefined&web_id=undefined" language="JavaScript"></script>script>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>
