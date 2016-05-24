@@ -1,0 +1,137 @@
+<html>
+<head>
+	
+	<title>Ace-Editor 上手及调用方法</title>
+	<meta name="keywords" content="Just do, Just for fun" />
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--<link rel="stylesheet" href="/css/main.css" type="text/css">
+-->
+	<link href="/css/main.css?v=2" rel="stylesheet" type="text/css" />
+    <!--<link rel="stylesheet" href="/css/style.css" type="text/css">
+-->
+    
+
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+
+    
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2"/>
+    
+
+</head>
+
+<body>
+
+<h1 id="Ace-Editor_上手及调用方法">Ace-Editor 上手及调用方法</h1>
+<p>因为最近一个项目的需要，需要一个网页端的代码显示，可编辑，高亮，显行，方便跳转等功能。试着想了想怎么写，越想越麻烦，本着不重复造轮子的想法，找到了C9 在线编辑器的base 版，也就是这个Ace-Editor, Ace-Editor 功能很强大，我配置使用了一下，能够满足各种需求了。</p>
+<h1 id="上手">上手</h1>
+<p>主页：<a href="https://ace.c9.io" target="_blank" rel="external">Ace-editor</a><br>Github: <a href="https://github.com/ajaxorg/ace-builds/" target="_blank" rel="external">ace-builds</a></p>
+<p>clone 下builds 文件，这些已经是generated files 了，如果要进一步了解，对编辑器本身做改造，可以访问源头<a href="https://github.com/ajaxorg/ace" target="_blank" rel="external">ace</a>。</p>
+<p>使用代码编辑器很简单，下载完builds files之后，在html 文件插入如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="doctype">&lt;!DOCTYPE html&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">html</span> <span class="attribute">lang</span>=<span class="value">"en"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">head</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">title</span>&gt;</span>ACE in Action<span class="tag">&lt;/<span class="title">title</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">style</span> <span class="attribute">type</span>=<span class="value">"text/css"</span> <span class="attribute">media</span>=<span class="value">"screen"</span>&gt;</span><span class="css"></span></div><div class="line">    <span class="id">#editor</span> <span class="rules">{ </span></div><div class="line">        <span class="rule"><span class="attribute">position</span>:<span class="value"> absolute</span></span>;</div><div class="line">        <span class="rule"><span class="attribute">top</span>:<span class="value"> <span class="number">0</span></span></span>;</div><div class="line">        <span class="rule"><span class="attribute">right</span>:<span class="value"> <span class="number">0</span></span></span>;</div><div class="line">        <span class="rule"><span class="attribute">bottom</span>:<span class="value"> <span class="number">0</span></span></span>;</div><div class="line">        <span class="rule"><span class="attribute">left</span>:<span class="value"> <span class="number">0</span></span></span>;</div><div class="line">    <span class="rule">}</span></div><div class="line"><span class="tag">&lt;/<span class="title">style</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">head</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">body</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">id</span>=<span class="value">"editor"</span>&gt;</span>function foo(items) {</div><div class="line">    var x = "All this is syntax highlighted";</div><div class="line">    return x;</div><div class="line">}<span class="tag">&lt;/<span class="title">div</span>&gt;</span></div><div class="line">    </div><div class="line"><span class="tag">&lt;<span class="title">script</span> <span class="attribute">src</span>=<span class="value">"/ace-builds/src-noconflict/ace.js"</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span> <span class="attribute">charset</span>=<span class="value">"utf-8"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">script</span>&gt;</span><span class="javascript"></span></div><div class="line">    <span class="keyword">var</span> editor = ace.edit(<span class="string">"editor"</span>);</div><div class="line">    editor.setTheme(<span class="string">"ace/theme/monokai"</span>);</div><div class="line">    <span class="built_in">document</span>.getElementById(<span class="string">'editor'</span>).style.fontSize=<span class="string">'12px'</span>;</div><div class="line">    editor.getSession().setMode(<span class="string">"ace/mode/javascript"</span>);</div><div class="line"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">html</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>其中只需要引入工程文件下的ace.js， 然后将编辑器div 用edit 绑定成一个编辑器，后边的诸多功能，都是从这个对象开始的。上边的例子中，指定了主题，设置了语言模式。ace 支持百种语言模式。</p>
+<p>一些最初操作，如设置主题，以及语言模式，如上例子，直接用获得的对象调用，setTheme, getSession().setMode()，以及利用DOM 操作来制定字体大小。<br>所以，一个常规的注册过程应当是这样的：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> editor = ace.edit(<span class="string">"xxx"</span>);</div><div class="line"><span class="keyword">var</span> session = editor.getSession();</div></pre></td></tr></table></figure>
+
+<p>实际上，这一块有一些API 搞得不是很清晰，有些函数是在editor 上操作，有些是在session上操作的，有些是editor 和session 都可以。所以一个良好的办法就是开始初始化的时候把两个都先初始化。</p>
+<h1 id="常用操作">常用操作</h1>
+<p>设置和获取代码区内的代码，这是我的项目里要用的比较多的操作，因为涉及到频繁的文件跳转，读取和写入操作。他的使用非常简单。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">editor.setValue(<span class="string">"the new text here"</span>); <span class="comment">// or session.setValue</span></div><div class="line">editor.getValue(); <span class="comment">// or session.getValue</span></div></pre></td></tr></table></figure>
+
+<p>此处editor 和 session 都是可以的，建议直接使用editor。</p>
+<p>获取选中的范围，做片段代码检测和替换的时候，可能会用到这个api,不需要指定参数，就根据代码区选中的代码部分，做操作就可以了。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">editor.session.getTextRange(editor.getSelectionRange());</div></pre></td></tr></table></figure>
+
+<p>在光标处插入字符串：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">editor.insert(<span class="string">"Something cool"</span>);</div></pre></td></tr></table></figure>
+
+<p>获取当前光标所在的行和列，定义一个函数，监听代码区内的鼠标点击操作，然后获取行列，这个用处较多。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">editor.selection.getCursor();</div></pre></td></tr></table></figure>
+
+<p>定位到某一行，配合上一个使用，可以实现两个编辑器的同步跳转操作，以此方法，也可以实现markDown 编辑器的制作了。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">editor.gotoLine(lineNumber);</div></pre></td></tr></table></figure>
+
+<p>只读文本，两块代码区，有一块是只读的，所以将该设置定位true.</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">editor.setReadOnly(<span class="literal">true</span>);</div></pre></td></tr></table></figure>
+
+<p>搜索功能，可以给搜索定制比较多的参数，然后实现替换等功能。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">editor.find(<span class="string">'needle'</span>,{</div><div class="line">    backwards: <span class="literal">false</span>,</div><div class="line">    wrap: <span class="literal">false</span>,</div><div class="line">    caseSensitive: <span class="literal">false</span>,</div><div class="line">    wholeWord: <span class="literal">false</span>,</div><div class="line">    regExp: <span class="literal">false</span></div><div class="line">});</div><div class="line">editor.findNext();</div><div class="line">editor.findPrevious();</div></pre></td></tr></table></figure>
+
+<p>其中可以指定的参数：</p>
+<ul>
+<li>needle: The string or regular expression you’re looking for</li>
+<li>backwards: Whether to search backwards from where cursor currently is. Defaults to false.</li>
+<li>wrap: Whether to wrap the search back to the beginning when it hits the end. Defaults to false.</li>
+<li>caseSensitive: Whether the search ought to be case-sensitive. Defaults to false.</li>
+<li>wholeWord: Whether the search matches only on whole words. Defaults to false.</li>
+<li>range: The Range to search within. Set this to null for the whole document</li>
+<li>regExp: Whether the search is a regular expression or not. Defaults to false.</li>
+<li>start: The starting Range or cursor position to begin the search</li>
+<li>skipCurrent: Whether or not to include the current line in the search. Default to false.</li>
+</ul>
+<p>然后使用，find,replace,relaceall ，就可以做替换了。</p>
+<p>监听代码区的变化，这个是重要的功能，省去了一些自己写监听函数的功夫，一般来说，ace 中的监听函数都形式如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">object.on(<span class="string">"change"</span> <span class="function"><span class="keyword">function</span><span class="params">(e)</span></span>{});</div></pre></td></tr></table></figure>
+
+<p>最常用的监听会话的变化，进一步来讲就是监听当前光标的变化，选择的内容的变化等。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">editor.getSession().on(<span class="string">'change'</span>, <span class="function"><span class="keyword">function</span><span class="params">(e)</span> </span>{</div><div class="line">    <span class="comment">// e.type, etc</span></div><div class="line">    <span class="comment">// To listen for an onchange:</span></div><div class="line">});</div><div class="line">editor.getSession().selection.on(<span class="string">'changeSelection'</span>, <span class="function"><span class="keyword">function</span><span class="params">(e)</span> </span>{</div><div class="line">    <span class="comment">// To listen for an selection change:</span></div><div class="line">});</div><div class="line">editor.getSession().selection.on(<span class="string">'changeCursor'</span>, <span class="function"><span class="keyword">function</span><span class="params">(e)</span> </span>{</div><div class="line">    <span class="comment">// To listen for a cursor change:</span></div><div class="line">});</div></pre></td></tr></table></figure>
+
+<p>绑定快捷键操作，这个算是功能完善之后的小功能点了</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">editor.commands.addCommand({</div><div class="line">    name: <span class="string">'myCommand'</span>,</div><div class="line">    bindKey: {win: <span class="string">'Ctrl-M'</span>,  mac: <span class="string">'Command-M'</span>},</div><div class="line">    exec: <span class="function"><span class="keyword">function</span><span class="params">(editor)</span> </span>{</div><div class="line">        <span class="comment">//...</span></div><div class="line">    },</div><div class="line">    readOnly: <span class="literal">true</span> <span class="comment">// false if this command should not apply in readOnly mode</span></div><div class="line">});</div></pre></td></tr></table></figure>
+
+<h1 id="更多功能">更多功能</h1>
+<p>ace 作为一个在线编辑器的底层模板，实现了非常多的底层功能，报错词法分析，分词器都做到了，在此基础之上，还可以制作自己的语法高亮系统，以及语法处理，依托这个功能，还可以实现自己的Markdown编辑器。不过，我现在要做的功能不是实现一个markdown编辑器，所以这一部分功能不涉及。</p>
+<p>另外，在Document 里可以查到他的API Reference， 总共可以分为以下这些类别，需要的时候，可以查阅文档：</p>
+<ul>
+<li>Anchor</li>
+<li>BackgroundTokenizer</li>
+<li>Document</li>
+<li>EditSession</li>
+<li>Editor</li>
+<li>Range</li>
+<li>Scrollbar</li>
+<li>Search</li>
+<li>Selection</li>
+<li>TokenIterator</li>
+<li>Tokenizer</li>
+<li>UndoManger</li>
+<li>VirtualRenderer</li>
+</ul>
+<h1 id="可以拿来做什么">可以拿来做什么</h1>
+<p>在ace-editor 的基础上实现的C9 在线IDE非常强大，实现了一个IDE 应该有的全部功能，这也当是ace 的强大所在。</p>
+<p>ace 可以用来做一个Markdown编辑器，现在做这个不麻烦，主要是不能有bug，网上可以找到一些已有的语法分析方案，然后可以实现一套自己的方案。进一步的话，麻烦一些的就是实现一个自己的文件夹系统，来管理文件。</p>
+<p>我现在使用它要做的功能，是两个代码编辑框，从一个代码编辑框中任意位置，会根据代码中的内容，定位到另一个文件中的位置。关键的技术问题就是后台实现一个文件管理的功能，前端能够读取光标所在行，分析所在行标记的另一个文件的路径和文件中的位置，并在另一个代码编辑框中显示，并定位到该行。</p>
+<p>再下一步是要能够对代码某一个range，做替换操作。替换完成后，还应当能够确保本地得以修改。</p>
+
+
+<!--<a href="http://yoursite.com/2016/05/24/Ace-Editor-上手及调用方法/#disqus_thread" class="article-comment-link">Comments</a>-->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'null'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+<div style="display:none">
+<script src="http://s4.cnzz.com/stat.php?id=undefined&web_id=undefined" language="JavaScript"></script>script>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>
