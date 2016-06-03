@@ -1,0 +1,80 @@
+<html>
+<head>
+	
+	<title>打造XSS自动测试工具 -- XSS升级之路</title>
+	<meta name="keywords" content="Just do, Just for fun" />
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--<link rel="stylesheet" href="/css/main.css" type="text/css">
+-->
+	<link href="/css/main.css?v=2" rel="stylesheet" type="text/css" />
+    <!--<link rel="stylesheet" href="/css/style.css" type="text/css">
+-->
+    
+
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+
+    
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2"/>
+    
+
+</head>
+
+<body>
+
+<h1 id="XSS_自动化测试">XSS 自动化测试</h1>
+<p>现在我们打了一些不错的散装备，是时候组合一下，打造一款套装了。</p>
+<p>XSS 本身由于其原理并不复杂，所以在防御上，往往一些简单的过滤就可以隔绝掉百分之九十九的漏洞，所以对于一个试图挖掘XSS 的人，如果完全手工的去挖掘漏洞，和闭着眼去山里挖金子的概率是差不多的。所以，这个时候，就需要一套自动化渗透测试的工具，帮助我们进行XSS 的挖掘，这样的工具挺多，AWVS 这种比较全面的软件，还有XSSaminer 之类的小工具。</p>
+<p>那么，我们准备做的，是去创造一个自动化的小工具，实现自动化测试，也可以让自己更方便的配置需要的内容。</p>
+<p>因为XSS 分成反射型，DOM 型，储存型，其中反射型相对容易发现一些，我们就以反射型漏洞挖掘为先机，开始挖掘之路，一个基本的构思比较简单：</p>
+<ol>
+<li>两种起始端，一种是写个爬虫，一种是写个浏览器插件，在使用浏览的时候，每浏览一个网站，自动重发一些包，尝试进行XSS。两种起始，后边的过程基本相似。</li>
+<li>获取网站URL</li>
+<li>处理URL，获取参数值，并转换成map结构，key=参数，value=值。</li>
+<li>尝试对每个值构造一个独有标识符。此处可以是只用自己设置的独有的一串字符，可以包含一些特殊字符，以方便消减漏报。</li>
+<li>可以对重新生成的URL 发送HTTP请求，或者是利用Ajax 对当前URL发送数据。</li>
+<li>返回状态码，为200则捕获网页，查找独有标示符。</li>
+<li>查找成功代表一个可能的渗透漏洞。</li>
+<li>爬虫的话，后边继续获得该URL 网页下，其他的链接，循环调用。可采用广度优先，或者是深度优先，依网站特点而定，个人倾向选择广度优先，因为不会在一个深度里越陷越深，而且获取的URL 要保证同源。</li>
+</ol>
+<p>补充：</p>
+<ol>
+<li>以上这个只能算是查找最简单的反射型XSS 的方法，进一步的，如果我们要检测DOM 型漏洞，就需要通过查找一些表单项，抓包分析等方法进行测试。这是后边要做的内容了。</li>
+<li>最好添加一个日志功能，将抓包的内容以服务器日志，如nginx 日志格式保存，方便分析和进一步测试。</li>
+<li>对于更成熟的工具，线程池和IP池都是必要的，这也是后话了。</li>
+</ol>
+<p>下面就让我们用Python 从最基础的爬虫开始构建起完整的自动化检测工具吧。</p>
+<p>使用库，beautifulsoup，urllib, PhantomJS, Selenium 等。</p>
+<p>（未完待续）</p>
+
+
+<!--<a href="http://yoursite.com/2016/06/03/打造XSS自动测试工具-XSS升级之路/#disqus_thread" class="article-comment-link">Comments</a>-->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'null'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+<div style="display:none">
+<script src="http://s4.cnzz.com/stat.php?id=undefined&web_id=undefined" language="JavaScript"></script>script>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>
