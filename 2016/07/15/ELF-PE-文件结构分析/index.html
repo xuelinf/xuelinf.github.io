@@ -1,0 +1,330 @@
+<html>
+<head>
+	
+	<title>ELF&amp;PE 文件结构分析</title>
+	<meta name="keywords" content="Just do, Just for fun" />
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--<link rel="stylesheet" href="/css/main.css" type="text/css">
+-->
+	<link href="/css/main.css?v=2" rel="stylesheet" type="text/css" />
+    <!--<link rel="stylesheet" href="/css/style.css" type="text/css">
+-->
+    
+
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+
+    
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2"/>
+    
+
+</head>
+
+<body>
+
+<h1 id="ELF&amp;PE_文件结构分析">ELF&amp;PE 文件结构分析</h1>
+<p>说简单点，ELF 对应于UNIX 下的文件，而PE 则是Windows 的可执行文件，分析ELF 和 PE 的文件结构，是逆向工程，或者是做调试，甚至是开发所应具备的基本能力。在进行逆向工程的开端，我们拿到ELF 文件，或者是PE 文件，首先要做的就是分析文件头，了解信息，进而逆向文件。不说废话，开始分析：</p>
+<p>ELF和PE 文件都是基于Unix 的 COFF(Common Object File Format) 改造而来，更加具体的来说，他是来源于当时著名的 DEC(Digital Equipment Corporation) 的VAX/VMS 上的COFF文件格式。我们从ELF 说起。</p>
+<h2 id="ELF">ELF</h2>
+<p>ELF 文件标准里把系统中采用ELF 格式的文件归类为四种：</p>
+<ul>
+<li>可重定位文件，Relocatable File ,这类文件包含代码和数据，可用来连接成可执行文件或共享目标文件，静态链接库归为此类，对应于Linux 中的.o ，Windows 的 .obj.</li>
+<li>可执行文件，Executable File ，这类文件包含了可以直接执行的程序，它的代表就是ELF 可执行文件，他们一般没有扩展名。比如/bin/bash ，Windows 下的 .exe</li>
+<li>共享目标文件，Shared Object File ，这种文件包含代码和数据，链接器可以使用这种文件跟其他可重定位文件的共享目标文件链接，产生新的目标文件。另外是动态链接器可以将几个这种共享目标文件与可执行文件结合，作为进程映像来运行。对应于Linux 中的 .so，Windows 中的 DLL</li>
+<li>核心转储文件，Core Dump File，当进程意外终止，系统可以将该进程地址空间的内容及终止时的一些信息转存到核心转储文件。 对应 Linux 下的core dump。</li>
+</ul>
+<p>ELF 文件的总体结构大概是这样的：</p>
+<table>
+<thead>
+<tr>
+<th>ELF  Header</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>.text</td>
+<td></td>
+</tr>
+<tr>
+<td>.data</td>
+<td></td>
+</tr>
+<tr>
+<td>.bss</td>
+<td></td>
+</tr>
+<tr>
+<td>… other section</td>
+<td></td>
+</tr>
+<tr>
+<td>Section header table</td>
+<td></td>
+</tr>
+<tr>
+<td>String Tables, Symbol Tables,..</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>ELF 文件头位于最前端，它包含了整个文件的基本属性，如文件版本，目标机器型号，程序入口等等。</li>
+<li>.text 为代码段，也是反汇编处理的部分，他们是以机器码的形式存储，没有反汇编的过程基本不会有人读懂这些二进制代码的。</li>
+<li>.data 数据段，保存的那些已经初始化了的<strong>全局静态变量</strong>和<strong>局部静态变量</strong>。</li>
+<li>.bss 段，存放的是未初始化的<strong>全局变量</strong>和<strong>局部静态变量</strong>，这个很容易理解，因为在未初始化的情况下，我们单独用一个段来保存，可以不在一开始就分配空间，而是在最终连接成可执行文件的时候，再在.bss 段分配空间。</li>
+<li>其他段，还有一些可选的段，比如.rodata 表示这里存储只读数据， .debug 表示调试信息等等，具体遇到可以查看相关文档。</li>
+<li>自定义段，这一块是为了实现用户特殊功能而存在的段，方便扩展，比如我们使用全局变量或者函数之前加上 <strong><strong>attribute</strong>(section(‘name’))</strong> 就可以吧变量或者函数放到以name 作为段名的段中。</li>
+<li>段表，Section Header Table ，是一个重要的部分，它描述了ELF 文件包含的所有段的信息，比如每个段的段名，段长度，在文件中的偏移，读写权限和一些段的其他属性。</li>
+</ul>
+<h3 id="ELF_Header">ELF Header</h3>
+<p>ELF 文件信息的查看利器在Linux 下是是objdump, readelf, 相关命令较多，可查。下面我们从ELF 文件头说起。</p>
+<p>文件头包含的内容很多，我们在Ubuntu 系统下使用 readelf 命令来查看ELF 文件头：</p>
+<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14684133247520.jpg" alt=""></p>
+<p>我们以bash 这个可执行文件为例，我们可以看到ELF 文件头定义了ELF 魔数，文件机器字节长度，数据存储方式，版本，运行平台，ABI版本，ELF 重定位类型，硬件平台，硬件平台版本，入口地址，程序头入口和长度，段表的位置和长度，段的数量。</p>
+<p>ELF 文件头的结构和相关常数一般定义在了 /usr/include/elf.h 中，我们可以进去查看一下：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14684160898401.jpg" alt=""></p>
+<p>除了第一个，其他都是一一对应的，第一个是一个对应了Magic number, Class, Data, Version, OS/ABI, ABI version.</p>
+<p>出现在最开始的ELF Magic number， 16字节是用来标识ELF 文件的平台属性，比如字长，字节序，ELF 文件版本。在加载的时候，首先会确认魔数的正确性，不正确的话就拒绝加载。</p>
+<p>另一个重要的东西是段表(Section Header Table) ,保存了各种各样段的基本属性，比如段名，段长度，文件中的偏移，读写权限，段的其他属性。而段表自己在ELF 文件中的位置是在ELF 头文件 e_shoff 决定的。</p>
+<p>我们可以使用 objdump -h 的指令来查看ELF 文件中包含哪些段，以bash 这个可执行为例，其实除了我们之前说的哪些基本结构，他包含很多其他的结构：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14684651119919.jpg" alt=""></p>
+<p>同样的，我们使用readelf -S 的指令也可以进行查看。</p>
+<p>下面我们来看一下结构，还是到elf.h 中去查看，他的结构体名字叫 Elf32_Shdr，64位对应Elf64_Shdr,结构如下：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14684654563974.jpg" alt=""></p>
+<p>以上结构中，分别对应于：</p>
+<ul>
+<li>段名</li>
+<li>段类型</li>
+<li>段标志位</li>
+<li>段虚拟地址</li>
+<li>段偏移</li>
+<li>段长度</li>
+<li>段链接</li>
+<li>段对齐</li>
+<li>项，一些大小固定的项，如符号表等。</li>
+</ul>
+<p>这些项目，在使用readelf -S 指令时一一对应。</p>
+<p>另外还有一个重要的表，叫重定位表，一般段名叫.rel.text， 在上边没有出现，链接器在处理目标文件时，需要对目标文件中的某些部位进行重定位，就是代码段和数据段中那些对绝对地址引用的位置，这个时候就需要使用重定位表了。</p>
+<h3 id="字符串表"><strong>字符串表</strong></h3>
+<p>为什么会有字符串表呢？其实这个也是在不断发展改进中找到的解决办法，在ELF 文件中，会用到很多的字符串，段名，变量名等等，但是字符串其本身又长度不固定，如果使用固定结构来表示，就会带来空间上的麻烦。所以，构造一个字符串表，将使用的字符串统一放在那里，然后通过偏移量来引用字符串，岂不美哉。</p>
+<p>需要使用的时候，只需要给一个偏移量，然后就到字符串该位置找字符串，遇到\0 就停止。</p>
+<p>字符串在ELF 文件中，也是以段的形式保存的，常见的段名 .strtab， .shstrtab 两个字符串分别为字符串表和段表字符串，前者用来保存普通的字符串，后者保存段名。</p>
+<p>在我们使用readelf -h 的时候，我们看到最后一个成员，section header string table index ，实际上他指的就是字符串表的下标，bash 对应的字符串表下标为27，在使用objdump 的时候，实际上忽略了字符串表，我们使用readelf ，就可以看到第27位即字符串表：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14684662035561.jpg" alt=""></p>
+<hr>
+<p>下面我们回顾一下，这个ELF 构造的精妙之处，当一个ELF 文件到来的时候，系统自然的找到他的开头，拿到文件头，首先看魔数，识别基本信息，看是不是正确的，或者是可识别的文件，然后加载他的基本信息，包括CPU 平台，版本号，段表的位置在哪，还可以拿到字符串表在哪，以及整个程序的入口地址。这一系列初始化信息拿到之后，程序可以通过字符串表定位，找到段名的字符串，通过段表的初始位置，确认每个段的位置，段名，长度等等信息，进而到达入口地址，准备执行。</p>
+<p>当然，这只是最初始的内容，其后还要考虑链接，Import,Export 等等内容，留待以后完善。</p>
+<h2 id="PE_文件">PE 文件</h2>
+<p>下面我们去看看更为常见的PE 文件格式，实际上PE 与 ELF 文件基本相同，也是采用了基于段的格式，同时PE 也允许程序员将变量或者函数放在自定义的段中， GCC 中<strong><strong>attribute</strong>(section(‘name’))</strong> 扩展属性。</p>
+<p>PE 文件的前身是COFF，所以分析PE 文件，先来看看COFF 的文件格式，他保存在WinNT.h 文件中。</p>
+<p>COFF 的文件格式和ELF 几乎一毛一样：</p>
+<table>
+<thead>
+<tr>
+<th>Image Header</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SectionTable Image_SECTION_HEADER</td>
+<td></td>
+</tr>
+<tr>
+<td>.text</td>
+<td></td>
+</tr>
+<tr>
+<td>data</td>
+<td></td>
+</tr>
+<tr>
+<td>.drectve</td>
+<td></td>
+</tr>
+<tr>
+<td>.debug$S</td>
+<td></td>
+</tr>
+<tr>
+<td>… other sections</td>
+<td></td>
+</tr>
+<tr>
+<td>Symbol Table</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>文件头定义在WinNT.h 中，我们打开来看一下：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14684760385167.jpg" alt=""></p>
+<p>我们可以看到，它这个文件头和ELF 实际上是一样的，也在文件头中定义了段数，符号表的位置，Optional Header 的大小，这个Optional Header 后边就看到了，他就是PE 可执行文件的文件头的部分，以及段的属性等。</p>
+<p>跟在文件头后边的是COFF 文件的段表，结构体名叫 IMAGE_SECTION_HEADER ：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14684763452964.jpg" alt=""></p>
+<p>属性包括这些，和ELF 没差：</p>
+<ul>
+<li>段名</li>
+<li>物理地址 PhysicalAddress</li>
+<li>虚拟地址 VirtualAddress</li>
+<li>原始数据大小 Sizeof raw data</li>
+<li>段在文件中的位置 File pointer to raw data</li>
+<li>该段的重定位表在文件中的位置 File pointer to relocation table</li>
+<li>该段的行号表在文件中的位置 File pointer to line number</li>
+<li>标志位，包括段的类型，对齐方式，读取权限等标志。</li>
+</ul>
+<h3 id="DOS_头"><strong>DOS 头</strong></h3>
+<p>在我们分析PE 的之前，还有另外一个头要了解一下，DOS 头，不得不说，微软事儿还是挺多的。</p>
+<p>微软在创建PE 文件格式时，人们正在广泛使用DOS 文件，所以微软为了考虑兼容性的问题，所以在PE 头的最前边还添加了一个 IMAGE_DOS_HEADER 结构体，用来扩展已有的DOS EXE。在WinNTFS.h 里可以看到他的身影。</p>
+<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14684768685651.jpg" alt=""></p>
+<p>DOS 头结构体的大小是40字节，这里边有两个重要的成员，需要知道，一个是e_magic 又见魔数，一个是e_lfanew，它只是了NT 头的偏移。</p>
+<p>对于PE 文件来说，这个e_magic，也就是DOS 签名都是MZ，据说是一个叫 Mark Zbikowski 的开发人员在微软设计了这种ODS 可执行文件，所以…</p>
+<p>我们以Windows 下的notepad++ 的可执行文件为例，在二进制编辑软件中打开，此类软件比较多，Heditor 打开：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14684776538992.jpg" alt=""></p>
+<p>开始的两个字节是4D5A，e_lfanew 为00000108 注意存储顺序，小端。</p>
+<p>你以为开头加上了DOS 头就完事了么，就可以跟着接PE 头了么。为了兼容DOS 当然不是这么简单了，紧接着DOS 头，跟的是DOS 存根，DOS stub。这一块就是为DOS 而准备的，对于PE 文件，即使没有它也可以正常运行。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14684783166951.jpg" alt=""></p>
+<p>旁边的ASCII 是读不懂的，因为他是机器码，是汇编，为了在DOS 下执行，对于notepad++ 来说，这里是执行了一句，this program cannot be run in DOS mode 然后退出。逗我= =，有新的人，可以在DOS 中创造一个程序，做一些小动作。</p>
+<h3 id="NT头"><strong>NT头</strong></h3>
+<p>下面进入正题，在HEditor 上也看到了PE，这一块就是正式的步入PE 的范畴。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14684785601204.jpg" alt=""></p>
+<p>这是32位的PE 文件头定义，64位对应改。第一个成员就是签名，如我们所说，就是我们看到的「PE」，对应为50450000h。</p>
+<p>这里边有两个东西，第一个就是我们之前看到的COFF 文件头，这里直接放进来了，我们不再分析。</p>
+<p>看第二个，IMAGE_OPTIONAL_HEADER 不是说这个头可选，而是里边有些变量是可选的，而且有一些变量是必须的，否则会导致文件无法运行：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14684788909981.jpg" alt=""></p>
+<p>有这么几个需要重点关注的成员，这些都是文件运行所必需的：</p>
+<ol>
+<li>Magic 魔数，对于32结构体来说是10B，对于64结构体来说是20B.</li>
+<li>AddressOfEntryPoint 持有EP 的RVA 值，之处程序最先执行的代码起始位置，也就是程序入口。</li>
+<li>ImageBase 进程虚拟内存的范围是0-FFFFFFFF (32位)。PE 文件被加载到这样的内存中，ImageBase 指出文件的优先装入位置。</li>
+<li>SectionAlignment, FileAlignment  PE 文件的Body 部分划分为若干段，FileAlignment 之处段在磁盘文件中的最小单位，SectionAlignment指定了段在内存中的最小单位。</li>
+<li>SizeOfImage 指定 PE Image 在虚拟内存中所占的空间大小。</li>
+<li>SizeOfHeader PE 头的大小</li>
+<li>Subsystem 用来区分系统驱动文件与普通可执行文件。</li>
+<li>NumberOfRvaAndSizes 指定DataDirectory 数组的个数,虽然最后一个值，指出个数是16，但实际上PE 装载还是通过识别这个值来确定大小的。至于DataDirectory 是什么看下边</li>
+<li>DataDirectory  它是一个由IMAGE_DATA_DIRECTORY 结构体组成的数组，数组每一项都有定义的值，里边有一些重要的值，EXPORT/IMPORT/RESOURCE, TLS direction 是重点关注的。</li>
+</ol>
+<h3 id="段头"><strong>段头</strong></h3>
+<p>PE 的段头直接沿用的COFF 的段头结构，上边也说过了，我们查看notepad++ 的段头，可以获得各个段名，以及其信息，这里，我们可以使用一些软件查看，更加方便：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14684806363696.jpg" alt=""></p>
+<h3 id="RVA_to_RAW"><strong>RVA to RAW</strong></h3>
+<p>理解PE 最重要的一个部分就是理解文件从磁盘到内存地址的映射过程，做逆向的人员，只有熟练地掌握才能跟踪到程序的调用过程和位置，才能分析和寻找漏洞。</p>
+<p>对于文件和内存的映射关系，其实很简单，他们通过一个简单的公式计算而来：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14684815471605.jpg" alt=""></p>
+<p>换算公式是这样的：</p>
+<p>RAW -PointToRawData = RVA - VirtualAddress</p>
+<p>寻找过程就是先找到RVA 所在的段，然后根据公式计算出文件偏移。因为我们通过逆向工具，可以在内存中查找到所在的RVA，进而我们就可以计算出在文件中所在的位置，这样，就可以手动进行修改。</p>
+<p>看回我们刚才载入的nodepad++ ，其中的V Addr, 实际上就是VirtualAddress，R offset 就是PointerToRawData。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14684833906993.jpg" alt=""></p>
+<p>假如我们的RVA 地址是5000，那么计算方法就是，查看区段，发现在.text 中，5000-1000+400 = 4400，这就是RAW 00004400，而实际上，因为我们的ImageBase 是00400000，所以，我们在反编译时候内存中的地址是00405000.</p>
+<p>接下来，使我们的PE头中的核心内容，IAT 和 EAT，也就是 Import address table, export address table.</p>
+<h3 id="IAT"><strong>IAT</strong></h3>
+<p>导入地址表的内容与Windows 操作系统的核心进程，内存，DLL 结构有关。他是一种表格，记录了程序使用哪些库中的哪些函数。</p>
+<p>下面，让我们把目光转到DLL 上，Dynamic Linked Library 支撑了整个 OS。DLL 的好处在于，不需要把库包含在程序中，单独组成DLL 文件，需要时调用即可，内存映射技术使加载后的DLL 代码，资源在多个进程中实现共享，更新库时候只要替换相关DLL 文件即可。</p>
+<p>加载DLL 的方式有两种，一种是显式链接，使用DLL 时候加载，使用完释放内存。另一种是隐式链接，程序开始就一同加载DLL，程序终止的时候才释放掉内存。而IAT 提供的机制与隐式链接相关，最典型的Kernel32.dll。</p>
+<p>我们来看看notepad++ 调用kernel32.dll 中的CreateFileW, 使用PE 调试工具Ollydbg</p>
+<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14685051539663.jpg" alt=""><br>我们看到填入参数之后，call 了35d7ffff 地址的内容，然后我们去dump 窗口，找一下kernel.CreateFileW：</p>
+<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14685055938620.jpg" alt=""></p>
+<p>我们双击汇编窗口，启动编辑，发现确实是call 的这个数值：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14685057233562.jpg" alt=""></p>
+<p>可是问题来了，上边是E8 35D7FFFF，下边地址却是 00C62178。其实这是Win Visita, Win 7的ASLR 技术，主要就是针对缓冲溢出攻击的一种保护技术，通过随机化布局，让逆向跟踪者，难以查找地址，就难以简单的进行溢出攻击。不过还是可以通过跳板的方式，找到溢出的办法，这就是后话了。</p>
+<p>现在可以确定的是，35D7FFFF 可以认为保存的数值就是 CreateFileW 的地址。而为什么不直接使用CALL 7509168B 这种方式直接调用呢？ Kernel32.dll 版本各不相同，对应的CreateFileW 函数也各不相同，为了兼容各种环境，编译器准备了CreateFileW 函数的实际地址，然后记下DWORD PTR DS：[xxxxxx] 这样的指令，执行文件时候，PE 装载器将CreateFileW 函数地址写到这个位置。</p>
+<p>同时，由于重定位的原因存在，所以也不能直接使用CALL 7509168B 的方式，比如两个DLL 文件有相同的 ImageBase，装载的时候，一个装载到该位置之后，另一个就不能装载该位置了，需要换位置。所以我们不能对实际地址进行硬编码。</p>
+<p><strong>IMAGE_IMPORT_DESCRIPTOR</strong><br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14685068586068.jpg" alt=""><br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14685457410563.jpg" alt=""></p>
+<p>对于一个普通程序来说，需要导入多少个库，就会存在多少个这样的结构体，这些结构体组成数组，然后数组最后是以NULL 结构体结束。其中有几个重要的成员：</p>
+<ul>
+<li>OriginalFirstThunk  INT Import Name Table 地址，RVA</li>
+<li>Name  库名称字符串地址，RVA，就是说该地址保存库名称</li>
+<li>First Thunk  IAT 地址 RVA</li>
+<li>INT 中个元素的值是上边那个IMAGE_IMPORT_BY_NAME 结构体指针。</li>
+<li>INT 与 IAT 大小应相同。</li>
+</ul>
+<p>那么PE 是如何导入函数输出到IAT 的：</p>
+<ol>
+<li>读取NAME 成员，获取扩名称字符串</li>
+<li>装载相应库： LoadLibrary(“kernel32.dll”)</li>
+<li>读取OriginalFirstThunk成员，获取INT 地址</li>
+<li>读取INT 数组中的值，获取相应的 IMAGE_IMPORT_BY_NAME地址，是RVA地址</li>
+<li>使用IMAGE_IMPORT_BY_NAME 的Hint 或者是name 项，获取相应函数的起始位置 GetProcAddress(“GetCurrentThreadId”)</li>
+<li>读取FistrThunk 成员，获得IAT 地址。</li>
+<li>将上面获得的函数地址输入相应IAT 数组值。</li>
+<li>重复4-7 到INT 结束。</li>
+</ol>
+<p>这里就产生了一个疑惑，OriginalFirstThunk 和 First Thunk 都指向的是函数，为什么多此一举呢？</p>
+<p>首先，从直观上说，两个都指向了库中引入函数的数组，鱼C 画的这张图挺直观：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14685474368965.jpg" alt=""></p>
+<p>OriginalFirstThunk 和 FirstThunk 他们都是两个类型为IMAGE_THUNK_DATA 的数组，它是一个指针大小的联合（union）类型。<br>每一个IMAGE_THUNK_DATA 结构定义一个导入函数信息（即指向结构为IMAGE_IMPORT_BY_NAME 的家伙，这家伙稍后再议）。<br>然后数组最后以一个内容为0 的 IMAGE_THUNK_DATA 结构作为结束标志。<br>IMAGE_THUNK_DATA32 结构体如下：</p>
+<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14685474240866.jpg" alt=""></p>
+<p>因为是Union 结构，IMAGE_THUNK_DATA 事实上是一个双字大小。<br>规定如下：</p>
+<p>当 IMAGE_THUNK_DATA 值的最高位为 1时，表示函数以序号方式输入，这时候低 31位被看作一个函数序号。</p>
+<p>当 IMAGE_THUNK_DATA 值的最高位为 0时，表示函数以字符串类型的函数名方式输入，这时双字的值是一个 RVA，指向一个 IMAGE_IMPORT_BY_NAME 结构。</p>
+<p>我们再看IMAGE_IMPORT_BY_NAME 结构：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14685476323595.jpg" alt=""></p>
+<p>结构中的 Hint 字段也表示函数的序号，不过这个字段是可选的，有些编译器总是将它设置为 0。</p>
+<p>Name 字段定义了导入函数的名称字符串，这是一个以 0 为结尾的字符串。</p>
+<p>现在重点来了：</p>
+<p><strong>第一个数组（由 OriginalFirstThunk 所指向）是单独的一项，而且不能被改写，我们前边称为 INT。第二个数组（由 FirstThunk 所指向）事实上是由 PE 装载器重写的。</strong></p>
+<p>PE 装载器装载顺序正如上边所讲的那样，我们再将它讲详细一点：</p>
+<p>PE 装载器首先搜索 OriginalFirstThunk ，找到之后加载程序迭代搜索数组中的每个指针，找到每个 IMAGE_IMPORT_BY_NAME 结构所指向的输入函数的地址，然后加载器用函数真正入口地址来替代由 FirstThunk 数组中的一个入口，因此我们称为输入地址表(IAT).</p>
+<p>继续套用鱼C 的图，就能直观的感受到了：</p>
+<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14685477970895.jpg" alt=""></p>
+<p>所以，在读取一次OriginalFirstThunk 之后，程序就是依靠IAT 提供的函数地址来运行了。</p>
+<h3 id="EAT"><strong>EAT</strong></h3>
+<p>搞清楚了IAT 的原理，EAT 就好理解了，目前这篇总结的有点长了，我长话短说。IAT 是导入的库和函数的表，那么EAT 就对应于导出，它使不同的应用程序可以调用库文件中提供的函数，为了方便导出函数，就需要保存这些导出信息。</p>
+<p>回头看PE 文件中的PE头我们可以看到IMAGE_EXPORT_DIRECTORY 结构体以的位置，他在IMAGE_OPTIONAL_HEADER32.DataDirectory[0].VirtualAddress 的值就是 IMAGE_EXPORT_DIREDCTORY 的起始位置。<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14685496702397.jpg" alt=""></p>
+<p>IMAGE_EXPORT_DIRECTORY结构体如下：</p>
+<p><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14685491114979.jpg" alt=""></p>
+<p>这里边同样是这么几个重要的成员：</p>
+<ul>
+<li>NumberOfFunctions  实际Export 函数的个数</li>
+<li>NumberOfNames  Export 函数中具名的函数个数</li>
+<li>AddressOfFunctins  Export 函数地址数组，数组个数是上边的NOF</li>
+<li>AddressOfNames  函数名称地址数组，个数是上边的NON</li>
+<li>AddressOfNameOrdinals  Ordinal 地址数组，个数等于上边NON</li>
+<li>Name 一个RVA 值，指向一个定义了模块名称的字符串。如即使Kernel32.dll 文件被改名为”Ker.dll”。仍然可以从这个字符串中的值得知其在编译时的文件名是”Kernel32.dll”。</li>
+<li>Base：导出函数序号的起始值，将AddressOfFunctions 字段指向的入口地址表的索引号加上这个起始值就是对应函数的导出 序号。<br>以kernel32.dll 为例，我们看一下：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14685523787323.jpg" alt=""></li>
+</ul>
+<p>从上边这些成员，我们实际上可以看出，是有两种方式提供给那些想调用该库中函数的，一种是直接从序号查找函数入口地址导入，一种是通过函数名来查找函数入口地址导入。</p>
+<p>先上一个鱼C 的图，方便理解：<br><img src="http://7s1s1q.com1.z0.glb.clouddn.com/2016-07-15-14685509520225.jpg" alt=""></p>
+<p>上边图，注意一点，因为AddressOfNameOrdinals 的序号应当是从0开始的，不过图中映射的是第二个函数指向的序号1。</p>
+<p>我们分别说一下两种方式：</p>
+<p><strong>当已知导出序号的时候</strong></p>
+<ol>
+<li>Windows 装载器定位到PE 文件头，</li>
+<li>从PE 文件头中的 IMAGE_OPTIONAL_HEADER32 结构中取出数据目录表，并从第一个数据目录中得到导出表的RVA ，</li>
+<li>从导出表的 Base 字段得到起始序号，</li>
+<li>将需要查找的导出序号减去起始序号，得到函数在入口地址表中的索引，</li>
+<li>检测索引值是否大于导出表的 NumberOfFunctions 字段的值，如果大于后者的话，说明输入的序号是无效的用这个索引值在 AddressOfFunctions 字段指向的导出函数入口地址表中取出相应的项目，这就是函数入口地址的RVA 值，当函数被装入内存的时候，这个RVA 值加上模块实际装入的基地址，就得到了函数真正的入口地址</li>
+</ol>
+<p><strong>当已知函数名称查找入口地址时</strong></p>
+<ol>
+<li>从导出表的 NumberOfNames 字段得到已命名函数的总数，并以这个数字作为循环的次数来构造一个循环</li>
+<li>从 AddressOfNames 字段指向得到的函数名称地址表的第一项开始，在循环中将每一项定义的函数名与要查找的函数名相比较，如果没有任何一个函数名是符合的，表示文件中没有指定名称的函数，如果某一项定义的函数名与要查找的函数名符合，那么记下这个函数名在字符串地址表中的索引值，然后在 AddressOfNamesOrdinals 指向的数组中以同样的索引值取出数组项的值，我们这里假设这个值是x</li>
+<li>最后，以 x 值作为索引值，在 AddressOfFunctions 字段指向的函数入口地址表中获取的 RVA 就是函数的入口地址</li>
+</ol>
+<p>一般来说，做逆向或者是写代码都是第二种方法，我们以kernel32.dll 中的GetProcAddress 函数为例，其操作原理如下：</p>
+<ol>
+<li>利用 AddressOfNames 成员转到 『函数名称数组』</li>
+<li>『函数名称数组』中存储着字符串地址，通过比较字符串，查找指定的函数名称，此时数组所以为成为name_index</li>
+<li>利用 AddressOfNameOrdinals 成员，转到这个序号数组</li>
+<li>在ordinal 数组中通过name_index 查找到相应的序号</li>
+<li>利用AddressOfFunctions 成员，转到『函数地址数组』EAT</li>
+<li>在EAT 中将刚刚得到的ordinal 作为索引，获得指定函数的入口地址</li>
+</ol>
+<hr>
+<p>写了这么多，实际上算是对文件结构有了一个入门的认识，至少知道在程序运行过程中，系统是如何进行操作和链接的，而更加详细的内容注入运行时压缩，DLL 注入，API 钩取等技术，就需要在这个基础之上继续挖掘，所以PE ，ELF 文件结构的分析是相当重要的。</p>
+<p>PS. 参考：<br><a href="http://blog.fishc.com/1600.html" target="_blank" rel="external">鱼C 讲解PE 文件格式之INT</a><br>《Windows PE 权威指南》<br>《逆向工程核心原理》<br>《程序员的自我修养-链接，装载与库》</p>
+
+
+<!--<a href="http://yoursite.com/2016/07/15/ELF-PE-文件结构分析/#disqus_thread" class="article-comment-link">Comments</a>-->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'null'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+<div style="display:none">
+<script src="http://s4.cnzz.com/stat.php?id=undefined&web_id=undefined" language="JavaScript"></script>script>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>
