@@ -1,0 +1,153 @@
+<html>
+<head>
+	
+	<title>用户态调试器原理剖析&amp;内核级调试原理</title>
+	<meta name="keywords" content="Just do, Just for fun" />
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--<link rel="stylesheet" href="/css/main.css" type="text/css">
+-->
+	<link href="/css/main.css?v=2" rel="stylesheet" type="text/css" />
+    <!--<link rel="stylesheet" href="/css/style.css" type="text/css">
+-->
+    
+
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+
+    
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2"/>
+    
+
+</head>
+
+<body>
+
+<h1 id="调试器原理">调试器原理</h1>
+<p>本篇算是做逆向工程相关学习的开篇吧，调试则不仅仅是逆向工程的内容，更是一个开发程序猿需要掌握的内容。</p>
+<h2 id="用户态调试器_与_内核态调试器">用户态调试器 与 内核态调试器</h2>
+<p>首先我们需要了解调试器到底是如何轻而易举的观察和控制被调试的过程呢。其实简单来说，就是利用了调试的API，而调试又分为用户态调试和内核态调试。</p>
+<p>所谓的用户态调试器就是在用户态下进行调试，利用了操作系统提供的一系列公开的API 来进行调试。</p>
+<p>Windows操作系统提供了一组API来支持调试器。这些API可以分为三类：</p>
+<ul>
+<li>创建调试目标的API；</li>
+<li>在调试循环中处理调试事件的API。</li>
+<li>查看和修改调试目标的API。</li>
+</ul>
+<p>下面这种图是张银奎老师《软件调试》一书中画的Windows 下用户态调试的模型，各个角色包括了调试器进程，被调试进程，调试子系统，调试API，NTDLL和内核中支持的一些函数。书中讲解的非常详细，但本次总结的重点不在于此，所以就不再展开，下面简单的围绕用户态调试这些API 做以介绍。<br><img src="media/14727118491370/14727813267689.jpg" alt=""></p>
+<h3 id="创建调试目标">创建调试目标</h3>
+<p>调试器工作之前，首先做的是创建调试目标。用户态调试器创建目标的方法不外乎创建一个新进程，或者是直接附加到一个运行的进程，这和逆向做注入是一样的。采用方法之后，进程就成了调试目标，操作系统将调试器与调试目标关联起来。</p>
+<p>调试器创建目标通过调用CreateProcess 同时传入DEBUG_PROCESS 标志。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">STARTUPINFO si={<span class="number">0</span>};  </div><div class="line">si.cb=<span class="keyword">sizeof</span>(si);  </div><div class="line">PROCESS_INFORMATION pi={<span class="number">0</span>};  </div><div class="line"><span class="keyword">bool</span> ret=CreateProcesss(NULL,argv[<span class="number">1</span>],NULL,NULL,<span class="keyword">false</span>,  </div><div class="line">DEBUG_PROCESS,NULL,NULL,&si,&pi);</div></pre></td></tr></table></figure>
+
+<p>而调试器附加到一个运行进程则是通过调用 DebugActiveProcess 来实现的。此函数允许将调试器绑定到一个正在运行的进程。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">bool</span> DebugActiveProcess(DWORD dwProcessId )</div></pre></td></tr></table></figure>
+
+<p>dwProcessId 就是绑定金城的标示id，如果绑定成功，返回非零，否则返回零。</p>
+<h3 id="调试循环">调试循环</h3>
+<p>接下来，就类似于Windows 的消息循环，调试循环也是在调试部结束的时候，会一直等待操作系统发送调试事件。</p>
+<p>在调试目标被调试时，进程执行的一些操作会以事件的方式通知调试器。例如动态库的加载与卸载、新线程的创建和销毁以及代码或处理器抛出的异常都会通知调试器。当有事件需要通知调试器时，操作系统会首先挂起调试目标的所有线程，然后把事件通知调试器。并且等待调试器通知其继续执行。</p>
+<p>首先，调试器会利用WaitForDebugEvent 来等待事件通知的到来，当事件到来，该函数会返回事件信息，而事件信息会包装在一个叫DEBUG_EVENT 结构中。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> DEBUG_EVENT {</div><div class="line">DWORD dwDebugEventCode;</div><div class="line">DWORD dwProcessId;</div><div class="line">DWORD dwThreadId;</div><div class="line"><span class="keyword">union</span> {</div><div class="line">EXCEPTION_DEBUG_INFO Exception;</div><div class="line">CREATE_THREAD_DEBUG_INFO CreateThread;</div><div class="line">CREATE_PROCESS_DEBUG_INFO CreateProcessInfo;</div><div class="line">EXIT_THREAD_DEBUG_INFO ExitThread;</div><div class="line">EXIT_PROCESS_DEBUG_INFO ExitProcess;</div><div class="line">LOAD_DLL_DEBUG_INFO LoadDll;</div><div class="line">UNLOAD_DLL_DEBUG_INFO UnloadDll;</div><div class="line">OUTPUT_DEBUG_STRING_INFO DebugString;</div><div class="line">RIP_INFO RipInfo;</div><div class="line">}u;</div><div class="line">}DEBUG_EVENT, *LPDEBUG_EVENT;  ;</div></pre></td></tr></table></figure>
+
+<p>我们看一下union 中的各种调试事件：</p>
+<ul>
+<li>EXCEPTION_DEBUG_EVENT  调试中出现异常，生成调试事件。</li>
+<li>CREATE_THREAD_DEBUG_EVENT  调试过程中创建新进程或调试器开始调试已经激活的进程时，就会生成调试事件。要注意，当调试器主线程被创建时不会收到该通知。</li>
+<li>CREATE_PROCESS_DEBUG_EVENT  进程被创建。</li>
+<li>EXIT_THREAD_DEBUG_EVENT  线程退出事件。</li>
+<li>EXIT_PROCESS_DEBUG_EVENT  进程退出事件。</li>
+<li>LOAD_DLL_DEBUG_EVENT  装载DLL 文件时，生成事件。PE 装载器第一次解析出与DLL 有关的链接时，将收到这一事件。调试进程使用了 LoadLibrary 也会发生。 </li>
+<li>UNLOAD_DLL_DEBUG_EVENT  使用FreeLibrary 函数卸载DLL 文件时，会生成调试事件。注意，只有在DLL 使用次数为0的时候，才会生成这个事件。</li>
+<li>OUTPUT_DEBUG_STRING_EVENT  调用DebugOutputString 函数向程序发送消息字符串发生该事件。</li>
+<li>RIP_EVENT  只有Windows 98 检查过的构件才会生成该调试事件，报告错误信息。</li>
+</ul>
+<p>而调试相关的重点则是第一个 EXCEPTION_DEBUG_EVENT 他有一个很长的异常列表：</p>
+<ul>
+<li>EXCEPTION_ACCESS_VIOLATION  0xC0000005  程序企图读写一个不可访问的地址时引发的异常。例如企图读取0地址处的内存。</li>
+<li>EXCEPTION_ARRAY_BOUNDS_EXCEEDED  0xC000008C  数组访问越界时引发的异常。</li>
+<li>EXCEPTION_BREAKPOINT  0x80000003  触发断点时引发的异常。</li>
+<li>EXCEPTION_DATATYPE_MISALIGNMENT  0x80000002  程序读取一个未经对齐的数据时引发的异常。</li>
+<li>EXCEPTION_FLT_DENORMAL_OPERAND  0xC000008D  如果浮点数操作的操作数是非正常的，则引发该异常。所谓非正常，即它的值太小以至于不能用标准格式表示出来。</li>
+<li>EXCEPTION_FLT_DIVIDE_BY_ZERO  0xC000008E  浮点数除法的除数是0时引发该异常。</li>
+<li>EXCEPTION_FLT_INEXACT_RESULT  0xC000008F  浮点数操作的结果不能精确表示成小数时引发该异常。</li>
+<li>EXCEPTION_FLT_INVALID_OPERATION  0xC0000090  该异常表示不包括在这个表内的其它浮点数异常。</li>
+<li>EXCEPTION_FLT_OVERFLOW  0xC0000091  浮点数的指数超过所能表示的最大值时引发该异常。</li>
+<li>EXCEPTION_FLT_STACK_CHECK  0xC0000092  进行浮点数运算时栈发生溢出或下溢时引发该异常。</li>
+<li>EXCEPTION_FLT_UNDERFLOW  0xC0000093  浮点数的指数小于所能表示的最小值时引发该异常。</li>
+<li>EXCEPTION_ILLEGAL_INSTRUCTION  0xC000001D  程序企图执行一个无效的指令时引发该异常。</li>
+<li>EXCEPTION_IN_PAGE_ERROR  0xC0000006  程序要访问的内存页不在物理内存中时引发的异常。</li>
+<li>EXCEPTION_INT_DIVIDE_BY_ZERO  0xC0000094  整数除法的除数是0时引发该异常。</li>
+<li>EXCEPTION_INT_OVERFLOW  0xC0000095  整数操作的结果溢出时引发该异常。</li>
+<li>EXCEPTION_INVALID_DISPOSITION  0xC0000026  异常处理器返回一个无效的处理的时引发该异常。</li>
+<li>EXCEPTION_NONCONTINUABLE_EXCEPTION  0xC0000025  发生一个不可继续执行的异常时，如果程序继续执行，则会引发该异常。</li>
+<li>EXCEPTION_PRIV_INSTRUCTION  0xC0000096  程序企图执行一条当前CPU模式不允许的指令时引发该异常。</li>
+<li>EXCEPTION_SINGLE_STEP  0x80000004  标志寄存器的TF位为1时，每执行一条指令就会引发该异常。主要用于单步调试。</li>
+<li>EXCEPTION_STACK_OVERFLOW  0xC00000FD  栈溢出时引发该异常。</li>
+</ul>
+<p><strong>这么多的异常，虽然是我们平时看到的，但是列在一起也是非常让人老眼昏花，不过其实我们重点关注的是EXCEPTION_BREAKPOINT 断点异常</strong>，代码调试遇到该指令，立即中断运行，然后交给调试器进行处理。</p>
+<p>所以，说了这些，利用调试的方法逆向的重点就是在这，利用断点的方法，找到代码中我们想要插入的部分，设置断点，将该字节改成0xCC 即可。使用完之后，将该字节回复原值，然后将控制权返回给被调试者，就可以了。</p>
+<p>说了那么多，WaitForDebugEvent 的基本结构是这样的：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">BOOL WaitForDebugEvent(LPDEBUG_ENENT lpDebugEvent, DWORD dwMilliseconds)</div></pre></td></tr></table></figure>
+
+<ul>
+<li>lpDebugEvent ：指向接收调试事件信息的DEBUG_ ENENT结构的指针</li>
+<li>dwMilliseconds：指定用来等待调试事件发生的毫秒数，如果 这段时间内没有调试事件发生，函数将返回调用者；如果将该参数指定为INFINITE，函数将一直等待直到调试事件发生</li>
+</ul>
+<p>如果函数成功，则返回非零值；如果失败，则返回零。在调试器调用WaitForDebugEvent返回后，得到事件通知，然后解析DEBUG_EVENT结构，并对事件进行响应，处理完成后调试器将会调用ContinueDebugEvent，并根据参数来通知调试目标执行相应操作。</p>
+<p>另一个重点的函数就是让被调试者恢复运行了：</p>
+<p>ContinueDebugEvent函数，此函数允许调试器恢复先前由于调试事件而挂起的线程。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">BOOL ContinueDebugEvent(DWORD dwProcessId,DWORD dwThreadId, DWORD dwContinueStatus )</div></pre></td></tr></table></figure>
+
+<ul>
+<li>dwProcessId 为被调试进程的进程标识符</li>
+<li>dwThreadId  为欲恢复线程的线程标识符</li>
+<li>dwContinueStatus指定了该线程将以何种方式继续，包含两个定义值DBG_CONTINUE和DBG_EXCEPTION_NOT_HANDLED</li>
+</ul>
+<p>如果函数成功，则返回非零值；如果失败，则返回零。</p>
+<p>下面是一个简单的示例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">DWORD Condition=DBG_CONTINUE;  </div><div class="line">  </div><div class="line"><span class="keyword">while</span>(Condition)  </div><div class="line">  </div><div class="line">{  </div><div class="line">  </div><div class="line">    DEBUG_EVENT DebugEvent={<span class="number">0</span>};  </div><div class="line">  </div><div class="line">WaitForDebugEvent(&DebugEvent,INFINITE);<span class="comment">//等待调试事件  </span></div><div class="line">  </div><div class="line">ProcessEvenet(DebugEvent)<span class="comment">//处理调试事件。  </span></div><div class="line">  </div><div class="line">ContinueDebugEvent(DebugEvent.dwProcessId,DebugEvent.dwThreadId,Condition);<span class="comment">//通知调试目标继续执行。  </span></div><div class="line">  </div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>而具体的处理事件可以是这样的：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line">DWORD ProcessEvent(DEBUG_EVENT de)  </div><div class="line">{  </div><div class="line">   <span class="keyword">switch</span>(de.dwDebugEvent.Code)  </div><div class="line">   {  </div><div class="line">      <span class="keyword">case</span> EXCEPTION_DEBUG_EVENT:  </div><div class="line">  </div><div class="line">        {  </div><div class="line">         }  </div><div class="line">         <span class="keyword">break</span>;  </div><div class="line">  </div><div class="line">     <span class="keyword">case</span> CREATE_THREAD_DEBUG_EVENT:  </div><div class="line">  </div><div class="line">        {  </div><div class="line">         }  </div><div class="line">         <span class="keyword">break</span>;  </div><div class="line">  </div><div class="line">     <span class="keyword">case</span> CREATE_PROCESS_DEBUG_EVENT:  </div><div class="line">  </div><div class="line">        {  </div><div class="line">         }  </div><div class="line">         <span class="keyword">break</span>;  </div><div class="line">  </div><div class="line">     <span class="keyword">case</span> EXIT_THREAD_DEBUG_EVENT:  </div><div class="line">  </div><div class="line">        {  </div><div class="line">         }  </div><div class="line">         <span class="keyword">break</span>;  </div><div class="line">  </div><div class="line">     <span class="keyword">case</span> EXIT_PROCESS_DEBUG_EVENT:  </div><div class="line">  </div><div class="line">        {  </div><div class="line">         }  </div><div class="line">         <span class="keyword">break</span>;  </div><div class="line">      <span class="keyword">case</span> LOAD_DLL_DEBUG_EVENT:  </div><div class="line">  </div><div class="line">        {  </div><div class="line">         }  </div><div class="line">         <span class="keyword">break</span>;  </div><div class="line">      <span class="keyword">case</span> OUTPUT_DEBUG_STRING_EVENT:  </div><div class="line">  </div><div class="line">        {  </div><div class="line">         }  </div><div class="line">         <span class="keyword">break</span>;  </div><div class="line">       ......  </div><div class="line">}  </div><div class="line"><span class="keyword">return</span> DBG_CONTINUE;  </div><div class="line">}</div></pre></td></tr></table></figure>
+
+<h3 id="调试事件到来的顺序">调试事件到来的顺序</h3>
+<p>当我们启动调试目标时，调试器接收到的第一个事件是CREATE_THREAD_DEBUG_EVENT。接下来是加载dll的事件。每加载一个，都会产生一个这样的事件。</p>
+<p>当所有模块都被加载到进程地址空间后，调试目标就准备好运行了，调试器此时也做好了接收通知的准备。此时是设置断点的最佳时机。</p>
+<p>在调试目标退出之前调试器会收到 EXIT_DEBUG_PROCESS_EVENT通知。此后调试器不能收到加载到进程地址空间的dll从进程卸载的UNLOAD_DLL_DEBUG_EVENT通知。</p>
+<p>Windows操作系统使用结构化异常处理（SEH)机制将处理器引发的异常传递给内核及用户态程序。每个SEH异常都有一个无符号整形的异常码来唯一标识。这个异常码是由系统在异常发生时指定的。这些异常码使用了操作系统开发人员定义的公开异常码。</p>
+<h3 id="内核态调试">内核态调试</h3>
+<p>简单来说，内核调试就是分析和调试内和空间的代码和数据，主要有操作系统的内核，执行体 和各种驱动程序。可以把驱动程序看作是对操作系统内核的拓展和补充，因此可以把内核调试简单的理解为调试操作系统的广义内核。内核调试的问题在于他讲调试目标中断到调试器意味着操作系统内核的中断，而内核负责整个系统的调度和执行，内核一旦停止，整个系统也就停止了。所以如果想做内核级别的调试，要么需要硬件级别的调试器，通过特定的借口与CPU 建立连接，要么是在系统内核加入调试支持。</p>
+<p>内核态调试则是提供了内核级别的调试。除了前边提到的功能，借助内核调试，我们还可以直接下载到系统文件符号，获取到系统内部的结构体，有一些是尚未公开的，以及一些API 的相关信息。还可以用来读取，分析Windows OS 的转储文件，帮助分析发生系统崩溃的原因。</p>
+<p>目前比较流行的OllyDBG, IDA pro， 属于用户态调试器，而微软自己出品的WinDBG既可以用户态调试，也可以内核调试，Linux 下的调试器对应为GDB。</p>
+
+
+<!--<a href="http://yoursite.com/2016/09/02/用户态调试器原理剖析-内核级调试原理/#disqus_thread" class="article-comment-link">Comments</a>-->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'null'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+<div style="display:none">
+<script src="http://s4.cnzz.com/stat.php?id=undefined&web_id=undefined" language="JavaScript"></script>script>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>
